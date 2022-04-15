@@ -1,0 +1,5 @@
+{
+	"name": "package-files",
+	"files": ["lib"],
+	"main": "lib/index.js"
+}

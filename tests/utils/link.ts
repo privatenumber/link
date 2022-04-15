@@ -1,0 +1,25 @@
+import path from 'path';
+import { execaNode } from 'execa';
+
+const linkBinPath = path.resolve('./dist/cli.js');
+
+type Options = {
+	cwd: string;
+	nodePath: string;
+};
+
+export const link = async (
+	cliArguments: string[],
+	{
+		cwd,
+		nodePath,
+	}: Options,
+) => await execaNode(
+	linkBinPath,
+	cliArguments,
+	{
+		nodeOptions: [],
+		cwd,
+		nodePath,
+	},
+).catch(error => error);
