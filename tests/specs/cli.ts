@@ -6,7 +6,6 @@ import { link } from '../utils/link';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('cli', ({ test, describe }) => {
-
 		describe('error-cases', () => {
 			test('link package doesnt exist', async () => {
 				const fixture = await createFixture('./tests/fixtures/');
@@ -18,8 +17,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 				expect(linkProcess.exitCode).toBe(1);
 				expect(linkProcess.stderr).toBe('✖ Package path does not exist: ../non-existing');
-	
-				await fixture.rm();	
+
+				await fixture.rm();
 			});
 
 			test('link package.json doesnt exist', async () => {
@@ -34,8 +33,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 				expect(linkProcess.exitCode).toBe(1);
 				expect(linkProcess.stderr).toBe('✖ Failed to symlink ../package-files with error: package.json not found in ../package-files');
-	
-				await fixture.rm();	
+
+				await fixture.rm();
 			});
 		});
 

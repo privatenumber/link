@@ -10,9 +10,8 @@ import { linkPackage } from './link-package';
 		},
 	});
 
-	const packagePath = argv._.packagePath;
+	const { packagePath } = argv._;
 	await linkPackage(packagePath);
-
 })().catch((error) => {
 	console.error('Error:', error.message);
 	process.exit(1);

@@ -9,7 +9,7 @@ export async function symlink(
 	if (await fsExists(symlinkPath)) {
 		const symlinkRealpath = await fs.promises.realpath(symlinkPath);
 
-		if (targetPath == symlinkRealpath) {
+		if (targetPath === symlinkRealpath) {
 			return;
 		}
 

@@ -65,7 +65,6 @@ let id = 1;
 export async function createFixture(
 	fromFixtureTemplatePath: string,
 ) {
-
 	const fixturePath = path.resolve(
 		temporaryDirectory,
 		`${path.basename(fromFixtureTemplatePath)}-${id}`,
