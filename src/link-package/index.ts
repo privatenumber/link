@@ -1,4 +1,4 @@
-import { green, red, cyan } from 'kolorist';
+import { green, red, cyan, magenta } from 'kolorist';
 import { fsExists } from '../utils/fs-exists';
 import { symlinkPackage } from './symlink-package';
 
@@ -15,7 +15,7 @@ export async function linkPackage(
 
 	try {
 		const link = await symlinkPackage(packagePath);
-		console.log(green('✔'), 'symlinked', cyan(link.path), '→', cyan(packagePath));
+		console.log(green('✔'), `Symlinked ${magenta(link.name)}:`, cyan(link.path), '→', cyan(packagePath));
 		return link;
 	} catch (error) {
 		console.warn(red('✖'), 'Failed to symlink', cyan(packagePath), 'with error:', (error as any).message);

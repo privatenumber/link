@@ -27,6 +27,7 @@ export async function symlinkPackage(
 	);
 
 	return {
+		name: packageJson.name,
 		path: symlinkPath,
 		binaryPaths,
 	};
