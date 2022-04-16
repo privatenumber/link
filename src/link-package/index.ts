@@ -1,4 +1,6 @@
-import { green, red, cyan, magenta } from 'kolorist';
+import {
+	green, red, cyan, magenta,
+} from 'kolorist';
 import { fsExists } from '../utils/fs-exists';
 import { symlinkPackage } from './symlink-package';
 
