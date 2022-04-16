@@ -18,6 +18,8 @@ export const link = async (
 	linkBinPath,
 	cliArguments,
 	{
+		env: {},
+		extendEnv: false,
 		nodeOptions: [],
 		cwd,
 		nodePath,
