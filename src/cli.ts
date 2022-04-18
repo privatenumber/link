@@ -12,9 +12,11 @@ import { linkPackage } from './link-package';
 
 	const { packagePaths } = argv._;
 
-	for (const packagePath of packagePaths) {
-		await linkPackage(packagePath);
-	}
+	await Promise.all(
+		packagePaths.map(
+			packagePath => linkPackage(packagePath),
+		),
+	);
 })().catch((error) => {
 	console.error('Error:', error.message);
 	process.exit(1);

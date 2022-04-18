@@ -52,10 +52,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 				});
 
 				expect(linkProcess.exitCode).toBe(1);
-				expect(linkProcess.stdout).toBe([
-					'✔ Symlinked package-binary: node_modules/package-binary → ../package-binary',
-					'✔ Symlinked @organization/package-organization: node_modules/@organization/package-organization → ../package-organization',
-				].join('\n'));
+				expect(linkProcess.stdout).toMatch('✔ Symlinked package-binary: node_modules/package-binary → ../package-binary');
+				expect(linkProcess.stdout).toMatch('✔ Symlinked @organization/package-organization: node_modules/@organization/package-organization → ../package-organization');
 				expect(linkProcess.stderr).toMatch('✖ Failed to symlink');
 
 				await fixture.rm();
