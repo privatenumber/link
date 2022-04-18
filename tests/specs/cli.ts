@@ -36,6 +36,30 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 				await fixture.rm();
 			});
+
+			test('single failure should exit 1', async () => {
+				const fixture = await createFixture('./tests/fixtures/');
+
+				await fixture.rm('package-files/package.json');
+
+				const linkProcess = await link([
+					'../package-binary',
+					path.join(fixture.path, 'package-files'),
+					'../package-organization',
+				], {
+					cwd: path.join(fixture.path, 'package-entry'),
+					nodePath,
+				});
+
+				expect(linkProcess.exitCode).toBe(1);
+				expect(linkProcess.stdout).toBe([
+					'✔ Symlinked package-binary: node_modules/package-binary → ../package-binary',
+					'✔ Symlinked @organization/package-organization: node_modules/@organization/package-organization → ../package-organization',
+				].join('\n'));
+				expect(linkProcess.stderr).toMatch('✖ Failed to symlink');
+
+				await fixture.rm();
+			});
 		});
 
 		test('consecutive links', async () => {
