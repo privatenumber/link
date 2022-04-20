@@ -2,8 +2,10 @@ lockfileVersion: 5.3
 
 specifiers:
   '@pvtnbr/eslint-config': ^0.19.1
+  '@types/cmd-shim': ^2.0.1
   '@types/node': ^17.0.25
   cleye: ^1.1.0
+  cmd-shim: ^5.0.0
   del: ^6.0.0
   eslint: ^8.13.0
   esno: ^0.14.1
@@ -17,8 +19,10 @@ specifiers:
 
 devDependencies:
   '@pvtnbr/eslint-config': 0.19.1_eslint@8.13.0+typescript@4.6.3
+  '@types/cmd-shim': 2.0.1
   '@types/node': 17.0.25
   cleye: 1.1.0
+  cmd-shim: 5.0.0
   del: 6.0.0
   eslint: 8.13.0
   esno: 0.14.1
@@ -254,6 +258,10 @@ packages:
       '@types/keyv': 3.1.4
       '@types/node': 17.0.25
       '@types/responselike': 1.0.0
+    dev: true
+
+  /@types/cmd-shim/2.0.1:
+    resolution: {integrity: sha512-soSTdKhjT7oj8RJ/k+awOxbsaXSKpt5id7oFAFQ3P3xKuy83PsbRpi4WZPEehZdfdMwUyZFC4vwS8FC8ZbqNAQ==}
     dev: true
 
   /@types/estree/0.0.39:
@@ -702,6 +710,11 @@ packages:
     resolution: {integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==}
     dev: true
 
+  /chownr/2.0.0:
+    resolution: {integrity: sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==}
+    engines: {node: '>=10'}
+    dev: true
+
   /ci-info/3.3.0:
     resolution: {integrity: sha512-riT/3vI5YpVH6/qomlDnJow6TBee2PBKSEpx3O32EGPYbWGIRsIlGRms3Sm74wYE1JMo8RnO04Hb12+v1J5ICw==}
     dev: true
@@ -736,6 +749,13 @@ packages:
     resolution: {integrity: sha1-0dyXOSAxTfZ/vrlCI7TuNQI56Ws=}
     dependencies:
       mimic-response: 1.0.1
+    dev: true
+
+  /cmd-shim/5.0.0:
+    resolution: {integrity: sha512-qkCtZ59BidfEwHltnJwkyVZn+XQojdAySM1D1gSeh11Z4pW1Kpolkyo53L5noc0nrxmIvyFwTmJRo4xs7FFLPw==}
+    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+    dependencies:
+      mkdirp-infer-owner: 2.0.0
     dev: true
 
   /color-convert/1.9.3:
@@ -1952,6 +1972,10 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /infer-owner/1.0.4:
+    resolution: {integrity: sha512-IClj+Xz94+d7irH5qRyfJonOdfTzuDaifE6ZPWfx0N0+/ATZCbuTPq2prFl526urkQd90WyUKIh1DfBQ2hMz9A==}
+    dev: true
+
   /inflight/1.0.6:
     resolution: {integrity: sha1-Sb1jMdfQLQwJvJEKEHW6gWW1bfk=}
     dependencies:
@@ -2473,6 +2497,21 @@ packages:
 
   /mkdirp-classic/0.5.3:
     resolution: {integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==}
+    dev: true
+
+  /mkdirp-infer-owner/2.0.0:
+    resolution: {integrity: sha512-sdqtiFt3lkOaYvTXSRIUjkIdPTcxgv5+fgqYE/5qgwdw12cOrAuzzgzvVExIkH/ul1oeHN3bCLOWSG3XOqbKKw==}
+    engines: {node: '>=10'}
+    dependencies:
+      chownr: 2.0.0
+      infer-owner: 1.0.4
+      mkdirp: 1.0.4
+    dev: true
+
+  /mkdirp/1.0.4:
+    resolution: {integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==}
+    engines: {node: '>=10'}
+    hasBin: true
     dev: true
 
   /moize/6.1.0:
