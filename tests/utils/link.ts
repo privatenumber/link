@@ -1,5 +1,4 @@
 import path from 'path';
-import fs from 'fs';
 import { execaNode } from 'execa';
 
 const linkBinPath = path.resolve('./dist/cli.js');
