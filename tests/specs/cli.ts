@@ -6,7 +6,7 @@ import { link } from '../utils/link';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('cli', ({ test, describe }) => {
-		describe('error-cases', () => {
+		describe('error-cases', ({ test }) => {
 			// test('link package doesnt exist', async () => {
 			// 	const fixture = await createFixture('./tests/fixtures/');
 
@@ -51,11 +51,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodePath,
 				});
 
-				console.log(linkProcess);
-
 				expect(linkProcess.exitCode).toBe(1);
-				expect(linkProcess.stdout).toMatch('✔ Symlinked package-binary: node_modules/package-binary → ../package-binary');
-				expect(linkProcess.stdout).toMatch('✔ Symlinked @organization/package-organization: node_modules/@organization/package-organization → ../package-organization');
+				expect(linkProcess.stdout).toMatch('✔ Symlinked package-binary');
+				expect(linkProcess.stdout).toMatch('✔ Symlinked @organization/package-organization');
 				expect(linkProcess.stderr).toMatch('✖ Failed to symlink');
 
 				await fixture.rm();
