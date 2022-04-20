@@ -19,5 +19,6 @@ export async function symlink(
 	await fs.promises.symlink(
 		targetPath,
 		symlinkPath,
+		'dir',
 	);
 }
