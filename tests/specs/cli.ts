@@ -186,6 +186,13 @@ export default testSuite(({ describe }, nodePath: string) => {
 				path.join(fixture.path, 'package-entry/node_modules'),
 			));
 
+			console.log(await fs.promises.readdir(
+				path.join(fixture.path, 'package-entry/node_modules/package-binary'),
+			));
+
+			console.log(await fs.promises.realpath(
+				path.join(fixture.path, 'package-entry/node_modules/package-binary'),
+			));
 
 			const packageA = await execaNode(
 				path.join(fixture.path, 'package-entry'),
