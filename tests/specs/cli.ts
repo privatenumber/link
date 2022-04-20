@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 import { testSuite, expect } from 'manten';
 import { execa, execaNode } from 'execa';
@@ -174,19 +175,27 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			console.log(linkB);
 
-			// await link(['../package-organization'], {
-			// 	cwd: path.join(fixture.path, 'package-entry'),
-			// 	nodePath,
-			// });
+			const linkC = await link(['../package-organization'], {
+				cwd: path.join(fixture.path, 'package-entry'),
+				nodePath,
+			});
 
-			// const packageA = await execaNode(
-			// 	path.join(fixture.path, 'package-entry'),
-			// 	[],
-			// 	{
-			// 		nodePath,
-			// 		nodeOptions: [],
-			// 	},
-			// );
+			console.log(linkC);
+
+			console.log(await fs.promises.readdir(
+				path.join(fixture.path, 'package-entry/node_modules'),
+			));
+
+
+			const packageA = await execaNode(
+				path.join(fixture.path, 'package-entry'),
+				[],
+				{
+					nodePath,
+					nodeOptions: [],
+				},
+			);
+			console.log(packageA);
 			// expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization"]');
 
 			await fixture.rm();
