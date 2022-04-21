@@ -2,8 +2,8 @@ import path from 'path';
 import fs from 'fs';
 import cmdShim from 'cmd-shim';
 import { readPackageJson } from '../utils/read-package-json';
-import { linkBinaries } from './link-binaries';
 import { symlink } from '../utils/symlink';
+import { linkBinaries } from './link-binaries';
 
 const nodeModulesDirectory = 'node_modules';
 
