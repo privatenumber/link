@@ -1,5 +1,4 @@
 import fs from 'fs';
-import del from 'del';
 import { fsExists } from './fs-exists';
 
 export async function symlink(
@@ -14,8 +13,7 @@ export async function symlink(
 			return;
 		}
 
-		// TODO: Change to rm
-		await del(symlinkPath);
+		await fs.promises.unlink(symlinkPath);
 	}
 
 	await fs.promises.symlink(
