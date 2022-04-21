@@ -24,3 +24,15 @@ export async function symlink(
 		type,
 	);
 }
+
+export async function symlinkBinary(
+	binaryPath: string,
+	linkPath: string,
+) {
+	await symlink(
+		binaryPath,
+		linkPath,
+	);
+
+	await fs.promises.chmod(linkPath, 0o755);
+}

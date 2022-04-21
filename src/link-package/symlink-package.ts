@@ -2,22 +2,10 @@ import path from 'path';
 import fs from 'fs';
 import cmdShim from 'cmd-shim';
 import { readPackageJson } from '../utils/read-package-json';
-import { symlink } from '../utils/symlink';
+import { symlink, symlinkBinary } from '../utils/symlink';
 import { linkBinaries } from './link-binaries';
 
 const nodeModulesDirectory = 'node_modules';
-
-async function linkBinary(
-	binaryPath: string,
-	linkPath: string,
-) {
-	await symlink(
-		binaryPath,
-		linkPath,
-	);
-
-	await fs.promises.chmod(linkPath, 0o755);
-}
 
 export async function symlinkPackage(
 	packagePath: string,
@@ -37,7 +25,7 @@ export async function symlinkPackage(
 	await linkBinaries(
 		packagePath,
 		packageJson,
-		(process.platform === 'win32') ? cmdShim : linkBinary,
+		(process.platform === 'win32') ? cmdShim : symlinkBinary,
 	);
 
 	return {
