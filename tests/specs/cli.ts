@@ -143,10 +143,15 @@ export default testSuite(({ describe }, nodePath: string) => {
 				},
 			});
 
-			const binary = await execa('npm', ['test'], {
+			// Executable
+			const binary = await execa(path.join(entryPackagePath, 'node_modules/.bin/binary'));
+			expect(binary.stdout).toMatch('package-binary');
+
+			// Executable via npm
+			const binaryNpm = await execa('npm', ['test'], {
 				cwd: entryPackagePath,
 			});
-			expect(binary.stdout).toMatch('package-binary');
+			expect(binaryNpm.stdout).toMatch('package-binary');
 
 			// Expect non publish files to exist in symlink
 			const nonPublishFileExists = await fixture.exists('package-entry/node_modules/package-files/non-publish-file.js');
