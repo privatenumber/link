@@ -2,7 +2,6 @@ import { cli } from 'cleye';
 import { linkPackage } from './link-package';
 import { loadConfig } from './utils/load-config';
 
-
 (async () => {
 	const argv = cli({
 		name: 'link',
@@ -20,12 +19,16 @@ import { loadConfig } from './utils/load-config';
 				packagePath => linkPackage(packagePath),
 			),
 		);
+
+		return;
 	}
 
 	const config = await loadConfig();
 
 	if (!config) {
-		console.warn(`Warning: Config file not found at ${process.cwd()}/link.config.json`);
+		console.warn(`Warning: Config file "link.config.json" not found in current directory.`);
+		// console.log('');
+		// console.log('Did you mean to run `npm link` instead? Check out npx link as a safer alternative!');
 		return;
 	}
 
@@ -33,8 +36,11 @@ import { loadConfig } from './utils/load-config';
 		return;
 	}
 
-	console.log(config);
-
+	await Promise.all(
+		config.packages.map(
+			async (linkPath) => await linkPackage(linkPath)
+		),
+	);
 })().catch((error) => {
 	console.error('Error:', error.message);
 	process.exit(1);
