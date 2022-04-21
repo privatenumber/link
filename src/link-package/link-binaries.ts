@@ -4,21 +4,6 @@ import type { PackageJson } from 'type-fest';
 
 const binDirectoryPath = 'node_modules/.bin';
 
-async function linkBinary(
-	binaryPath: string,
-	linkPath: string,
-	linkFunction: (targetPath: string, linkPath: string) => Promise<void>,
-) {
-	await linkFunction(
-		binaryPath,
-		linkPath,
-	);
-
-	await fs.promises.chmod(linkPath, 0o755);
-
-	return linkPath;
-}
-
 export async function linkBinaries(
 	packagePath: string,
 	{
@@ -36,21 +21,18 @@ export async function linkBinaries(
 	});
 
 	if (typeof bin === 'string') {
-		return [
-			await linkBinary(
-				path.resolve(packagePath, bin),
-				path.join(binDirectoryPath, name!),
-				linkFunction,
-			),
-		];
+		await linkFunction(
+			path.resolve(packagePath, bin),
+			path.join(binDirectoryPath, name!),
+		);
+		return;
 	}
 
-	return await Promise.all(
+	await Promise.all(
 		Object.entries(bin).map(
-			async ([binaryName, binaryPath]) => await linkBinary(
+			async ([binaryName, binaryPath]) => await linkFunction(
 				path.resolve(packagePath, binaryPath),
 				path.join(binDirectoryPath, binaryName),
-				linkFunction,
 			),
 		),
 	);

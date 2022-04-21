@@ -1,7 +1,8 @@
 import path from 'path';
 import fs from 'fs';
-import { symlink } from '../utils/symlink';
+import cmdShim from 'cmd-shim';
 import { readPackageJson } from '../utils/read-package-json';
+import { symlink, symlinkBinary } from '../utils/symlink';
 import { linkBinaries } from './link-binaries';
 
 const nodeModulesDirectory = 'node_modules';
@@ -18,17 +19,17 @@ export async function symlinkPackage(
 	await symlink(
 		path.resolve(packagePath),
 		symlinkPath,
+		'dir',
 	);
 
-	const binaryPaths = await linkBinaries(
+	await linkBinaries(
 		packagePath,
 		packageJson,
-		symlink,
+		(process.platform === 'win32') ? cmdShim : symlinkBinary,
 	);
 
 	return {
 		name: packageJson.name,
 		path: symlinkPath,
-		binaryPaths,
 	};
 }

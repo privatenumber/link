@@ -6,7 +6,7 @@ import { link } from '../utils/link';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('cli', ({ test, describe }) => {
-		describe('error-cases', () => {
+		describe('error-cases', ({ test }) => {
 			test('link package doesnt exist', async () => {
 				const fixture = await createFixture('./tests/fixtures/');
 
@@ -52,8 +52,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 				});
 
 				expect(linkProcess.exitCode).toBe(1);
-				expect(linkProcess.stdout).toMatch('✔ Symlinked package-binary: node_modules/package-binary → ../package-binary');
-				expect(linkProcess.stdout).toMatch('✔ Symlinked @organization/package-organization: node_modules/@organization/package-organization → ../package-organization');
+				expect(linkProcess.stdout).toMatch('✔ Symlinked package-binary');
+				expect(linkProcess.stdout).toMatch('✔ Symlinked @organization/package-organization');
 				expect(linkProcess.stderr).toMatch('✖ Failed to symlink');
 
 				await fixture.rm();
@@ -143,10 +143,15 @@ export default testSuite(({ describe }, nodePath: string) => {
 				},
 			});
 
-			const binary = await execa('npm', ['test'], {
+			// Executable
+			const binary = await execa(path.join(entryPackagePath, 'node_modules/.bin/binary'));
+			expect(binary.stdout).toMatch('package-binary');
+
+			// Executable via npm
+			const binaryNpm = await execa('npm', ['test'], {
 				cwd: entryPackagePath,
 			});
-			expect(binary.stdout).toMatch('package-binary');
+			expect(binaryNpm.stdout).toMatch('package-binary');
 
 			// Expect non publish files to exist in symlink
 			const nonPublishFileExists = await fixture.exists('package-entry/node_modules/package-files/non-publish-file.js');
