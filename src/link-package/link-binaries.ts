@@ -21,15 +21,14 @@ export async function linkBinaries(
 	});
 
 	if (typeof bin === 'string') {
-		return [
-			await linkFunction(
-				path.resolve(packagePath, bin),
-				path.join(binDirectoryPath, name!),
-			),
-		];
+		await linkFunction(
+			path.resolve(packagePath, bin),
+			path.join(binDirectoryPath, name!),
+		);
+		return;
 	}
 
-	return await Promise.all(
+	await Promise.all(
 		Object.entries(bin).map(
 			async ([binaryName, binaryPath]) => await linkFunction(
 				path.resolve(packagePath, binaryPath),

@@ -1,9 +1,9 @@
 import path from 'path';
 import fs from 'fs';
 import cmdShim from 'cmd-shim';
-import { promisify } from 'util';
 import { readPackageJson } from '../utils/read-package-json';
 import { linkBinaries } from './link-binaries';
+import { symlink } from '../utils/symlink';
 
 const nodeModulesDirectory = 'node_modules';
 
@@ -11,7 +11,7 @@ async function linkBinary(
 	binaryPath: string,
 	linkPath: string,
 ) {
-	await fs.promises.symlink(
+	await symlink(
 		binaryPath,
 		linkPath,
 	);
@@ -28,21 +28,20 @@ export async function symlinkPackage(
 
 	await fs.promises.mkdir(path.dirname(symlinkPath), { recursive: true });
 
-	await fs.promises.symlink(
+	await symlink(
 		path.resolve(packagePath),
 		symlinkPath,
 		'dir',
 	);
 
-	const binaryPaths = await linkBinaries(
+	await linkBinaries(
 		packagePath,
 		packageJson,
-		(process.platform === 'win32') ? promisify(cmdShim) : linkBinary,
+		(process.platform === 'win32') ? cmdShim : linkBinary,
 	);
 
 	return {
 		name: packageJson.name,
 		path: symlinkPath,
-		binaryPaths,
 	};
 }
