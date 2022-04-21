@@ -50,7 +50,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 			});
 			expect(binaryNpm.stdout).toMatch('package-binary');
 
-
 			const binary = await execa(path.join(entryPackagePath, 'node_modules/.bin/binary'));
 			expect(binary.stdout).toBe('package-binary');
 
@@ -59,7 +58,5 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			await fixture.rm();
 		});
-
 	});
 });
-

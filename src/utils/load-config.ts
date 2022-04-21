@@ -1,6 +1,6 @@
+import type { LinkConfig } from '../types';
 import { fsExists } from './fs-exists';
 import { readJsonFile } from './read-json-file';
-import type { LinkConfig } from '../types';
 
 const configPath = 'link.config.json';
 
