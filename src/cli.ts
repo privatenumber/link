@@ -1,5 +1,4 @@
 import { cli } from 'cleye';
-import terminalLink from 'terminal-link';
 import { linkPackage } from './link-package';
 import { loadConfig } from './utils/load-config';
 
@@ -17,7 +16,7 @@ import { loadConfig } from './utils/load-config';
 					type: 'section',
 					data: {
 						title: 'Website',
-						body: 'https://www.npmjs.com/package/link'
+						body: 'https://www.npmjs.com/package/link',
 					},
 				});
 
@@ -41,7 +40,7 @@ import { loadConfig } from './utils/load-config';
 	const config = await loadConfig();
 
 	if (!config) {
-		console.warn(`Warning: Config file "link.config.json" not found in current directory.\n         Read the documentation to learn more: https://www.npmjs.com/package/link\n`);
+		console.warn('Warning: Config file "link.config.json" not found in current directory.\n         Read the documentation to learn more: https://www.npmjs.com/package/link\n');
 		argv.showHelp();
 		return;
 	}
