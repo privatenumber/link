@@ -14,6 +14,37 @@ From the project you want to link a package to:
 npx link <package-path>
 ```
 
+### Configuration file
+
+Create a `link.config.json` configuration file at the root of your npm project to automatically setup links to multiple packages.
+
+Example _link.config.json_:
+```json5
+{
+    "packages": [
+        "/path/to/package-path-a",
+        "../package-path-b"
+    ]
+}
+```
+
+The configuration has the following type schema:
+```ts
+type LinkConfig = {
+
+    // List of packages to link
+    packages?: string[]
+}
+```
+
+> Note: It's not recommended to commit this file to source control since this is for local development with local paths.
+
+
+To link the dependencies defined in `link.config.json`, run:
+```sh
+npx link
+```
+
 ## FAQ
 
 ### Why should I use this over `npm link`?

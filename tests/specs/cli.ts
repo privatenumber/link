@@ -136,18 +136,16 @@ export default testSuite(({ describe }, nodePath: string) => {
 			);
 			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization"]');
 
-			// Test binary
-			await fixture.writeJson('package-entry/package.json', {
-				scripts: {
-					test: 'binary',
-				},
-			});
-
 			// Executable
 			const binary = await execa(path.join(entryPackagePath, 'node_modules/.bin/binary'));
 			expect(binary.stdout).toMatch('package-binary');
 
 			// Executable via npm
+			await fixture.writeJson('package-entry/package.json', {
+				scripts: {
+					test: 'binary',
+				},
+			});
 			const binaryNpm = await execa('npm', ['test'], {
 				cwd: entryPackagePath,
 			});

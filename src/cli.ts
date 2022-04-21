@@ -1,10 +1,11 @@
 import { cli } from 'cleye';
 import { linkPackage } from './link-package';
+import { loadConfig } from './utils/load-config';
 
 (async () => {
 	const argv = cli({
 		name: 'link',
-		parameters: ['<package paths...>'],
+		parameters: ['[package paths...]'],
 		help: {
 			description: 'A better `npm link` - Link a package to the current project',
 		},
@@ -12,9 +13,30 @@ import { linkPackage } from './link-package';
 
 	const { packagePaths } = argv._;
 
+	if (packagePaths.length > 0) {
+		await Promise.all(
+			packagePaths.map(
+				packagePath => linkPackage(packagePath),
+			),
+		);
+
+		return;
+	}
+
+	const config = await loadConfig();
+
+	if (!config) {
+		console.warn('Warning: Config file "link.config.json" not found in current directory.');
+		return;
+	}
+
+	if (!config.packages) {
+		return;
+	}
+
 	await Promise.all(
-		packagePaths.map(
-			packagePath => linkPackage(packagePath),
+		config.packages.map(
+			async linkPath => await linkPackage(linkPath),
 		),
 	);
 })().catch((error) => {
