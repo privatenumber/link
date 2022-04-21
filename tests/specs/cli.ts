@@ -44,8 +44,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 				const linkProcess = await link([
 					'../package-binary',
-					// path.join(fixture.path, 'package-files'),
-					// '../package-organization',
+					path.join(fixture.path, 'package-files'),
+					'../package-organization',
 				], {
 					cwd: path.join(fixture.path, 'package-entry'),
 					nodePath,
@@ -55,8 +55,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 				expect(linkProcess.exitCode).toBe(1);
 				expect(linkProcess.stdout).toMatch('✔ Symlinked package-binary');
-				// expect(linkProcess.stdout).toMatch('✔ Symlinked @organization/package-organization');
-				// expect(linkProcess.stderr).toMatch('✖ Failed to symlink');
+				expect(linkProcess.stdout).toMatch('✔ Symlinked @organization/package-organization');
+				expect(linkProcess.stderr).toMatch('✖ Failed to symlink');
 
 				await fixture.rm();
 			});
