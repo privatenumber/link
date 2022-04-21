@@ -5,7 +5,6 @@ specifiers:
   '@types/node': ^17.0.25
   cleye: ^1.1.0
   cmd-shim: ^5.0.0
-  del: ^6.0.0
   eslint: ^8.13.0
   esno: ^0.14.1
   execa: ^6.1.0
@@ -21,7 +20,6 @@ devDependencies:
   '@types/node': 17.0.25
   cleye: 1.1.0
   cmd-shim: 5.0.0
-  del: 6.0.0
   eslint: 8.13.0
   esno: 0.14.1
   execa: 6.1.0
