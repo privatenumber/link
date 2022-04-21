@@ -51,8 +51,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodePath,
 				});
 
-				console.log(linkProcess);
-
 				expect(linkProcess.exitCode).toBe(1);
 				expect(linkProcess.stdout).toMatch('✔ Symlinked package-binary');
 				expect(linkProcess.stdout).toMatch('✔ Symlinked @organization/package-organization');
@@ -113,49 +111,49 @@ export default testSuite(({ describe }, nodePath: string) => {
 		// 	await fixture.rm();
 		// });
 
-		// test('multiple packages', async () => {
-		// 	const fixture = await createFixture('./tests/fixtures/');
+		test('multiple packages', async () => {
+			const fixture = await createFixture('./tests/fixtures/');
 
-		// 	const entryPackagePath = path.join(fixture.path, 'package-entry');
+			const entryPackagePath = path.join(fixture.path, 'package-entry');
 
-		// 	await link([
-		// 		'../package-binary',
-		// 		path.join(fixture.path, 'package-files'),
-		// 		'../package-organization',
-		// 	], {
-		// 		cwd: entryPackagePath,
-		// 		nodePath,
-		// 	});
+			await link([
+				'../package-binary',
+				path.join(fixture.path, 'package-files'),
+				'../package-organization',
+			], {
+				cwd: entryPackagePath,
+				nodePath,
+			});
 
-		// 	// Test that linked packages are resolvable
-		// 	const packageA = await execaNode(
-		// 		entryPackagePath,
-		// 		[],
-		// 		{
-		// 			nodePath,
-		// 			nodeOptions: [],
-		// 		},
-		// 	);
-		// 	expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization"]');
+			// Test that linked packages are resolvable
+			const packageA = await execaNode(
+				entryPackagePath,
+				[],
+				{
+					nodePath,
+					nodeOptions: [],
+				},
+			);
+			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization"]');
 
-		// 	// Test binary
-		// 	await fixture.writeJson('package-entry/package.json', {
-		// 		scripts: {
-		// 			test: 'binary',
-		// 		},
-		// 	});
+			// Test binary
+			await fixture.writeJson('package-entry/package.json', {
+				scripts: {
+					test: 'binary',
+				},
+			});
 
-		// 	const binary = await execa('npm', ['test'], {
-		// 		cwd: entryPackagePath,
-		// 	});
-		// 	expect(binary.stdout).toMatch('package-binary');
+			const binary = await execa('npm', ['test'], {
+				cwd: entryPackagePath,
+			});
+			expect(binary.stdout).toMatch('package-binary');
 
-		// 	// Expect non publish files to exist in symlink
-		// 	const nonPublishFileExists = await fixture.exists('package-entry/node_modules/package-files/non-publish-file.js');
-		// 	expect(nonPublishFileExists).toBe(true);
+			// Expect non publish files to exist in symlink
+			const nonPublishFileExists = await fixture.exists('package-entry/node_modules/package-files/non-publish-file.js');
+			expect(nonPublishFileExists).toBe(true);
 
-		// 	await fixture.rm();
-		// });
+			await fixture.rm();
+		});
 
 		// test('works without package.json in cwd', async () => {
 		// 	const fixture = await createFixture('./tests/fixtures/');
