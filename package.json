@@ -24,6 +24,17 @@
 		"test": "esno tests/index.ts",
 		"lint": "eslint ."
 	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		"*.{js,ts,md,json}": [
+			"eslint",
+			"npm test"
+		]
+	},
 	"devDependencies": {
 		"@pvtnbr/eslint-config": "^0.19.1",
 		"@types/fs-extra": "^9.0.13",
@@ -35,7 +46,9 @@
 		"execa": "^6.1.0",
 		"fs-extra": "^10.1.0",
 		"get-node": "^12.1.0",
+		"husky": "^4.3.8",
 		"kolorist": "^1.5.1",
+		"lint-staged": "^12.3.7",
 		"manten": "^0.0.3",
 		"pkgroll": "^1.0.4",
 		"type-fest": "^2.12.2",
