@@ -1,10 +1,14 @@
+import path from 'path';
 import type { LinkConfig } from '../types';
 import { fsExists } from './fs-exists';
 import { readJsonFile } from './read-json-file';
 
-const configPath = 'link.config.json';
+const configFile = 'link.config.json';
 
-export async function loadConfig() {
+export async function loadConfig(
+	packageDirectory: string,
+) {
+	const configPath = path.join(packageDirectory, configFile);
 	const configExists = await fsExists(configPath);
 
 	if (!configExists) {
