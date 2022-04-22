@@ -1,6 +1,6 @@
 import fs from 'fs';
+import { remove } from 'fs-extra/lib/remove/index.js';
 import { fsExists } from './fs-exists';
-import { remove } from 'fs-extra/lib/remove';
 
 export async function symlink(
 	targetPath: string,
