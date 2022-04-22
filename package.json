@@ -22,7 +22,7 @@
 		"build": "pkgroll --minify",
 		"pretest": "npm run build",
 		"test": "esno tests/index.ts",
-		"lint": "eslint ."
+		"lint": "eslint --cache ."
 	},
 	"husky": {
 		"hooks": {
@@ -31,7 +31,7 @@
 	},
 	"lint-staged": {
 		"*.{js,ts,md,json}": [
-			"eslint",
+			"eslint --cache",
 			"npm test"
 		]
 	},
