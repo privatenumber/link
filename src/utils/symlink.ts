@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { fsExists } from './fs-exists';
+import { remove } from 'fs-extra/lib/remove';
 
 export async function symlink(
 	targetPath: string,
@@ -13,7 +14,7 @@ export async function symlink(
 			return;
 		}
 
-		await fs.promises.unlink(symlinkPath);
+		await remove(symlinkPath);
 	}
 
 	await fs.promises.symlink(

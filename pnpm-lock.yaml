@@ -2,12 +2,14 @@ lockfileVersion: 5.3
 
 specifiers:
   '@pvtnbr/eslint-config': ^0.19.1
+  '@types/fs-extra': ^9.0.13
   '@types/node': ^17.0.25
   cleye: ^1.1.0
   cmd-shim: ^5.0.0
   eslint: ^8.13.0
   esno: ^0.14.1
   execa: ^6.1.0
+  fs-extra: ^10.1.0
   get-node: ^12.1.0
   kolorist: ^1.5.1
   manten: ^0.0.3
@@ -17,12 +19,14 @@ specifiers:
 
 devDependencies:
   '@pvtnbr/eslint-config': 0.19.1_eslint@8.13.0+typescript@4.6.3
+  '@types/fs-extra': 9.0.13
   '@types/node': 17.0.25
   cleye: 1.1.0
   cmd-shim: 5.0.0
   eslint: 8.13.0
   esno: 0.14.1
   execa: 6.1.0
+  fs-extra: 10.1.0
   get-node: 12.1.0
   kolorist: 1.5.1
   manten: 0.0.3
@@ -262,6 +266,12 @@ packages:
 
   /@types/estree/0.0.51:
     resolution: {integrity: sha512-CuPgU6f3eT/XgKKPqKd/gLZV1Xmvf1a2R5POBOGQa6uv82xpls89HU5zKeVoyR8XzHd1RGNOlQlvUe3CFkjWNQ==}
+    dev: true
+
+  /@types/fs-extra/9.0.13:
+    resolution: {integrity: sha512-nEnwB++1u5lVDM2UI4c1+5R+FYaKfaAzS4OococimjVm3nQw3TuzH5UNsocrcTBbhnerblyHj4A49qXbIiZdpA==}
+    dependencies:
+      '@types/node': 17.0.25
     dev: true
 
   /@types/http-cache-semantics/4.0.1:
@@ -1709,6 +1719,15 @@ packages:
     resolution: {integrity: sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==}
     dev: true
 
+  /fs-extra/10.1.0:
+    resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
+    engines: {node: '>=12'}
+    dependencies:
+      graceful-fs: 4.2.10
+      jsonfile: 6.1.0
+      universalify: 2.0.0
+    dev: true
+
   /fs.realpath/1.0.0:
     resolution: {integrity: sha1-FQStJSMVjKpA20onh8sBQRmU6k8=}
     dev: true
@@ -2292,6 +2311,14 @@ packages:
       eslint-visitor-keys: 3.3.0
       espree: 9.3.1
       semver: 7.3.7
+    dev: true
+
+  /jsonfile/6.1.0:
+    resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
+    dependencies:
+      universalify: 2.0.0
+    optionalDependencies:
+      graceful-fs: 4.2.10
     dev: true
 
   /jsx-ast-utils/3.2.2:
@@ -3377,6 +3404,11 @@ packages:
     resolution: {integrity: sha512-3faScn5I+hy9VleOq/qNbAd6pAx7iH5jYBMS9I1HgQVijz/4mv5Bvw5iw1sC/90CODiKo81G/ps8AJrISn687g==}
     dependencies:
       '@types/unist': 2.0.6
+    dev: true
+
+  /universalify/2.0.0:
+    resolution: {integrity: sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==}
+    engines: {node: '>= 10.0.0'}
     dev: true
 
   /uri-js/4.4.1:

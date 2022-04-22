@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 import { testSuite, expect } from 'manten';
 import { execa, execaNode } from 'execa';
@@ -187,6 +188,25 @@ export default testSuite(({ describe }, nodePath: string) => {
 				},
 			);
 			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization"]');
+
+			await fixture.rm();
+		});
+
+		test('overwrites directory in place of symlink', async () => {
+			const fixture = await createFixture('./tests/fixtures/');
+			const entryPackagePath = path.join(fixture.path, 'package-entry');
+
+			await fs.promises.mkdir(
+				path.join(entryPackagePath, 'node_modules/package-binary'),
+				{ recursive: true },
+			);
+
+			const linkBinary = await link(['../package-binary'], {
+				cwd: entryPackagePath,
+				nodePath,
+			});
+
+			expect(linkBinary.exitCode).toBe(0);
 
 			await fixture.rm();
 		});
