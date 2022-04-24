@@ -8,11 +8,12 @@ import { linkBinaries } from './link-binaries';
 const nodeModulesDirectory = 'node_modules';
 
 export async function symlinkPackage(
+	linkToPackagePath: string,
 	packagePath: string,
 ) {
 	const packageJson = await readPackageJson(packagePath);
 
-	const symlinkPath = path.join(nodeModulesDirectory, packageJson.name);
+	const symlinkPath = path.join(linkToPackagePath, nodeModulesDirectory, packageJson.name);
 
 	await fs.promises.mkdir(path.dirname(symlinkPath), { recursive: true });
 

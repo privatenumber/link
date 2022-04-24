@@ -67,20 +67,19 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const entryPackagePath = path.join(fixture.path, 'package-entry');
 
 			// Links multiple packages consecutively
-			await link(['../package-binary'], {
-				cwd: entryPackagePath,
-				nodePath,
-			});
-
-			await link([path.join(fixture.path, 'package-files')], {
-				cwd: entryPackagePath,
-				nodePath,
-			});
-
-			await link(['../package-organization'], {
-				cwd: entryPackagePath,
-				nodePath,
-			});
+			await Promise.all(
+				[
+					'../package-binary',
+					path.join(fixture.path, 'package-files'),
+					'../package-organization',
+					'../package-nested-link',
+				].map(async (packagePath) => {
+					await link([packagePath], {
+						cwd: entryPackagePath,
+						nodePath,
+					});
+				}),
+			);
 
 			// Test that linked packages are resolvable
 			const packageA = await execaNode(
@@ -91,7 +90,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodeOptions: [],
 				},
 			);
-			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization"]');
+			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-nested-link",null]]');
 
 			// Test binary
 			await fixture.writeJson('package-entry/package.json', {
@@ -121,6 +120,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				'../package-binary',
 				path.join(fixture.path, 'package-files'),
 				'../package-organization',
+				'../package-nested-link',
 			], {
 				cwd: entryPackagePath,
 				nodePath,
@@ -135,7 +135,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodeOptions: [],
 				},
 			);
-			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization"]');
+			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-nested-link",null]]');
 
 			// Executable
 			const binary = await execa(path.join(entryPackagePath, 'node_modules/.bin/binary'));
@@ -161,23 +161,23 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('works without package.json in cwd', async () => {
 			const fixture = await createFixture('./tests/fixtures/');
+			const entryPackagePath = path.join(fixture.path, 'package-entry');
 
 			await fixture.rm('package-entry/package.json');
 
-			await link(['../package-binary'], {
-				cwd: path.join(fixture.path, 'package-entry'),
-				nodePath,
-			});
-
-			await link([path.join(fixture.path, 'package-files')], {
-				cwd: path.join(fixture.path, 'package-entry'),
-				nodePath,
-			});
-
-			await link(['../package-organization'], {
-				cwd: path.join(fixture.path, 'package-entry'),
-				nodePath,
-			});
+			await Promise.all(
+				[
+					'../package-binary',
+					path.join(fixture.path, 'package-files'),
+					'../package-organization',
+					'../package-nested-link',
+				].map(async (packagePath) => {
+					await link([packagePath], {
+						cwd: entryPackagePath,
+						nodePath,
+					});
+				}),
+			);
 
 			const packageA = await execaNode(
 				path.join(fixture.path, 'package-entry'),
@@ -187,7 +187,40 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodeOptions: [],
 				},
 			);
-			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization"]');
+			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-nested-link",null]]');
+
+			await fixture.rm();
+		});
+
+		test('deep linking', async () => {
+			const fixture = await createFixture('./tests/fixtures/');
+			const entryPackagePath = path.join(fixture.path, 'package-entry');
+
+			await fixture.rm('package-entry/package.json');
+
+			await Promise.all(
+				[
+					'../package-binary',
+					path.join(fixture.path, 'package-files'),
+					'../package-organization',
+					'../package-nested-link',
+				].map(async (packagePath) => {
+					await link([packagePath, '--deep'], {
+						cwd: entryPackagePath,
+						nodePath,
+					});
+				}),
+			);
+
+			const packageA = await execaNode(
+				path.join(fixture.path, 'package-entry'),
+				[],
+				{
+					nodePath,
+					nodeOptions: [],
+				},
+			);
+			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-nested-link","package-files"]]');
 
 			await fixture.rm();
 		});

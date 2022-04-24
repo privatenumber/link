@@ -32,6 +32,9 @@ The configuration has the following type schema:
 ```ts
 type LinkConfig = {
 
+    // Whether to run link on linked packages with link.config.json
+    deepLink?: boolean
+
     // List of packages to link
     packages?: string[]
 }
@@ -43,6 +46,18 @@ type LinkConfig = {
 To link the dependencies defined in `link.config.json`, run:
 ```sh
 npx link
+```
+
+### Deep linking
+
+By default, `npx link` only links packages in the current project. However, there are cases where the linked packages also needs linking setup.
+
+Deep linking recursively runs link on every linked package that has a `link.config.json` file.
+
+Enable with the `--deep` flag or `deepLink` property in `link.config.json`.
+
+```sh
+npx link --deep
 ```
 
 ## FAQ
