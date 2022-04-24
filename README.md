@@ -2,6 +2,7 @@
 
 A safer version of [`npm link`](https://docs.npmjs.com/cli/v8/commands/npm-link).
 
+Why is `npm link` unsafe? Read the [blog post](https://hirok.io/posts/avoid-npm-link).
 ## Usage
 
 `npx link` simply symlinks the target package as a dependency in the current project.
@@ -63,7 +64,7 @@ npx link --deep
 ## FAQ
 
 ### Why should I use this over `npm link`?
-Because `npm link` has foot guns that make it dangerous to use.
+Because `npm link` has [footguns that make it dangerous to use](https://hirok.io/posts/avoid-npm-link).
 
 ### Why does `npx link` point to `ln`?
 
