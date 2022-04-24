@@ -52,7 +52,7 @@ export async function linkFromConfig(
 		return;
 	}
 
-	const deep = options.deep ?? config.deep ?? false;
+	const deep = options.deep ?? config.deepLink ?? false;
 
 	await Promise.all(
 		config.packages.map(

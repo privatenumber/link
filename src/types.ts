@@ -1,4 +1,4 @@
 export type LinkConfig = {
-	deep?: boolean;
+	deepLink?: boolean;
 	packages?: string[];
 }

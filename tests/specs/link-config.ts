@@ -5,10 +5,9 @@ import { createFixture } from '../utils/create-fixture';
 import { link } from '../utils/link';
 
 export default testSuite(({ describe }, nodePath: string) => {
-	describe('link.config.json', ({ test }) => {
+	describe('link.config.json', ({ test, describe }) => {
 		test('symlink', async () => {
 			const fixture = await createFixture('./tests/fixtures/');
-
 			const entryPackagePath = path.join(fixture.path, 'package-entry');
 
 			await fixture.writeJson('package-entry/link.config.json', {
@@ -21,6 +20,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 					// Package with @org in name
 					'../package-organization',
+
+					'../package-nested-link',
 				],
 			});
 
@@ -37,7 +38,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodeOptions: [],
 				},
 			);
-			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization"]');
+			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-nested-link",null]]');
 
 			// Executable via npm
 			await fixture.writeJson('package-entry/package.json', {
@@ -57,6 +58,84 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(nonPublishFileExists).toBe(true);
 
 			await fixture.rm();
+		});
+
+		describe('deep linking', ({ test }) => {
+			test('cli', async () => {
+				const fixture = await createFixture('./tests/fixtures/');
+				const entryPackagePath = path.join(fixture.path, 'package-entry');
+
+				await fixture.writeJson('package-entry/link.config.json', {
+					packages: [
+						// Relative path & binary
+						'../package-binary',
+
+						// Absolute path
+						path.join(fixture.path, 'package-files'),
+
+						// Package with @org in name
+						'../package-organization',
+
+						'../package-nested-link',
+					],
+				});
+
+				await link(['--deep'], {
+					cwd: entryPackagePath,
+					nodePath,
+				});
+
+				const packageA = await execaNode(
+					path.join(entryPackagePath, 'index.js'),
+					[],
+					{
+						nodePath,
+						nodeOptions: [],
+					},
+				);
+				expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-nested-link","package-files"]]');
+
+				await fixture.rm();
+			});
+
+			test('link.config', async () => {
+				const fixture = await createFixture('./tests/fixtures/');
+				const entryPackagePath = path.join(fixture.path, 'package-entry');
+
+				await fixture.writeJson('package-entry/link.config.json', {
+					deepLink: true,
+
+					packages: [
+						// Relative path & binary
+						'../package-binary',
+
+						// Absolute path
+						path.join(fixture.path, 'package-files'),
+
+						// Package with @org in name
+						'../package-organization',
+
+						'../package-nested-link',
+					],
+				});
+
+				await link([], {
+					cwd: entryPackagePath,
+					nodePath,
+				});
+
+				const packageA = await execaNode(
+					path.join(entryPackagePath, 'index.js'),
+					[],
+					{
+						nodePath,
+						nodeOptions: [],
+					},
+				);
+				expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-nested-link","package-files"]]');
+
+				await fixture.rm();
+			});
 		});
 	});
 });

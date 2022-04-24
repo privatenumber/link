@@ -40,7 +40,7 @@ import { loadConfig } from './utils/load-config';
 				packagePath => linkPackage(
 					linkToPackagePath,
 					packagePath,
-					// argv.flags.deep,
+					argv.flags.deep,
 				),
 			),
 		);
