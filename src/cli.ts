@@ -9,6 +9,7 @@ import { loadConfig } from './utils/load-config';
 		flags: {
 			deep: {
 				type: Boolean,
+				alias: 'd',
 				description: 'Run `npx link` on dependencies if they have a link.config.json',
 			},
 		},
