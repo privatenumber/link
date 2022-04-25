@@ -3,6 +3,13 @@
 A safer version of [`npm link`](https://docs.npmjs.com/cli/v8/commands/npm-link).
 
 Why is `npm link` unsafe? Read the [blog post](https://hirok.io/posts/avoid-npm-link).
+
+### Features
+- 🔗 Link dependencies without removing previous links
+- 🛡 Only resolves to local paths
+- 🔥 Config file quickly linking multiple packages
+- 💫 Deep linking for quickling linking multilple packages
+
 ## Usage
 
 `npx link` simply symlinks the target package as a dependency in the current project.
