@@ -8,23 +8,23 @@ import { linkBinaries } from './link-binaries';
 const nodeModulesDirectory = 'node_modules';
 
 export async function symlinkPackage(
-	linkToPackagePath: string,
-	packagePath: string,
+	basePackagePath: string,
+	linkPackagePath: string,
 ) {
-	const packageJson = await readPackageJson(packagePath);
+	const packageJson = await readPackageJson(linkPackagePath);
 
-	const symlinkPath = path.join(linkToPackagePath, nodeModulesDirectory, packageJson.name);
+	const symlinkPath = path.join(basePackagePath, nodeModulesDirectory, packageJson.name);
 
 	await fs.promises.mkdir(path.dirname(symlinkPath), { recursive: true });
 
 	await symlink(
-		path.resolve(packagePath),
+		path.resolve(linkPackagePath),
 		symlinkPath,
 		'dir',
 	);
 
 	await linkBinaries(
-		packagePath,
+		linkPackagePath,
 		packageJson,
 		(process.platform === 'win32') ? cmdShim : symlinkBinary,
 	);

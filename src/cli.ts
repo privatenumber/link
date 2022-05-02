@@ -32,15 +32,15 @@ import { loadConfig } from './utils/load-config';
 		},
 	});
 
-	const linkToPackagePath = process.cwd();
+	const basePackagePath = process.cwd();
 	const { packagePaths } = argv._;
 
 	if (packagePaths.length > 0) {
 		await Promise.all(
 			packagePaths.map(
-				packagePath => linkPackage(
-					linkToPackagePath,
-					packagePath,
+				linkPackagePath => linkPackage(
+					basePackagePath,
+					linkPackagePath,
 					argv.flags.deep,
 				),
 			),
@@ -48,7 +48,7 @@ import { loadConfig } from './utils/load-config';
 		return;
 	}
 
-	const config = await loadConfig(linkToPackagePath);
+	const config = await loadConfig(basePackagePath);
 
 	if (!config) {
 		console.warn('Warning: Config file "link.config.json" not found in current directory.\n         Read the documentation to learn more: https://www.npmjs.com/package/link\n');
@@ -57,7 +57,7 @@ import { loadConfig } from './utils/load-config';
 	}
 
 	await linkFromConfig(
-		linkToPackagePath,
+		basePackagePath,
 		config,
 		{
 			deep: argv.flags.deep,
