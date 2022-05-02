@@ -95,6 +95,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodePath,
 				});
 
+				console.log(linkProcess);
+
 				expect(linkProcess.exitCode).toBe(0);
 
 				await fixture.rm();
