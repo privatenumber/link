@@ -8,7 +8,7 @@ export async function symlink(
 	type?: string,
 ) {
 	if (await fsExists(symlinkPath)) {
-		const symlinkRealpath = await fs.promises.realpath(symlinkPath);
+		const symlinkRealpath = await fs.promises.realpath(symlinkPath).catch(() => null);
 
 		if (targetPath === symlinkRealpath) {
 			return;

@@ -59,6 +59,46 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 				await fixture.rm();
 			});
+
+			test('symlink exists', async () => {
+				const fixture = await createFixture('./tests/fixtures/');
+				const packageEntryPath = path.join(fixture.path, 'package-entry');
+
+				await fs.promises.mkdir(path.join(packageEntryPath, 'node_modules'));
+				await fs.promises.symlink(
+					'../../package-files',
+					path.join(packageEntryPath, 'node_modules/package-files'),
+				);
+
+				const linkProcess = await link(['../package-files'], {
+					cwd: packageEntryPath,
+					nodePath,
+				});
+
+				expect(linkProcess.exitCode).toBe(0);
+
+				await fixture.rm();
+			});
+
+			test('broken symlink exists', async () => {
+				const fixture = await createFixture('./tests/fixtures/');
+				const packageEntryPath = path.join(fixture.path, 'package-entry');
+
+				await fs.promises.mkdir(path.join(packageEntryPath, 'node_modules'));
+				await fs.promises.symlink(
+					'../broken-symlink/../../package-files',
+					path.join(packageEntryPath, 'node_modules/package-files'),
+				);
+
+				const linkProcess = await link(['../package-files'], {
+					cwd: path.join(fixture.path, 'package-entry'),
+					nodePath,
+				});
+
+				expect(linkProcess.exitCode).toBe(0);
+
+				await fixture.rm();
+			});
 		});
 
 		test('consecutive links', async () => {
