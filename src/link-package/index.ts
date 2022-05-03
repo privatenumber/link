@@ -24,7 +24,6 @@ export async function linkPackage(
 		console.log(green('✔'), `Symlinked ${magenta(link.name)}:`, cyan(link.path), '→', cyan(linkPackagePath));
 	} catch (error) {
 		console.warn(red('✖'), 'Failed to symlink', cyan(linkPackagePath), 'with error:', (error as any).message);
-		console.log(error);
 		process.exitCode = 1;
 		return;
 	}
