@@ -1,9 +1,8 @@
 import fs from 'fs';
 
-// Checks if symlink file exists
 export const fsExists = (
 	path: string,
-) => fs.promises.lstat(path).then(
+) => fs.promises.access(path).then(
 	() => true,
 	() => false,
 );
