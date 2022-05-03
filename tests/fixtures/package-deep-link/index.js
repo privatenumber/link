@@ -7,6 +7,6 @@ const requireSafe = (specifier) => {
 };
 
 module.exports = [
-	'package-nested-link',
+	'package-deep-link',
 	requireSafe('package-files'),
 ];

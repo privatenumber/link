@@ -3,5 +3,5 @@ console.log(JSON.stringify([
 	require('package-binary'),
 	require('package-files'),
 	require('@organization/package-organization'),
-	require('package-nested-link'),
+	require('package-deep-link'),
 ]));

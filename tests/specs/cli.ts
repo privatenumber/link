@@ -33,7 +33,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				});
 
 				expect(linkProcess.exitCode).toBe(1);
-				expect(linkProcess.stderr).toBe('✖ Failed to symlink ../package-files with error: package.json not found in ../package-files');
+				expect(linkProcess.stderr).toMatch('✖ Failed to symlink ../package-files with error: package.json not found');
 
 				await fixture.rm();
 			});
@@ -130,7 +130,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					'../package-binary',
 					path.join(fixture.path, 'package-files'),
 					'../package-organization',
-					'../package-nested-link',
+					'../package-deep-link',
 				].map(async (packagePath) => {
 					await link([packagePath], {
 						cwd: entryPackagePath,
@@ -148,7 +148,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodeOptions: [],
 				},
 			);
-			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-nested-link",null]]');
+			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link",null]]');
 
 			// Test binary
 			await fixture.writeJson('package-entry/package.json', {
@@ -178,7 +178,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				'../package-binary',
 				path.join(fixture.path, 'package-files'),
 				'../package-organization',
-				'../package-nested-link',
+				'../package-deep-link',
 			], {
 				cwd: entryPackagePath,
 				nodePath,
@@ -193,7 +193,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodeOptions: [],
 				},
 			);
-			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-nested-link",null]]');
+			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link",null]]');
 
 			// Executable
 			const binary = await execa(path.join(entryPackagePath, 'node_modules/.bin/binary'));
@@ -228,7 +228,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					'../package-binary',
 					path.join(fixture.path, 'package-files'),
 					'../package-organization',
-					'../package-nested-link',
+					'../package-deep-link',
 				].map(async (packagePath) => {
 					await link([packagePath], {
 						cwd: entryPackagePath,
@@ -245,7 +245,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodeOptions: [],
 				},
 			);
-			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-nested-link",null]]');
+			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link",null]]');
 
 			await fixture.rm();
 		});
@@ -261,7 +261,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					'../package-binary',
 					path.join(fixture.path, 'package-files'),
 					'../package-organization',
-					'../package-nested-link',
+					'../package-deep-link',
 				].map(async (packagePath) => {
 					await link([packagePath, '--deep'], {
 						cwd: entryPackagePath,
@@ -278,7 +278,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodeOptions: [],
 				},
 			);
-			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-nested-link","package-files"]]');
+			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link","package-files"]]');
 
 			await fixture.rm();
 		});
