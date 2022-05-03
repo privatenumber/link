@@ -1,20 +1,27 @@
 import fs from 'fs';
 import { remove } from 'fs-extra/lib/remove/index.js';
-import { fsExists } from './fs-exists';
 
 export async function symlink(
 	targetPath: string,
 	symlinkPath: string,
 	type?: string,
 ) {
-	if (await fsExists(symlinkPath)) {
-		const symlinkRealpath = await fs.promises.realpath(symlinkPath).catch(() => null);
+	const stats = await fs.promises.lstat(symlinkPath).catch(() => null);
 
-		if (targetPath === symlinkRealpath) {
-			return;
+	if (stats) {
+		if (stats.isSymbolicLink()) {
+			const symlinkRealpath = await fs.promises.realpath(symlinkPath).catch(() => null);
+
+			if (targetPath === symlinkRealpath) {
+				return;
+			}
 		}
 
-		await remove(symlinkPath);
+		if (stats.isDirectory()) {
+			await remove(symlinkPath);
+		} else {
+			await fs.promises.unlink(symlinkPath);
+		}
 	}
 
 	await fs.promises.symlink(

@@ -99,6 +99,24 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 				await fixture.rm();
 			});
+
+			test('directory in-place of symlink', async () => {
+				const fixture = await createFixture('./tests/fixtures/');
+				const packageEntryPath = path.join(fixture.path, 'package-entry');
+
+				await fs.promises.mkdir(path.join(packageEntryPath, 'node_modules/package-files'), {
+					recursive: true,
+				});
+
+				const linkProcess = await link(['../package-files'], {
+					cwd: path.join(fixture.path, 'package-entry'),
+					nodePath,
+				});
+
+				expect(linkProcess.exitCode).toBe(0);
+
+				await fixture.rm();
+			});
 		});
 
 		test('consecutive links', async () => {
