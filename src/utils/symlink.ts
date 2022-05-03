@@ -7,16 +7,22 @@ export async function symlink(
 	symlinkPath: string,
 	type?: string,
 ) {
+	console.log(1);
 	if (await fsExists(symlinkPath)) {
+		console.log(2);
 		const symlinkRealpath = await fs.promises.realpath(symlinkPath).catch(() => null);
+		console.log(3);
 
 		if (targetPath === symlinkRealpath) {
+			console.log(4);
 			return;
 		}
 
+		console.log(5);
 		await remove(symlinkPath);
 	}
 
+	console.log(6);
 	await fs.promises.symlink(
 		targetPath,
 		symlinkPath,
