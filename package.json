@@ -1,0 +1,75 @@
+{
+	"name": "link",
+	"version": "0.0.0-semantic-release",
+	"description": "A better npm link",
+	"keywords": [
+		"npm",
+		"link",
+		"symlink"
+	],
+	"license": "MIT",
+	"repository": "privatenumber/link",
+	"funding": "https://github.com/privatenumber/link?sponsor=1",
+	"author": {
+		"name": "Hiroki Osame",
+		"email": "hiroki.osame@gmail.com"
+	},
+	"files": [
+		"dist"
+	],
+	"bin": "dist/cli.js",
+	"scripts": {
+		"build": "pkgroll --minify",
+		"pretest": "npm run build",
+		"test": "esno tests/index.ts",
+		"lint": "eslint --cache ."
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		"*.{js,ts,md,json}": [
+			"eslint --cache",
+			"npm test"
+		]
+	},
+	"devDependencies": {
+		"@pvtnbr/eslint-config": "^0.20.2",
+		"@types/cmd-shim": "^5.0.0",
+		"@types/fs-extra": "^9.0.13",
+		"@types/node": "^17.0.25",
+		"cleye": "^1.1.0",
+		"cmd-shim": "^5.0.0",
+		"eslint": "^8.14.0",
+		"esno": "^0.14.1",
+		"execa": "^6.1.0",
+		"fs-extra": "^10.1.0",
+		"get-node": "^12.1.0",
+		"husky": "^4.3.8",
+		"kolorist": "^1.5.1",
+		"lint-staged": "^12.3.7",
+		"manten": "^0.0.3",
+		"pkgroll": "^1.2.2",
+		"type-fest": "^2.12.2",
+		"typescript": "^4.6.3"
+	},
+	"eslintConfig": {
+		"extends": "@pvtnbr",
+		"ignorePatterns": [
+			"tests/fixtures"
+		],
+		"rules": {
+			"@typescript-eslint/no-shadow": [
+				"error",
+				{
+					"allow": [
+						"describe",
+						"test"
+					]
+				}
+			]
+		}
+	}
+}
