@@ -11,14 +11,15 @@ export async function symlinkPackage(
 	basePackagePath: string,
 	linkPackagePath: string,
 ) {
-	const packageJson = await readPackageJson(linkPackagePath);
-
+	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
+	const packageJson = await readPackageJson(absoluteLinkPackagePath);
 	const symlinkPath = path.join(basePackagePath, nodeModulesDirectory, packageJson.name);
 
 	await fs.promises.mkdir(path.dirname(symlinkPath), { recursive: true });
 
 	await symlink(
-		path.resolve(linkPackagePath),
+		// link path relative from symlink path
+		path.relative(path.dirname(symlinkPath), absoluteLinkPackagePath),
 		symlinkPath,
 		'dir',
 	);

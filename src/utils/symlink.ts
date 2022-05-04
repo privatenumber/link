@@ -6,6 +6,13 @@ export async function symlink(
 	symlinkPath: string,
 	type?: string,
 ) {
+	// const targetPathResolvable = await fsExists(
+	// 	path.resolve(path.dirname(symlinkPath), targetPath),
+	// );
+	// if (!targetPathResolvable) {
+	// 	throw new Error('Target path is not resolvable: ' + targetPath);
+	// }
+
 	const stats = await fs.promises.lstat(symlinkPath).catch(() => null);
 
 	if (stats) {

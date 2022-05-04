@@ -1,3 +1,4 @@
+import path from 'path';
 import {
 	green, red, cyan, magenta,
 } from 'kolorist';
@@ -11,7 +12,8 @@ export async function linkPackage(
 	linkPackagePath: string,
 	deep?: boolean,
 ) {
-	const pathExists = await fsExists(linkPackagePath);
+	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
+	const pathExists = await fsExists(absoluteLinkPackagePath);
 
 	if (!pathExists) {
 		console.warn(red('✖'), `Package path does not exist: ${linkPackagePath}`);
@@ -29,11 +31,11 @@ export async function linkPackage(
 	}
 
 	if (deep) {
-		const config = await loadConfig(linkPackagePath);
+		const config = await loadConfig(absoluteLinkPackagePath);
 
 		if (config) {
 			await linkFromConfig(
-				linkPackagePath,
+				absoluteLinkPackagePath,
 				config,
 				{ deep },
 			);
