@@ -9,4 +9,5 @@ const requireSafe = (specifier) => {
 module.exports = [
 	'package-deep-link',
 	requireSafe('package-files'),
+	requireSafe('@organization/package-organization'),
 ];

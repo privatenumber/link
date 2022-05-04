@@ -130,7 +130,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					'../package-binary',
 					path.join(fixture.path, 'package-files'),
 					'../package-organization',
-					'../package-deep-link',
+					'../nested/package-deep-link',
 				].map(async (packagePath) => {
 					await link([packagePath], {
 						cwd: entryPackagePath,
@@ -148,7 +148,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodeOptions: [],
 				},
 			);
-			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link",null]]');
+			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link",null,null]]');
 
 			// Test binary
 			await fixture.writeJson('package-entry/package.json', {
@@ -178,7 +178,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				'../package-binary',
 				path.join(fixture.path, 'package-files'),
 				'../package-organization',
-				'../package-deep-link',
+				'../nested/package-deep-link',
 			], {
 				cwd: entryPackagePath,
 				nodePath,
@@ -193,7 +193,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodeOptions: [],
 				},
 			);
-			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link",null]]');
+			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link",null,null]]');
 
 			// Executable
 			const binary = await execa(path.join(entryPackagePath, 'node_modules/.bin/binary'));
@@ -228,7 +228,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					'../package-binary',
 					path.join(fixture.path, 'package-files'),
 					'../package-organization',
-					'../package-deep-link',
+					'../nested/package-deep-link',
 				].map(async (packagePath) => {
 					await link([packagePath], {
 						cwd: entryPackagePath,
@@ -245,7 +245,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodeOptions: [],
 				},
 			);
-			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link",null]]');
+			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link",null,null]]');
 
 			await fixture.rm();
 		});
@@ -256,29 +256,28 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			await fixture.rm('package-entry/package.json');
 
-			await Promise.all(
-				[
-					'../package-binary',
-					path.join(fixture.path, 'package-files'),
-					'../package-organization',
-					'../package-deep-link',
-				].map(async (packagePath) => {
-					await link([packagePath, '--deep'], {
-						cwd: entryPackagePath,
-						nodePath,
-					});
-				}),
-			);
+			const linkProcess = await link([
+				'../package-binary',
+				path.join(fixture.path, 'package-files'),
+				'../package-organization',
+				'../nested/package-deep-link',
+				'--deep',
+			], {
+				cwd: entryPackagePath,
+				nodePath,
+			});
+
+			expect(linkProcess.exitCode).toBe(0);
 
 			const packageA = await execaNode(
-				path.join(fixture.path, 'package-entry'),
+				entryPackagePath,
 				[],
 				{
 					nodePath,
 					nodeOptions: [],
 				},
 			);
-			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link","package-files"]]');
+			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link","package-files","@organization/package-organization"]]');
 
 			await fixture.rm();
 		});

@@ -21,7 +21,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					// Package with @org in name
 					'../package-organization',
 
-					'../package-deep-link',
+					'../nested/package-deep-link',
 				],
 			});
 
@@ -38,7 +38,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodeOptions: [],
 				},
 			);
-			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link",null]]');
+			expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link",null,null]]');
 
 			// Executable via npm
 			await fixture.writeJson('package-entry/package.json', {
@@ -76,7 +76,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 						// Package with @org in name
 						'../package-organization',
 
-						'../package-deep-link',
+						'../nested/package-deep-link',
 					],
 				});
 
@@ -93,7 +93,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 						nodeOptions: [],
 					},
 				);
-				expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link","package-files"]]');
+				expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link","package-files","@organization/package-organization"]]');
 
 				await fixture.rm();
 			});
@@ -115,7 +115,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 						// Package with @org in name
 						'../package-organization',
 
-						'../package-deep-link',
+						'../nested/package-deep-link',
 					],
 				});
 
@@ -132,7 +132,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 						nodeOptions: [],
 					},
 				);
-				expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link","package-files"]]');
+				expect(packageA.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link","package-files","@organization/package-organization"]]');
 
 				await fixture.rm();
 			});
