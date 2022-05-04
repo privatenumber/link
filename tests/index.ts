@@ -1,7 +1,7 @@
 import { describe } from 'manten';
 import getNode from 'get-node';
-import specCli from './specs/cli';
-import specLinkConfig from './specs/link-config';
+import specCli from './specs/cli.spec';
+import specLinkConfig from './specs/link-config.spec';
 
 const nodeVersions = [
 	'12.22.9',
