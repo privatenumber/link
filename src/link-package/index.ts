@@ -23,7 +23,7 @@ export async function linkPackage(
 
 	try {
 		const link = await symlinkPackage(basePackagePath, linkPackagePath);
-		console.log(green('✔'), `Symlinked ${magenta(link.name)}:`, cyan(link.path), '→', cyan(linkPackagePath));
+		console.log(green('✔'), `Symlinked ${magenta(link.name)}:`, cyan(link.path), '→', cyan(link.target));
 	} catch (error) {
 		console.warn(red('✖'), 'Failed to symlink', cyan(linkPackagePath), 'with error:', (error as any).message);
 		process.exitCode = 1;

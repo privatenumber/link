@@ -17,9 +17,11 @@ export async function symlinkPackage(
 
 	await fs.promises.mkdir(path.dirname(symlinkPath), { recursive: true });
 
+	// Link path relative from symlink path
+	const targetPath = path.relative(path.dirname(symlinkPath), absoluteLinkPackagePath);
+
 	await symlink(
-		// link path relative from symlink path
-		path.relative(path.dirname(symlinkPath), absoluteLinkPackagePath),
+		targetPath,
 		symlinkPath,
 		'dir',
 	);
@@ -33,5 +35,6 @@ export async function symlinkPackage(
 	return {
 		name: packageJson.name,
 		path: symlinkPath,
+		target: targetPath,
 	};
 }
