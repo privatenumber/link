@@ -2,6 +2,7 @@ import { describe } from 'manten';
 import getNode from 'get-node';
 import specCli from './specs/cli.spec';
 import specLinkConfig from './specs/link-config.spec';
+import specLoadConfig from './specs/load-config.spec';
 
 const nodeVersions = [
 	'12.22.9',
@@ -21,6 +22,7 @@ const nodeVersions = [
 		await describe(`Node ${node.version}`, ({ runTestSuite }) => {
 			runTestSuite(specCli, node.path);
 			runTestSuite(specLinkConfig, node.path);
+			runTestSuite(specLoadConfig);
 		});
 	}
 })();
