@@ -1,6 +1,0 @@
-{
-	"packages": [
-		"/path/to/package-path-a",
-		"../package-path-b"
-	]
-}
