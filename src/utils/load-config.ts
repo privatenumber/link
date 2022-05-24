@@ -21,6 +21,7 @@ export async function loadConfig(
 	const configJsPath = path.join(packageDirectory, configJsFile);
 	if (await fsExists(configJsPath)) {
 		try {
+			// eslint-disable-next-line node/global-require,@typescript-eslint/no-var-requires
 			return require(configJsPath) as LinkConfig;
 		} catch (error) {
 			throw new Error(`Failed to load config file ${configJsFile}: ${(error as any).message}`);
