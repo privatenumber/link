@@ -140,6 +140,25 @@ export default testSuite(({ describe }, nodePath: string) => {
 	});
 
 	describe('link.config.js', ({ test }) => {
+		test('catches invalid config error', async () => {
+			const fixture = await createFixture('./tests/fixtures/');
+			const entryPackagePath = path.join(fixture.path, 'package-entry');
+
+			await fixture.writeFile(
+				'package-entry/link.config.js',
+				`module.export.throws.error = {}`,
+			);
+
+			const linkProcess = await link([], {
+				cwd: entryPackagePath,
+				nodePath,
+			});
+
+			expect(linkProcess.stderr).toBe('Error: Failed to load config file link.config.js: Cannot read property \'throws\' of undefined');
+
+			await fixture.rm();
+		});
+	
 		test('symlink', async () => {
 			const fixture = await createFixture('./tests/fixtures/');
 			const entryPackagePath = path.join(fixture.path, 'package-entry');
