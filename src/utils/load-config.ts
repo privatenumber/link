@@ -3,21 +3,28 @@ import type { LinkConfig } from '../types';
 import { fsExists } from './fs-exists';
 import { readJsonFile } from './read-json-file';
 
-const configFile = 'link.config.json';
+const configJsonFile = 'link.config.json';
+const configJsFile = 'link.config.js';
 
 export async function loadConfig(
 	packageDirectory: string,
 ) {
-	const configPath = path.join(packageDirectory, configFile);
-	const configExists = await fsExists(configPath);
-
-	if (!configExists) {
-		return null;
+	const configJsonPath = path.join(packageDirectory, configJsonFile);
+	if (await fsExists(configJsonPath)) {
+		try {
+			return readJsonFile<LinkConfig>(configJsonPath);
+		} catch (error) {
+			throw new Error(`Failed to parse config JSON ${configJsonPath}: ${(error as any).message}`);
+		}
 	}
 
-	try {
-		return readJsonFile<LinkConfig>(configPath);
-	} catch (error) {
-		throw new Error(`Failed to parse config JSON: ${(error as any).message}`);
+	const configJsPath = path.join(packageDirectory, configJsFile);
+	if (await fsExists(configJsPath)) {
+		try {
+			// eslint-disable-next-line node/global-require,@typescript-eslint/no-var-requires
+			return require(configJsPath) as LinkConfig;
+		} catch (error) {
+			throw new Error(`Failed to load config file ${configJsFile}: ${(error as any).message}`);
+		}
 	}
 }
