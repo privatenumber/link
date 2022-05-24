@@ -3,36 +3,27 @@ import type { LinkConfig } from '../types';
 import { fsExists } from './fs-exists';
 import { readJsonFile } from './read-json-file';
 
-const configFileName = 'link.config.json';
-const configFileJsName = 'link.config.js';
-
-async function requireConfigAsync(packageDirectory: string): Promise<JSON> {
-	// eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require
-	return JSON.parse(JSON.stringify(require(packageDirectory)));
-}
-
-const getConfigPath = (
-	configDirectory: string,
-	file: string,
-): string => path.join(configDirectory, file);
+const configJsonFile = 'link.config.json';
+const configJsFile = 'link.config.js';
 
 export async function loadConfig(
 	packageDirectory: string,
 ) {
-	const [configFile, configJsFile] = [configFileName, configFileJsName]
-		.map(name => getConfigPath(packageDirectory, name));
-
-	try {
-		if (await fsExists(configFile)) {
-			return readJsonFile<LinkConfig>(configFile);
+	const configJsonPath = path.join(packageDirectory, configJsonFile);
+	if (await fsExists(configJsonPath)) {
+		try {
+			return readJsonFile<LinkConfig>(configJsonPath);
+		} catch (error) {
+			throw new Error(`Failed to parse config JSON ${configJsonPath}: ${(error as any).message}`);
 		}
+	}
 
-		if (await fsExists(configJsFile)) {
-			return requireConfigAsync(configJsFile);
+	const configJsPath = path.join(packageDirectory, configJsFile);
+	if (await fsExists(configJsPath)) {
+		try {
+			return require(configJsPath) as LinkConfig;
+		} catch (error) {
+			throw new Error(`Failed to load config file ${configJsFile}: ${(error as any).message}`);
 		}
-
-		return null;
-	} catch (error) {
-		throw new Error(`Failed to parse config JSON: ${(error as any).message}`);
 	}
 }
