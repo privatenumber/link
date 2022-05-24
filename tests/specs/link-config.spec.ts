@@ -154,7 +154,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				nodePath,
 			});
 
-			expect(linkProcess.stderr).toBe('Error: Failed to load config file link.config.js: Cannot read property \'throws\' of undefined');
+			expect(linkProcess.stderr).toMatch('Error: Failed to load config file link.config.js:');
 
 			await fixture.rm();
 		});
