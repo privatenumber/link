@@ -146,7 +146,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			await fixture.writeFile(
 				'package-entry/link.config.js',
-				`module.export.throws.error = {}`,
+				'module.export.throws.error = {}',
 			);
 
 			const linkProcess = await link([], {
@@ -158,7 +158,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			await fixture.rm();
 		});
-	
+
 		test('symlink', async () => {
 			const fixture = await createFixture('./tests/fixtures/');
 			const entryPackagePath = path.join(fixture.path, 'package-entry');
