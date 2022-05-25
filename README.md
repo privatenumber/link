@@ -24,7 +24,7 @@ npx link <package-path>
 
 ### Configuration file
 
-Create a `link.config.json` configuration file at the root of your npm project to automatically setup links to multiple packages.
+Create a `link.config.json` (or `link.config.js`) configuration file at the root of your npm project to automatically setup links to multiple packages.
 
 Example _link.config.json_:
 ```json5
