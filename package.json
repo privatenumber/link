@@ -22,7 +22,8 @@
 		"build": "pkgroll --minify",
 		"pretest": "npm run build",
 		"test": "tsx tests/index.ts",
-		"lint": "eslint --cache ."
+		"lint": "eslint --cache .",
+		"prepack": "clean-pkg-json"
 	},
 	"husky": {
 		"hooks": {
@@ -40,6 +41,7 @@
 		"@types/cmd-shim": "^5.0.0",
 		"@types/fs-extra": "^9.0.13",
 		"@types/node": "^17.0.25",
+		"clean-pkg-json": "^1.0.0",
 		"cleye": "^1.1.0",
 		"cmd-shim": "^5.0.0",
 		"eslint": "^8.14.0",
