@@ -25,17 +25,6 @@
 		"lint": "eslint --cache .",
 		"prepack": "clean-pkg-json"
 	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "lint-staged"
-		}
-	},
-	"lint-staged": {
-		"*.{js,ts,md,json}": [
-			"eslint --cache",
-			"npm test"
-		]
-	},
 	"devDependencies": {
 		"@pvtnbr/eslint-config": "^0.20.2",
 		"@types/cmd-shim": "^5.0.0",
@@ -49,9 +38,7 @@
 		"fs-extra": "^10.1.0",
 		"fs-fixture": "^1.0.0",
 		"get-node": "^12.1.0",
-		"husky": "^4.3.8",
 		"kolorist": "^1.5.1",
-		"lint-staged": "^12.3.7",
 		"manten": "^0.0.3",
 		"pkgroll": "^1.2.2",
 		"tsx": "^3.1.0",
