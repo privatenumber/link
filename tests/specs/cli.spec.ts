@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { testSuite, expect } from 'manten';
 import { execa, execaNode } from 'execa';
-import { createFixture } from '../utils/create-fixture';
-import { link } from '../utils/link';
+import { createFixture } from 'fs-fixture';
+import { link } from '../utils';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('cli', ({ test, describe }) => {
