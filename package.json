@@ -45,6 +45,7 @@
 		"eslint": "^8.14.0",
 		"execa": "^6.1.0",
 		"fs-extra": "^10.1.0",
+		"fs-fixture": "^1.0.0",
 		"get-node": "^12.1.0",
 		"husky": "^4.3.8",
 		"kolorist": "^1.5.1",

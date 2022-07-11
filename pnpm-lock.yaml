@@ -10,6 +10,7 @@ specifiers:
   eslint: ^8.14.0
   execa: ^6.1.0
   fs-extra: ^10.1.0
+  fs-fixture: ^1.0.0
   get-node: ^12.1.0
   husky: ^4.3.8
   kolorist: ^1.5.1
@@ -30,6 +31,7 @@ devDependencies:
   eslint: 8.14.0
   execa: 6.1.0
   fs-extra: 10.1.0
+  fs-fixture: 1.0.0
   get-node: 12.1.0
   husky: 4.3.8
   kolorist: 1.5.1
@@ -1915,6 +1917,10 @@ packages:
       graceful-fs: 4.2.10
       jsonfile: 6.1.0
       universalify: 2.0.0
+    dev: true
+
+  /fs-fixture/1.0.0:
+    resolution: {integrity: sha512-p8/NVxnToe3sHTz8vZUWg2qY4GsVctOoab6FdjRMA9CrM4tGmJiSxEieOrMz+sEFDgz/0sx5qAfMBNCZbtwN1A==}
     dev: true
 
   /fs.realpath/1.0.0:
