@@ -162,12 +162,12 @@ export default testSuite(({ describe }, nodePath: string) => {
 			});
 			expect(binary.stdout).toMatch('package-binary');
 			expect(
-				await fixture.exists('package-entry/node_modules/.bin/package-organization')
+				await fixture.exists('package-entry/node_modules/.bin/package-organization'),
 			).toBe(true);
 
 			// Expect non publish files to exist in symlink
 			expect(
-				await fixture.exists('package-entry/node_modules/package-files/non-publish-file.js')
+				await fixture.exists('package-entry/node_modules/package-files/non-publish-file.js'),
 			).toBe(true);
 
 			await fixture.rm();
@@ -203,7 +203,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const binary = await execa(path.join(entryPackagePath, 'node_modules/.bin/binary'));
 			expect(binary.stdout).toMatch('package-binary');
 			expect(
-				await fixture.exists('package-entry/node_modules/.bin/package-organization')
+				await fixture.exists('package-entry/node_modules/.bin/package-organization'),
 			).toBe(true);
 
 			// Executable via npm
