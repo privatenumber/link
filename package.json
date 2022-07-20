@@ -22,6 +22,7 @@
 		"build": "pkgroll --minify",
 		"pretest": "npm run build",
 		"test": "tsx tests/index.ts",
+		"dev": "tsx watch tests/index.ts",
 		"lint": "eslint --cache .",
 		"prepack": "clean-pkg-json"
 	},
@@ -41,7 +42,7 @@
 		"kolorist": "^1.5.1",
 		"manten": "^0.0.3",
 		"pkgroll": "^1.2.2",
-		"tsx": "^3.1.0",
+		"tsx": "^3.8.0",
 		"type-fest": "^2.12.2",
 		"typescript": "^4.6.3"
 	},

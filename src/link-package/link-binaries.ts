@@ -2,10 +2,9 @@ import path from 'path';
 import fs from 'fs';
 import type { PackageJson } from 'type-fest';
 
-const binDirectoryPath = 'node_modules/.bin';
-
 export async function linkBinaries(
 	linkPackagePath: string,
+	nodeModulesPath: string,
 	{
 		name,
 		bin,
@@ -15,6 +14,12 @@ export async function linkBinaries(
 	if (!bin) {
 		return [];
 	}
+
+	if (name?.startsWith('@')) {
+		[, name] = name.split('/');
+	}
+
+	const binDirectoryPath = path.join(nodeModulesPath, '.bin');
 
 	await fs.promises.mkdir(binDirectoryPath, {
 		recursive: true,
