@@ -36,7 +36,7 @@ export async function linkBinaries(
 	await Promise.all(
 		Object.entries(bin).map(
 			async ([binaryName, binaryPath]) => await linkFunction(
-				path.resolve(linkPackagePath, binaryPath),
+				path.resolve(linkPackagePath, binaryPath!),
 				path.join(binDirectoryPath, binaryName),
 			),
 		),
