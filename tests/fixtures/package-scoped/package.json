@@ -1,0 +1,5 @@
+{
+	"name": "@scope/package-scoped",
+	"main": "file.js",
+	"bin": "./cli.js"
+}

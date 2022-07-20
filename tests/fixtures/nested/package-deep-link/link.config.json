@@ -1,6 +1,6 @@
 {
 	"packages": [
 		"../../package-files",
-		"../../package-organization"
+		"../../package-scoped"
 	]
 }

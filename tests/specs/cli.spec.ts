@@ -46,7 +46,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				const linkProcess = await link([
 					'../package-binary',
 					path.join(fixture.path, 'package-files'),
-					'../package-organization',
+					'../package-scoped',
 				], {
 					cwd: path.join(fixture.path, 'package-entry'),
 					nodePath,
@@ -54,7 +54,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 				expect(linkProcess.exitCode).toBe(1);
 				expect(linkProcess.stdout).toMatch('✔ Symlinked package-binary');
-				expect(linkProcess.stdout).toMatch('✔ Symlinked @organization/package-organization');
+				expect(linkProcess.stdout).toMatch('✔ Symlinked @scope/package-scoped');
 				expect(linkProcess.stderr).toMatch('✖ Failed to symlink');
 
 				await fixture.rm();
@@ -129,7 +129,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				[
 					'../package-binary',
 					path.join(fixture.path, 'package-files'),
-					'../package-organization',
+					'../package-scoped',
 					'../nested/package-deep-link',
 				].map(async (packagePath) => {
 					await link([packagePath], {
@@ -148,7 +148,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodeOptions: [],
 				},
 			);
-			expect(entryPackage.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link",null,null]]');
+			expect(entryPackage.stdout).toBe('["package-entry","package-binary","package-files","@scope/package-scoped",["package-deep-link",null,null]]');
 
 			// Test binary
 			await fixture.writeJson('package-entry/package.json', {
@@ -162,7 +162,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			});
 			expect(binary.stdout).toMatch('package-binary');
 			expect(
-				await fixture.exists('package-entry/node_modules/.bin/package-organization'),
+				await fixture.exists('package-entry/node_modules/.bin/package-scoped'),
 			).toBe(true);
 
 			// Expect non publish files to exist in symlink
@@ -181,7 +181,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await link([
 				'../package-binary',
 				path.join(fixture.path, 'package-files'),
-				'../package-organization',
+				'../package-scoped',
 				'../nested/package-deep-link',
 			], {
 				cwd: entryPackagePath,
@@ -197,13 +197,13 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodeOptions: [],
 				},
 			);
-			expect(entryPackage.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link",null,null]]');
+			expect(entryPackage.stdout).toBe('["package-entry","package-binary","package-files","@scope/package-scoped",["package-deep-link",null,null]]');
 
 			// Test binary
 			const binary = await execa(path.join(entryPackagePath, 'node_modules/.bin/binary'));
 			expect(binary.stdout).toMatch('package-binary');
 			expect(
-				await fixture.exists('package-entry/node_modules/.bin/package-organization'),
+				await fixture.exists('package-entry/node_modules/.bin/package-scoped'),
 			).toBe(true);
 
 			// Executable via npm
@@ -234,7 +234,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				[
 					'../package-binary',
 					path.join(fixture.path, 'package-files'),
-					'../package-organization',
+					'../package-scoped',
 					'../nested/package-deep-link',
 				].map(async (packagePath) => {
 					await link([packagePath], {
@@ -252,7 +252,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodeOptions: [],
 				},
 			);
-			expect(entryPackage.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link",null,null]]');
+			expect(entryPackage.stdout).toBe('["package-entry","package-binary","package-files","@scope/package-scoped",["package-deep-link",null,null]]');
 
 			await fixture.rm();
 		});
@@ -266,7 +266,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const linkProcess = await link([
 				'../package-binary',
 				path.join(fixture.path, 'package-files'),
-				'../package-organization',
+				'../package-scoped',
 				'../nested/package-deep-link',
 				'--deep',
 			], {
@@ -284,7 +284,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					nodeOptions: [],
 				},
 			);
-			expect(entryPackage.stdout).toBe('["package-entry","package-binary","package-files","@organization/package-organization",["package-deep-link","package-files","@organization/package-organization"]]');
+			expect(entryPackage.stdout).toBe('["package-entry","package-binary","package-files","@scope/package-scoped",["package-deep-link","package-files","@scope/package-scoped"]]');
 
 			await fixture.rm();
 		});

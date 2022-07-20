@@ -1,5 +1,0 @@
-{
-	"name": "@organization/package-organization",
-	"main": "file.js",
-	"bin": "./cli.js"
-}
