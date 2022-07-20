@@ -13,12 +13,14 @@ export async function symlinkPackage(
 ) {
 	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
 	const packageJson = await readPackageJson(absoluteLinkPackagePath);
-	const symlinkPath = path.join(basePackagePath, nodeModulesDirectory, packageJson.name);
+	const nodeModulesPath = path.join(basePackagePath, nodeModulesDirectory);
+	const symlinkPath = path.join(nodeModulesPath, packageJson.name);
+	const symlinkDirectory = path.dirname(symlinkPath);
 
-	await fs.promises.mkdir(path.dirname(symlinkPath), { recursive: true });
+	await fs.promises.mkdir(symlinkDirectory, { recursive: true });
 
 	// Link path relative from symlink path
-	const targetPath = path.relative(path.dirname(symlinkPath), absoluteLinkPackagePath);
+	const targetPath = path.relative(symlinkDirectory, absoluteLinkPackagePath);
 
 	await symlink(
 		targetPath,
@@ -27,7 +29,8 @@ export async function symlinkPackage(
 	);
 
 	await linkBinaries(
-		linkPackagePath,
+		absoluteLinkPackagePath,
+		nodeModulesPath,
 		packageJson,
 		(process.platform === 'win32') ? cmdShim : symlinkBinary,
 	);
