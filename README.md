@@ -97,6 +97,9 @@ npx link --deep
 ### Why should I use this over `npm link`?
 Because `npm link` has [footguns that make it dangerous to use](https://hirok.io/posts/avoid-npm-link).
 
+### How do I remove the symlinks?
+Run `npm install` (or the equivalent in your preferred package manager) and it should remove them.
+
 ### Why does `npx link` point to `ln`?
 
 You must use npx v7 or higher. Check the version with `npx -v`.
