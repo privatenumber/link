@@ -1,11 +1,11 @@
 import fs from 'fs';
 import { remove } from 'fs-extra/lib/remove/index.js';
 
-export async function symlink(
+export const symlink = async (
 	targetPath: string,
 	symlinkPath: string,
 	type?: string,
-) {
+) => {
 	// const targetPathResolvable = await fsExists(
 	// 	path.resolve(path.dirname(symlinkPath), targetPath),
 	// );
@@ -36,16 +36,16 @@ export async function symlink(
 		symlinkPath,
 		type,
 	);
-}
+};
 
-export async function symlinkBinary(
+export const symlinkBinary = async (
 	binaryPath: string,
 	linkPath: string,
-) {
+) => {
 	await symlink(
 		binaryPath,
 		linkPath,
 	);
 
 	await fs.promises.chmod(linkPath, 0o755);
-}
+};

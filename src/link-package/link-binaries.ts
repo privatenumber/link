@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import type { PackageJson } from 'type-fest';
 
-export async function linkBinaries(
+export const linkBinaries = async (
 	linkPackagePath: string,
 	nodeModulesPath: string,
 	{
@@ -10,7 +10,7 @@ export async function linkBinaries(
 		bin,
 	}: PackageJson,
 	linkFunction: (targetPath: string, linkPath: string) => Promise<void>,
-) {
+) => {
 	if (!bin) {
 		return [];
 	}
@@ -41,4 +41,4 @@ export async function linkBinaries(
 			),
 		),
 	);
-}
+};

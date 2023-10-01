@@ -6,9 +6,9 @@ import { readJsonFile } from './read-json-file';
 const configJsonFile = 'link.config.json';
 const configJsFile = 'link.config.js';
 
-export async function loadConfig(
+export const loadConfig = async (
 	packageDirectory: string,
-) {
+) => {
 	const configJsonPath = path.join(packageDirectory, configJsonFile);
 	if (await fsExists(configJsonPath)) {
 		try {
@@ -27,4 +27,4 @@ export async function loadConfig(
 			throw new Error(`Failed to load config file ${configJsFile}: ${(error as any).message}`);
 		}
 	}
-}
+};

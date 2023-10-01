@@ -7,11 +7,11 @@ import type { LinkConfig } from '../types';
 import { loadConfig } from '../utils/load-config';
 import { symlinkPackage } from './symlink-package';
 
-export async function linkPackage(
+export const linkPackage = async (
 	basePackagePath: string,
 	linkPackagePath: string,
 	deep?: boolean,
-) {
+) => {
 	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
 	const pathExists = await fsExists(absoluteLinkPackagePath);
 
@@ -41,15 +41,15 @@ export async function linkPackage(
 			);
 		}
 	}
-}
+};
 
-export async function linkFromConfig(
+export const linkFromConfig = async (
 	basePackagePath: string,
 	config: LinkConfig,
 	options: {
 		deep?: boolean;
 	},
-) {
+) => {
 	if (!config.packages) {
 		return;
 	}
@@ -65,4 +65,4 @@ export async function linkFromConfig(
 			),
 		),
 	);
-}
+};
