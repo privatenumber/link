@@ -7,10 +7,10 @@ import { linkBinaries } from './link-binaries';
 
 const nodeModulesDirectory = 'node_modules';
 
-export async function symlinkPackage(
+export const symlinkPackage = async (
 	basePackagePath: string,
 	linkPackagePath: string,
-) {
+) => {
 	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
 	const packageJson = await readPackageJson(absoluteLinkPackagePath);
 	const nodeModulesPath = path.join(basePackagePath, nodeModulesDirectory);
@@ -40,4 +40,4 @@ export async function symlinkPackage(
 		path: symlinkPath,
 		target: targetPath,
 	};
-}
+};

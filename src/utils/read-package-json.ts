@@ -5,9 +5,9 @@ import { readJsonFile } from './read-json-file';
 
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 
-export async function readPackageJson(
+export const readPackageJson = async (
 	packagePath: string,
-) {
+) => {
 	const packageJsonPath = path.join(packagePath, 'package.json');
 	const packageJsonExists = await fsExists(packageJsonPath);
 
@@ -22,4 +22,4 @@ export async function readPackageJson(
 	}
 
 	return packageJson as WithRequired<PackageJson, 'name'>;
-}
+};
