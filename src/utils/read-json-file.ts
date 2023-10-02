@@ -1,8 +1,8 @@
-import fs from 'fs';
+import fs from 'fs/promises';
 
 export const readJsonFile = async (
 	filePath: string,
 ) => {
-	const jsonString = await fs.promises.readFile(filePath, 'utf8');
+	const jsonString = await fs.readFile(filePath, 'utf8');
 	return JSON.parse(jsonString) as unknown;
 };
