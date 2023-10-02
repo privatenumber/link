@@ -1,8 +1,8 @@
-import fs from 'fs';
+import fs from 'fs/promises';
 
 export const fsExists = (
 	path: string,
-) => fs.promises.access(path).then(
+) => fs.access(path).then(
 	() => true,
 	() => false,
 );
