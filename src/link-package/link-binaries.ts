@@ -1,5 +1,5 @@
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs/promises';
 import type { PackageJson } from 'type-fest';
 
 export const linkBinaries = async (
@@ -21,7 +21,7 @@ export const linkBinaries = async (
 
 	const binDirectoryPath = path.join(nodeModulesPath, '.bin');
 
-	await fs.promises.mkdir(binDirectoryPath, {
+	await fs.mkdir(binDirectoryPath, {
 		recursive: true,
 	});
 

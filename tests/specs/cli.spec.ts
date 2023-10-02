@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 import { testSuite, expect } from 'manten';
 import { execa, execaNode } from 'execa';
@@ -64,8 +64,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 				const fixture = await createFixture('./tests/fixtures/');
 				const packageEntryPath = path.join(fixture.path, 'package-entry');
 
-				await fs.promises.mkdir(path.join(packageEntryPath, 'node_modules'));
-				await fs.promises.symlink(
+				await fs.mkdir(path.join(packageEntryPath, 'node_modules'));
+				await fs.symlink(
 					'../../package-files',
 					path.join(packageEntryPath, 'node_modules/package-files'),
 				);
@@ -84,8 +84,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 				const fixture = await createFixture('./tests/fixtures/');
 				const packageEntryPath = path.join(fixture.path, 'package-entry');
 
-				await fs.promises.mkdir(path.join(packageEntryPath, 'node_modules'));
-				await fs.promises.symlink(
+				await fs.mkdir(path.join(packageEntryPath, 'node_modules'));
+				await fs.symlink(
 					'../broken-symlink/../../package-files',
 					path.join(packageEntryPath, 'node_modules/package-files'),
 				);
@@ -104,7 +104,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				const fixture = await createFixture('./tests/fixtures/');
 				const packageEntryPath = path.join(fixture.path, 'package-entry');
 
-				await fs.promises.mkdir(path.join(packageEntryPath, 'node_modules/package-files'), {
+				await fs.mkdir(path.join(packageEntryPath, 'node_modules/package-files'), {
 					recursive: true,
 				});
 
@@ -293,7 +293,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const fixture = await createFixture('./tests/fixtures/');
 			const entryPackagePath = path.join(fixture.path, 'package-entry');
 
-			await fs.promises.mkdir(
+			await fs.mkdir(
 				path.join(entryPackagePath, 'node_modules/package-binary'),
 				{ recursive: true },
 			);
