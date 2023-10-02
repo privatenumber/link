@@ -2,12 +2,14 @@ import { describe } from 'manten';
 import getNode from 'get-node';
 
 const nodeVersions = [
-	'12.22.9',
+	'20',
 	...(
 		process.env.CI
 			? [
-				'14.18.3',
-				'16.13.2',
+				'18',
+				'16',
+				'14',
+				'12',
 			]
 			: []
 	),
