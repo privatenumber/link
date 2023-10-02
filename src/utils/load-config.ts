@@ -12,19 +12,19 @@ export const loadConfig = async (
 	const configJsonPath = path.join(packageDirectory, configJsonFile);
 	if (await fsExists(configJsonPath)) {
 		try {
-			return readJsonFile<LinkConfig>(configJsonPath);
+			return readJsonFile(configJsonPath) as LinkConfig;
 		} catch (error) {
-			throw new Error(`Failed to parse config JSON ${configJsonPath}: ${(error as any).message}`);
+			throw new Error(`Failed to parse config JSON ${configJsonPath}: ${(error as Error).message}`);
 		}
 	}
 
 	const configJsPath = path.join(packageDirectory, configJsFile);
 	if (await fsExists(configJsPath)) {
 		try {
-			// eslint-disable-next-line node/global-require,@typescript-eslint/no-var-requires
+			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			return require(configJsPath) as LinkConfig;
 		} catch (error) {
-			throw new Error(`Failed to load config file ${configJsFile}: ${(error as any).message}`);
+			throw new Error(`Failed to load config file ${configJsFile}: ${(error as Error).message}`);
 		}
 	}
 };

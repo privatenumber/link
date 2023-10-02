@@ -15,7 +15,7 @@ export const readPackageJson = async (
 		throw new Error(`package.json not found in ${packagePath}`);
 	}
 
-	const packageJson = await readJsonFile<PackageJson>(packageJsonPath);
+	const packageJson = await readJsonFile(packageJsonPath) as PackageJson;
 
 	if (!packageJson.name) {
 		throw new Error(`package.json must contain a name: ${packageJsonPath}`);

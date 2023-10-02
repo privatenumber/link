@@ -26,14 +26,14 @@
 		"prepack": "pnpm build && clean-pkg-json"
 	},
 	"devDependencies": {
-		"@pvtnbr/eslint-config": "^0.26.2",
+		"@pvtnbr/eslint-config": "^0.37.1",
 		"@types/cmd-shim": "^5.0.0",
 		"@types/fs-extra": "^9.0.13",
 		"@types/node": "^18.0.6",
 		"clean-pkg-json": "^1.0.0",
 		"cleye": "^1.2.1",
 		"cmd-shim": "^5.0.0",
-		"eslint": "^8.20.0",
+		"eslint": "^8.50.0",
 		"execa": "^6.1.0",
 		"fs-extra": "^10.1.0",
 		"fs-fixture": "^1.1.0",
