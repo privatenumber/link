@@ -4,8 +4,7 @@ import { command } from 'cleye';
 import packlist from 'npm-packlist';
 import { readPackageJson } from '../utils/read-package-json';
 import { createFakeTarball } from '../utils/create-fake-tarball';
-import { symlink } from '../utils/symlink';
-import { fsExists } from '../utils/fs-exists';
+import { symlink, hardlink } from '../utils/symlink';
 
 const linkPackage = async (
 	basePackagePath: string,
@@ -22,7 +21,7 @@ const linkPackage = async (
 
 	const isSetUp = await fs.readFile(linkPathCheck, 'utf8').catch(() => '') === absoluteLinkPackagePath;
 	if (!isSetUp) {
-		const tarballPath = await createFakeTarball(absoluteLinkPackagePath);
+		const tarballPath = await createFakeTarball(absoluteLinkPackagePath, packageJson);
 		console.log('Install the following tarball with the package manager of your choice:');
 		console.log('  npm install --no-save', tarballPath);
 		return;
@@ -31,7 +30,6 @@ const linkPackage = async (
 	const files = await packlist({
 		path: absoluteLinkPackagePath,
 		package: packageJson,
-		
 		edgesOut: new Map<string, string>(),
 	});
 
@@ -46,21 +44,9 @@ const linkPackage = async (
 			);
 
 			if (options?.hard) {
-				if (await fsExists(targetPath)) {
-					await fs.rm(targetPath, {
-						recursive: true,
-					});
-				}
-
-				await fs.link(
-					sourcePath,
-					targetPath,
-				);
+				await hardlink(sourcePath, targetPath);
 			} else {
-				await symlink(
-					sourcePath,
-					targetPath,
-				);	
+				await symlink(sourcePath, targetPath);
 			}
 		}),
 	);

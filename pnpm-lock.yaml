@@ -28,6 +28,9 @@ devDependencies:
   '@types/npmcli__package-json':
     specifier: ^4.0.1
     version: 4.0.1
+  '@types/tar-stream':
+    specifier: ^3.1.1
+    version: 3.1.1
   clean-pkg-json:
     specifier: ^1.2.0
     version: 1.2.0
@@ -688,6 +691,12 @@ packages:
 
   /@types/stack-utils@2.0.1:
     resolution: {integrity: sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==}
+    dev: true
+
+  /@types/tar-stream@3.1.1:
+    resolution: {integrity: sha512-/1E+a09mAFQwhlEHqiS3LuNWIBiyrn0HqUWZk2IyGzodu9zkXbaT5vl94iGlZGnG2IONVFZd84SFhns3MhhAQQ==}
+    dependencies:
+      '@types/node': 20.8.0
     dev: true
 
   /@types/unist@2.0.8:
