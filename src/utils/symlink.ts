@@ -1,10 +1,15 @@
 import fs from 'fs/promises';
 
+/**
+ * Helper to create a symlink
+ * Deletes the target path if it exists
+ */
 export const symlink = async (
 	targetPath: string,
 	symlinkPath: string,
 	type?: string,
 ) => {
+	// Check if valid symlink with a path that resolves
 	// const targetPathResolvable = await fsExists(
 	// 	path.resolve(path.dirname(symlinkPath), targetPath),
 	// );

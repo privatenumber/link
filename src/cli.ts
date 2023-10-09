@@ -1,9 +1,10 @@
 import { cli } from 'cleye';
 import { linkPackage, linkFromConfig } from './link-package';
 import { loadConfig } from './utils/load-config';
+import { publish } from './commands/publish';
 
 (async () => {
-	const argv = cli({
+	await cli({
 		name: 'link',
 		parameters: ['[package paths...]'],
 		flags: {
@@ -30,39 +31,42 @@ import { loadConfig } from './utils/load-config';
 				return renderers.render(nodes);
 			},
 		},
-	});
-
-	const basePackagePath = process.cwd();
-	const { packagePaths } = argv._;
-
-	if (packagePaths.length > 0) {
-		await Promise.all(
-			packagePaths.map(
-				linkPackagePath => linkPackage(
-					basePackagePath,
-					linkPackagePath,
-					argv.flags.deep,
+		commands: [
+			publish,
+		],
+	}, async (argv) => {
+		const basePackagePath = process.cwd();
+		const { packagePaths } = argv._;
+	
+		if (packagePaths.length > 0) {
+			await Promise.all(
+				packagePaths.map(
+					linkPackagePath => linkPackage(
+						basePackagePath,
+						linkPackagePath,
+						argv.flags,
+					),
 				),
-			),
+			);
+			return;
+		}
+
+		const config = await loadConfig(basePackagePath);
+	
+		if (!config) {
+			console.warn('Warning: Config file "link.config.json" not found in current directory.\n         Read the documentation to learn more: https://www.npmjs.com/package/link\n');
+			argv.showHelp();
+			return;
+		}
+	
+		await linkFromConfig(
+			basePackagePath,
+			config,
+			{
+				deep: argv.flags.deep,
+			},
 		);
-		return;
-	}
-
-	const config = await loadConfig(basePackagePath);
-
-	if (!config) {
-		console.warn('Warning: Config file "link.config.json" not found in current directory.\n         Read the documentation to learn more: https://www.npmjs.com/package/link\n');
-		argv.showHelp();
-		return;
-	}
-
-	await linkFromConfig(
-		basePackagePath,
-		config,
-		{
-			deep: argv.flags.deep,
-		},
-	);
+	});
 })().catch((error) => {
 	console.error('Error:', error.message);
 	process.exit(1);

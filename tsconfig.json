@@ -7,9 +7,9 @@
 		"strict": true,
 		"skipLibCheck": true,
 
-		// Node 12
+		// Node 18
 		"module": "commonjs",
-		"target": "ES2019",
+		"target": "ES2022",
 	},
 	"include": [
 		"src"

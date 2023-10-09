@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs/promises';
-import type { PackageJson } from 'type-fest';
+import type { PackageJson } from '@npmcli/package-json';
 
 export const linkBinaries = async (
 	linkPackagePath: string,

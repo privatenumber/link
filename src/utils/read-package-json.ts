@@ -1,5 +1,5 @@
 import path from 'path';
-import type { PackageJson } from 'type-fest';
+import type { PackageJson } from '@npmcli/package-json';
 import { fsExists } from './fs-exists';
 import { readJsonFile } from './read-json-file';
 

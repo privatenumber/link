@@ -10,7 +10,10 @@ import { symlinkPackage } from './symlink-package';
 export const linkPackage = async (
 	basePackagePath: string,
 	linkPackagePath: string,
-	deep?: boolean,
+	options: {
+		deep?: boolean;
+		published?: boolean;
+	},
 ) => {
 	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
 	const pathExists = await fsExists(absoluteLinkPackagePath);
@@ -22,7 +25,11 @@ export const linkPackage = async (
 	}
 
 	try {
-		const link = await symlinkPackage(basePackagePath, linkPackagePath);
+		const link = await symlinkPackage(
+			basePackagePath,
+			linkPackagePath,
+			options.published,
+		);
 		console.log(green('✔'), `Symlinked ${magenta(link.name)}:`, cyan(link.path), '→', cyan(link.target));
 	} catch (error) {
 		console.warn(red('✖'), 'Failed to symlink', cyan(linkPackagePath), 'with error:', (error as Error).message);
@@ -30,14 +37,14 @@ export const linkPackage = async (
 		return;
 	}
 
-	if (deep) {
+	if (options.deep) {
 		const config = await loadConfig(absoluteLinkPackagePath);
 
 		if (config) {
 			await linkFromConfig(
 				absoluteLinkPackagePath,
 				config,
-				{ deep },
+				options,
 			);
 		}
 	}
@@ -54,14 +61,16 @@ export const linkFromConfig = async (
 		return;
 	}
 
-	const deep = options.deep ?? config.deepLink ?? false;
+	const newOptions = {
+		deep: options.deep ?? config.deepLink ?? false
+	};
 
 	await Promise.all(
 		config.packages.map(
 			async linkPackagePath => await linkPackage(
 				basePackagePath,
 				linkPackagePath,
-				deep,
+				newOptions,
 			),
 		),
 	);
