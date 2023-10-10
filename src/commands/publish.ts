@@ -5,19 +5,15 @@ import packlist from 'npm-packlist';
 import outdent from 'outdent';
 import { bold, dim, italic } from 'kolorist';
 import { readPackageJson } from '../utils/read-package-json';
-import { symlink, hardlink } from '../utils/symlink';
+import { hardlink } from '../utils/symlink';
 
 const linkPackage = async (
 	basePackagePath: string,
 	linkPackagePath: string,
-	options?: {
-		hard?: boolean;
-	},
 ) => {
 	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
 	const packageJson = await readPackageJson(absoluteLinkPackagePath);
-	const relativeLinkPath = './' + path.join('node_modules', packageJson.name);
-	const linkPath = path.join(basePackagePath, relativeLinkPath);
+	const linkPath = path.join(basePackagePath, 'node_modules', packageJson.name);
 	const linkPathStat = await fs.lstat(linkPath).catch(() => null);
 
 	// isDirectory() here returns false even if the path is a symlink directory
@@ -42,7 +38,8 @@ const linkPackage = async (
 	const files = await packlist({
 		path: absoluteLinkPackagePath,
 		package: packageJson,
-		edgesOut: new Map<string, string>(),
+		// @ts-expect-error outdated types
+		edgesOut: new Map(),
 	});
 
 	await Promise.all(
@@ -55,11 +52,7 @@ const linkPackage = async (
 				{ recursive: true },
 			);
 
-			if (options?.hard) {
-				await hardlink(sourcePath, targetPath);
-			} else {
-				await symlink(sourcePath, targetPath);
-			}
+			await hardlink(sourcePath, targetPath);
 		}),
 	);
 
@@ -70,17 +63,15 @@ export const publish = command({
 	name: 'publish',
 	parameters: ['[package paths...]'],
 	flags: {
-		hard: {
-			type: Boolean,
-			description: 'Use hard links instead of symlinks',
-		},
-		watch: {
-			type: Boolean,
-			alias: 'w',
-			description: 'Watch for changes in the package and automatically relink',
-		},
+		// watch: {
+		// 	type: Boolean,
+		// 	alias: 'w',
+		// 	description: 'Watch for changes in the package and automatically relink',
+		// },
 	},
-	description: 'Only link files that will be published to npm (based on package.json#files)',
+	help: {
+		description: 'Link a package to simulate an environment similar to `npm install`',
+	},
 }, async (argv) => {
 	const cwdProjectPath = process.cwd();
 	const { packagePaths } = argv._;
@@ -91,7 +82,6 @@ export const publish = command({
 				linkPackagePath => linkPackage(
 					cwdProjectPath,
 					linkPackagePath,
-					argv.flags,
 				),
 			),
 		);
