@@ -12,7 +12,6 @@ export const linkPackage = async (
 	linkPackagePath: string,
 	options: {
 		deep?: boolean;
-		published?: boolean;
 	},
 ) => {
 	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
@@ -28,7 +27,6 @@ export const linkPackage = async (
 		const link = await symlinkPackage(
 			basePackagePath,
 			linkPackagePath,
-			options.published,
 		);
 		console.log(green('✔'), `Symlinked ${magenta(link.name)}:`, cyan(link.path), '→', cyan(link.target));
 	} catch (error) {
