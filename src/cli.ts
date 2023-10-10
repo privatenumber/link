@@ -37,7 +37,7 @@ import { publish } from './commands/publish';
 	}, async (argv) => {
 		const basePackagePath = process.cwd();
 		const { packagePaths } = argv._;
-	
+
 		if (packagePaths.length > 0) {
 			await Promise.all(
 				packagePaths.map(
@@ -52,13 +52,13 @@ import { publish } from './commands/publish';
 		}
 
 		const config = await loadConfig(basePackagePath);
-	
+
 		if (!config) {
 			console.warn('Warning: Config file "link.config.json" not found in current directory.\n         Read the documentation to learn more: https://www.npmjs.com/package/link\n');
 			argv.showHelp();
 			return;
 		}
-	
+
 		await linkFromConfig(
 			basePackagePath,
 			config,

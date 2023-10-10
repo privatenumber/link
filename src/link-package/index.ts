@@ -60,7 +60,7 @@ export const linkFromConfig = async (
 	}
 
 	const newOptions = {
-		deep: options.deep ?? config.deepLink ?? false
+		deep: options.deep ?? config.deepLink ?? false,
 	};
 
 	await Promise.all(

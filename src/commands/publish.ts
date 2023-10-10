@@ -56,7 +56,7 @@ const linkPackage = async (
 		}),
 	);
 
-	console.log('Linked! Use --watch if the distribution files change and you want to automatically relink new files');	
+	console.log('Linked! Use --watch if the distribution files change and you want to automatically relink new files');
 };
 
 export const publish = command({
@@ -75,7 +75,7 @@ export const publish = command({
 }, async (argv) => {
 	const cwdProjectPath = process.cwd();
 	const { packagePaths } = argv._;
-	
+
 	if (packagePaths.length > 0) {
 		await Promise.all(
 			packagePaths.map(
