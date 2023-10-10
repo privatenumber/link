@@ -2,8 +2,9 @@ import path from 'path';
 import fs from 'fs/promises';
 import { command } from 'cleye';
 import packlist from 'npm-packlist';
+import outdent from 'outdent';
+import { bold, dim, italic } from 'kolorist';
 import { readPackageJson } from '../utils/read-package-json';
-import { createFakeTarball } from '../utils/create-fake-tarball';
 import { symlink, hardlink } from '../utils/symlink';
 
 const linkPackage = async (
@@ -15,15 +16,26 @@ const linkPackage = async (
 ) => {
 	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
 	const packageJson = await readPackageJson(absoluteLinkPackagePath);
+	const relativeLinkPath = './' + path.join('node_modules', packageJson.name);
+	const linkPath = path.join(basePackagePath, relativeLinkPath);
+	const linkPathStat = await fs.lstat(linkPath).catch(() => null);
 
-	const linkPath = path.join(basePackagePath, 'node_modules', packageJson.name);
-	const linkPathCheck = path.join(linkPath, '..link');
+	// isDirectory() here returns false even if the path is a symlink directory
+	if (!linkPathStat?.isDirectory()) {
+		console.log(outdent`
+		Package not setup!
 
-	const isSetUp = await fs.readFile(linkPathCheck, 'utf8').catch(() => '') === absoluteLinkPackagePath;
-	if (!isSetUp) {
-		const tarballPath = await createFakeTarball(absoluteLinkPackagePath, packageJson);
-		console.log('Install the following tarball with the package manager of your choice:');
-		console.log('  npm install --no-save', tarballPath);
+		${bold('Instructions')}
+		1. Create a tarball in the target package directory:
+		  ${dim('$ npm pack')}
+
+		  ${italic('Tip: If you have a build step, add the build command to the package.json#prepack hook')}
+
+		2. Install the target package tarball in the current package:
+		  ${dim('$ npm install --no-save <tarball path>')}
+
+		Learn more: https://npmjs.com/link
+		`);
 		return;
 	}
 

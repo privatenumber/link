@@ -1,6 +1,6 @@
 # npx link
 
-A safer version of [`npm link`](https://docs.npmjs.com/cli/v8/commands/npm-link).
+A safer and enhanced version of [`npm link`](https://docs.npmjs.com/cli/v8/commands/npm-link).
 
 Why is `npm link` unsafe? Read the [blog post](https://hirok.io/posts/avoid-npm-link).
 
@@ -24,15 +24,82 @@ Why is `npm link` unsafe? Read the [blog post](https://hirok.io/posts/avoid-npm-
 
 ## Usage
 
-`npx link` simply symlinks the target package as a dependency in the current project.
+### Symlinking a package
+`npx link`  symlinks the target package as a dependency in the current project.
 
-Unlike `npm link`, it doesn't install the target package globally or re-install project dependencies.
-
-From the project you want to link a package to:
+From the project directory you want to link a package to:
 
 ```sh
 npx link <package-path>
 ```
+
+> **Secure linking**
+>
+> Unlike `npm link`, it doesn't install the target package globally or re-install project dependencies.
+
+### Publish mode
+
+Symlinking doesn't replicate the exact environment you get from installing a package using `npm install`. So sometimes, creating a symlink to the package directory isn't sufficient.
+
+#### Why?
+The discrepancy in the environments mainly come from the symlinked package retaining its development `node_modules` directory.
+
+Consider an example where there's an _App A_ with a dependency on _Package B_ , and they both depend on _Library C_:
+
+- Production environment
+
+	`npm install` recognizes that both _App A_ and _Package B_ require library C and installs only one instance of _Library C_ for them to share.
+
+- Symlinked environment
+
+	_App A_ will have its copy of _Library C_, and _Package B_ will also have its development copy of _Library C_—possibly with different versions. Consequently, when you run the application, it will load two different versions of _Library C_, leading to unexpected outcomes.
+
+To replicate the production environment in development, you can use _Publish mode_.
+
+#### Setup
+1. Pack the target project
+
+	In the package you want to link, run [`npm pack`](https://docs.npmjs.com/cli/v7/commands/npm-pack) to create a tarball:
+
+	```sh
+	cd target-package-path
+	npm pack
+	```
+
+	This creates a `.tgz` file in the current directory.
+
+	<details>
+	<summary><em>What does this do?</em></summary>
+	<br>
+
+	When you publish a package using `npm publish`, it runs `npm pack` to create a tarball and then publishes it to the registry.
+
+	However, if you only run `npm pack`, it generates the tarball without actually publishing it. You can install directly from this tarball to replicate the conditions of a published package.
+	</details>
+
+2. Install the target project
+
+	In the project you want to link the package to, install the tarball from _Step 1_:
+	```sh
+	npm install --no-save <tarball-path>
+	```
+
+3. Link the target project
+
+	```sh
+	npx link publish <package-path>
+	```
+
+	In publish mode, `npx link` will create hard links to the specific publish assets of the target package. By doing this, the `node_modules` directory will be identical to the one you get from installing the package from the registry.
+
+	<details>
+	<summary><em>Why hardlinks?</em></summary>
+	<br>
+
+	One other problem with the symlink approach is that Node.js looks up the `node_module` directory relative to the module's realpath, rather than the import path (aka symlink path).
+
+	</details>
+
 
 ### Configuration file
 
