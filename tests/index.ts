@@ -18,6 +18,7 @@ const nodeVersions = [
 		await describe(`Node ${node.version}`, ({ runTestSuite }) => {
 			runTestSuite(import('./specs/cli.spec'), node.path);
 			runTestSuite(import('./specs/link-config.spec'), node.path);
+			runTestSuite(import('./specs/publish.spec'), node.path);
 		});
 	}
 })();
