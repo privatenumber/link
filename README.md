@@ -96,7 +96,7 @@ To use Publish mode, follow these steps:
 	<summary><em>Why hard links?</em></summary>
 	<br>
 
-	Another issue with the symlink approach is that Node.js, and other bundler resolvers, looks up the `node_module` directory relative to the module's realpath rather than the import path (symlink path). By using hard links, we can prevent this behavior and ensure that the `node_modules` directory is resolved using the production tree we set up in _Step 2_.
+	Another issue with the symlink approach is that Node.js, and popular bundlers, looks up the `node_module` directory relative to a module's realpath rather than the import path (symlink path). By using hard links, we can prevent this behavior and ensure that the `node_modules` directory is resolved using the production tree we set up in _Step 2_.
 	</details>
 
 4. Start developing and make changes to the target project
