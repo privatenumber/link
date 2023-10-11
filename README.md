@@ -37,11 +37,11 @@ npx link <package-path>
 >
 > Unlike `npm link`, it doesn't install the target package globally or re-install project dependencies.
 
-## Publish Mode
+### Publish Mode
 
 Symlinking doesn't always replicate the exact environment you get from a standard `npm install`. This discrepancy primarily arises from symlinked packages retaining their development `node_modules` directory. This can lead to issues, especially when multiple packages depend on the same library. To address this, you can use _Publish mode_.
 
-### Why use Publish Mode?
+#### Why use Publish Mode?
 
 In a production environment, `npm install` detects common dependencies and installs only one instance of a shared dependency. However, in a symlinked environment, the symlinked package pulls in its own copy from development.
 
@@ -57,7 +57,7 @@ Consider an example where there's an _App A_ with a dependency on _Package B_, a
 
 Publish mode helps replicate the production environment in your development setup.
 
-### Setup
+#### Setup
 
 To use Publish mode, follow these steps:
 
@@ -75,7 +75,7 @@ To use Publish mode, follow these steps:
 
 2. Install the tarball
 
-	In the project where you want to link the package, install the tarball created in _Step 1_. Replace `<target-tarball-path>` with the path to the tarball:
+	In the current project, install the tarball created in _Step 1_. Replace `<target-tarball-path>` with the path to the tarball:
 
 	```sh
 	npm install --no-save <target-tarball-path>
@@ -85,7 +85,8 @@ To use Publish mode, follow these steps:
 
 3. Link the target project
 
-	In the project where you want to link the package, link the target package in publish mode:
+	In the current project, link the target package in publish mode:
+
 	```sh
 	npx link publish <target-package-path>
 	```
