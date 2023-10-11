@@ -37,11 +37,13 @@ npx link <package-path>
 >
 > Unlike `npm link`, it doesn't install the target package globally or re-install project dependencies.
 
-### Publish Mode
+### Publish mode
 
 Symlinking doesn't always replicate the exact environment you get from a standard `npm install`. This discrepancy primarily arises from symlinked packages retaining their development `node_modules` directory. This can lead to issues, especially when multiple packages depend on the same library. To address this, you can use _Publish mode_.
 
-#### Why use Publish Mode?
+<details>
+	<summary>Why use Publish mode?</summary>
+	<br>
 
 In a production environment, `npm install` detects common dependencies and installs only one instance of a shared dependency. However, in a symlinked environment, the symlinked package pulls in its own copy from development.
 
@@ -56,6 +58,8 @@ Consider an example where there's an _App A_ with a dependency on _Package B_, a
 	_App A_ has its copy of _Library C_, and _Package B_ also has its development copy of _Library C_—possibly with different versions. Consequently, when you run the application, it will load two different versions of _Library C_, leading to unexpected outcomes.
 
 Publish mode helps replicate the production environment in your development setup.
+
+</details>
 
 #### Setup
 
