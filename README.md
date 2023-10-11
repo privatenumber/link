@@ -33,74 +33,78 @@ From the project directory you want to link a package to:
 npx link <package-path>
 ```
 
-> **Secure linking**
+> **🛡️ Secure linking**
 >
 > Unlike `npm link`, it doesn't install the target package globally or re-install project dependencies.
 
-### Publish mode
+## Publish Mode
 
-Symlinking doesn't replicate the exact environment you get from installing a package using `npm install`. So sometimes, creating a symlink to the package directory isn't sufficient.
+Symlinking doesn't always replicate the exact environment you get from a standard `npm install`. This discrepancy primarily arises from symlinked packages retaining their development `node_modules` directory. This can lead to issues, especially when multiple packages depend on the same library. To address this, you can use _Publish mode_.
 
-#### Why?
-The discrepancy in the environments mainly come from the symlinked package retaining its development `node_modules` directory.
+### Why use Publish Mode?
 
-Consider an example where there's an _App A_ with a dependency on _Package B_ , and they both depend on _Library C_:
+In a production environment, `npm install` detects common dependencies and installs only one instance of a shared dependency. However, in a symlinked environment, the symlinked package pulls in its own copy from development.
+
+Consider an example where there's an _App A_ with a dependency on _Package B_, and they both depend on _Library C_:
 
 - Production environment
 
-	`npm install` recognizes that both _App A_ and _Package B_ require library C and installs only one instance of _Library C_ for them to share.
+	`npm install` detects that both _App A_ and _Package B_ depends on _Library C_ and installs one copy of _Library C_ for them to share.
 
 - Symlinked environment
 
-	_App A_ will have its copy of _Library C_, and _Package B_ will also have its development copy of _Library C_—possibly with different versions. Consequently, when you run the application, it will load two different versions of _Library C_, leading to unexpected outcomes.
+	_App A_ has its copy of _Library C_, and _Package B_ also has its development copy of _Library C_—possibly with different versions. Consequently, when you run the application, it will load two different versions of _Library C_, leading to unexpected outcomes.
 
-To replicate the production environment in development, you can use _Publish mode_.
+Publish mode helps replicate the production environment in your development setup.
 
-#### Setup
+### Setup
+
+To use Publish mode, follow these steps:
+
 1. Pack the target project
 
-	In the package you want to link, run [`npm pack`](https://docs.npmjs.com/cli/v7/commands/npm-pack) to create a tarball:
+	Navigate to the directory of package you want to link and run `npm pack` to create a tarball:
 
 	```sh
 	cd target-package-path
 	npm pack
 	```
 
-	This creates a `.tgz` file in the current directory.
+	This generates a tarball (`.tgz`) file in the current directory. Installing from this simulates the conditions of a published package without actually publishing it.
 
-	<details>
-	<summary><em>What does this do?</em></summary>
-	<br>
 
-	When you publish a package using `npm publish`, it runs `npm pack` to create a tarball and then publishes it to the registry.
+2. Install the tarball
 
-	However, if you only run `npm pack`, it generates the tarball without actually publishing it. You can install directly from this tarball to replicate the conditions of a published package.
-	</details>
+	In the project where you want to link the package, install the tarball created in _Step 1_. Replace `<target-tarball-path>` with the path to the tarball:
 
-2. Install the target project
-
-	In the project you want to link the package to, install the tarball from _Step 1_:
 	```sh
-	npm install --no-save <tarball-path>
+	npm install --no-save <target-tarball-path>
 	```
+
+	This allows npm (or the package manager of your choice) to set up the same `node_modules` tree used in a production environment.
 
 3. Link the target project
 
+	In the project where you want to link the package, link the target package in publish mode:
 	```sh
-	npx link publish <package-path>
+	npx link publish <target-package-path>
 	```
 
-	In publish mode, `npx link` will create hard links to the specific publish assets of the target package. By doing this, the `node_modules` directory will be identical to the one you get from installing the package from the registry.
+	This creates hard links in `node_modules` to the specific publish assets of the target package.
 
 	<details>
-	<summary><em>Why hardlinks?</em></summary>
+	<summary><em>Why hard links?</em></summary>
 	<br>
 
-	One other problem with the symlink approach is that Node.js looks up the `node_module` directory relative to the module's realpath, rather than the import path (aka symlink path).
-
+	Another issue with the symlink approach is that Node.js, and other bundler resolvers, looks up the `node_module` directory relative to the module's realpath rather than the import path (symlink path). By using hard links, we can prevent this behavior and ensure that the `node_modules` directory is resolved using the production tree we set up in _Step 2_.
 	</details>
 
+4. Start developing and make changes to the target project
 
+	Now that you've linked the target project, you can start developing. Any changes you make to the target project will be reflected in the linked project.
+
+	> **Note:** If the target project emits new files, you'll need to re-run `npx link publish <target-package-path>` to re-create the hard links.
+	
 ### Configuration file
 
 Create a `link.config.json` (or `link.config.js`) configuration file at the root of your npm project to automatically setup links to multiple packages.

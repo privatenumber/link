@@ -21,20 +21,25 @@ const linkPackage = async (
 
 	// isDirectory() here returns false even if the path is a symlink directory
 	if (!linkPathStat?.isDirectory()) {
-		console.log(outdent`
-		Package not setup!
+		console.log(
+			outdent`
+			Package not setup!
 
-		${bold('Instructions')}
-		1. Create a tarball in the target package directory:
-		  ${dim('$ npm pack')}
+			${bold('Instructions')}
+			1. Create a tarball in the target package directory:
+			  ${dim('$ npm pack')}
 
-		  ${italic('Tip: If you have a build step, add the build command to the package.json#prepack hook')}
+			  ${italic('Tip:')}
+			  ${italic('If the project has a build step, add the build command to the `prepack` hook in package.json')}
 
-		2. Install the target package tarball in the current package:
-		  ${dim('$ npm install --no-save <tarball path>')}
+			2. Install the target package tarball in the current package:
+			  ${dim('$ npm install --no-save <tarball path>')}
 
-		Learn more: https://npmjs.com/link
-		`);
+			3. Run this command again
+
+			Learn more: https://npmjs.com/link
+			`,
+		);
 		return;
 	}
 

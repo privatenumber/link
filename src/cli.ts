@@ -1,4 +1,5 @@
 import { cli } from 'cleye';
+import outdent from 'outdent';
 import { linkPackage, linkFromConfig } from './link-package';
 import { loadConfig } from './utils/load-config';
 import { publish } from './commands/publish';
@@ -54,7 +55,12 @@ import { publish } from './commands/publish';
 		const config = await loadConfig(basePackagePath);
 
 		if (!config) {
-			console.warn('Warning: Config file "link.config.json" not found in current directory.\n         Read the documentation to learn more: https://www.npmjs.com/package/link\n');
+			console.warn(
+				outdent`
+				Warning: Config file "link.config.json" not found in current directory.
+				         Read the documentation to learn more: https://www.npmjs.com/package/link
+				`,
+			);
 			argv.showHelp();
 			return;
 		}
