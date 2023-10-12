@@ -25,9 +25,6 @@
 		"lint": "eslint --cache .",
 		"prepack": "pnpm build && clean-pkg-json"
 	},
-	"dependencies": {
-		"npm-packlist": "^8.0.0"
-	},
 	"devDependencies": {
 		"@pvtnbr/eslint-config": "^0.37.1",
 		"@types/cmd-shim": "^5.0.0",
@@ -43,6 +40,7 @@
 		"get-node": "^14.2.1",
 		"kolorist": "^1.8.0",
 		"manten": "^1.1.0",
+		"npm-packlist": "^8.0.0",
 		"outdent": "^0.8.0",
 		"pkgroll": "^1.11.1",
 		"tsx": "^3.13.0",
