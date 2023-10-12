@@ -21,21 +21,19 @@ const linkPackage = async (
 
 	// isDirectory() here returns false even if the path is a symlink directory
 	if (!linkPathStat?.isDirectory()) {
-		console.log(
+		console.error(
 			outdent`
-			Package not setup!
+			Error: Package is not set up at ${cyan(linkPathRelative)}
 
-			${bold('Instructions')}
-			1. Create a tarball in the target package directory:
+			${bold('Setup instructions')}
+			1. In the Dependency package, create a tarball:
 			  ${dim('$ npm pack')}
 
-			  ${italic('Tip:')}
-			  ${italic('If the project has a build step, add the build command to the `prepack` hook in package.json')}
+			2. In the Consuming package, install the tarball and link the Dependency:
+			  ${dim('$ npm install --no-save <dependency-tarball>')}
+			  ${dim('$ npx link publish <dependency-path>')}
 
-			2. Install the target package tarball in the current package:
-			  ${dim('$ npm install --no-save <tarball path>')}
-
-			3. Run this command again
+			3. Start developing!
 
 			Learn more: https://npmjs.com/link
 			`,

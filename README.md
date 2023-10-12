@@ -37,14 +37,16 @@ Why is `npm link` unsafe? Read the [blog post](https://hirok.io/posts/avoid-npm-
 
 ## Usage
 
-### Symlinking a package
-`npx link` symlinks the _Dependency package_ as a dependency of the _Consuming package_.
+### Linking a package
 
-From the _Consuming package_ directory, run:
+From the _Consuming package_ directory, link the _Dependency package_:
 
 ```sh
 npx link <dependency-package-path>
 ```
+
+This creates a symbolic link inside the `node_modules` of _Consuming package_, referencing the _Dependency package_.
+
 
 > **🛡️ Secure linking**
 >
@@ -52,13 +54,13 @@ npx link <dependency-package-path>
 
 ### Publish mode
 
-Symlinking doesn't always replicate the exact environment you get from a standard `npm install`. This discrepancy primarily arises from symlinked packages retaining their development `node_modules` directory. This can lead to issues, especially when multiple packages depend on the same library.
+Using symbolic links may not replicate the exact environment you get from a standard `npm install`. This discrepancy primarily arises from symlinked packages retaining their development `node_modules` directory. This can lead to issues, especially when multiple packages depend on the same library.
 
 <details>
 	<summary>Here's an example</summary>
 	<br>
 
-In a production environment, `npm install` detects common dependencies and installs only one instance of a shared dependency. However, in a symlinked environment, the symlinked package pulls in its own copy from development.
+In a production environment, `npm install` detects common dependencies and installs only one instance of a shared dependency. However, when using a symbolic link to the package directory, the linked package pulls in its own copy from development.
 
 Consider an example where there's an _App A_ with a dependency on _Package B_, and they both depend on _Library C_:
 
@@ -66,7 +68,7 @@ Consider an example where there's an _App A_ with a dependency on _Package B_, a
 
 	`npm install` detects that both _App A_ and _Package B_ depends on _Library C_, and only installs one copy of _Library C_ for them to share.
 
-- Symlinked environment
+- Symbolic link environment
 
 	_App A_ has its copy of _Library C_, and _Package B_ also has its development copy of _Library C_—possibly with different versions. Consequently, when you run the application, it will load two different versions of _Library C_, leading to unexpected outcomes.
 
@@ -74,11 +76,11 @@ Consider an example where there's an _App A_ with a dependency on _Package B_, a
 
 _Publish mode_ helps replicate the production environment in your development setup.
 
-#### Instructions
+#### Setup instructions
 
 1. Pack the _Dependency package_
 
-	Navigate to the directory of package you want to link and run `npm pack` to create a tarball:
+	In the _Dependency package_, run `npm pack` to create a tarball:
 
 	```sh
 	cd dependency-package-path
@@ -88,38 +90,36 @@ _Publish mode_ helps replicate the production environment in your development se
 	This generates a tarball (`.tgz`) file in the current directory. Installing from this simulates the conditions of a published package without actually publishing it.
 
 
-2. Install the tarball
+2. In the _Consuming package_
 
-	In the _Consuming package_, install the tarball created in _Step 1_. Replace `<dependency-tarball-path>` with the path to the tarball:
+	1. Install the Dependency tarball from _Step 1_
 
-	```sh
-	npm install --no-save <dependency-tarball-path>
-	```
+		```sh
+		npm install --no-save <dependency-tarball-path>
+		```
 
-	This allows npm (or the package manager of your choice) to set up the same `node_modules` tree used in a production environment.
+		This sets up the same `node_modules` tree used in a production environment.
 
-3. Link the _Dependency package_
+	2. Link the _Dependency package_
 
-	In the _Consuming package_, link the _Dependency package_ in publish mode:
+		```sh
+		npx link publish <dependency-package-path>
+		```
 
-	```sh
-	npx link publish <dependency-package-path>
-	```
+		This creates hard links in `node_modules/dependency` to the specific publish assets of the _Dependency package_.
 
-	This creates hard links in `node_modules` to the specific publish assets of the _Dependency package_.
+		<details>
+		<summary><em>Why hard links instead of symbolic links?</em></summary>
+		<br>
 
-	<details>
-	<summary><em>Why hard links?</em></summary>
-	<br>
-
-	Another issue with the symlink approach is that Node.js, and popular bundlers, looks up the `node_module` directory relative to a module's realpath rather than the import path (symlink path). By using hard links, we can prevent this behavior and ensure that the `node_modules` directory is resolved using the production tree we set up in _Step 2_.
-	</details>
+		Another issue with the symlink approach is that Node.js, and popular bundlers, looks up the `node_module` directory relative to a module's realpath rather than the import path (symlink path). By using hard links, we can prevent this behavior and ensure that the `node_modules` directory is resolved using the production tree we set up in _Step 2_.
+		</details>
 
 4. Start developing and make changes to the _Dependency package_
 
 	Now that you've linked the _Dependency package_, you can start developing. Any changes you make to the _Dependency package_ will be reflected in the `node_modules` directory of the _Consuming package_.
 
-	> **Note:** If the _Dependency package_ emits new files, you'll need to re-run `npx link publish <dependency-package-path>` to re-create the hard links.
+	> **Note:** If the _Dependency package_ emits new files, you'll need to re-run `npx link publish <dependency-package-path>` to create new hard links.
 	
 ### Configuration file
 
@@ -184,7 +184,7 @@ npx link --deep
 ### Why should I use `npx link` over `npm link`?
 Because `npm link` [is complicated and could be dangerous to use](https://hirok.io/posts/avoid-npm-link). And `npx link` offers more features such as _Publish mode_.
 
-### How do I remove the symlinks?
+### How do I remove the links?
 Run `npm install` (or the equivalent in your preferred package manager) and it should remove them.
 
 ### Why does `npx link` point to `ln`?
