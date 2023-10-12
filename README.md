@@ -78,9 +78,7 @@ _Publish mode_ helps replicate the production environment in your development se
 
 #### Setup instructions
 
-1. Pack the _Dependency package_
-
-	In the _Dependency package_, run `npm pack` to create a tarball:
+1. In the _Dependency package_, run `npm pack` to create a tarball:
 
 	```sh
 	cd dependency-package-path
@@ -115,9 +113,9 @@ _Publish mode_ helps replicate the production environment in your development se
 		Another issue with the symlink approach is that Node.js, and popular bundlers, looks up the `node_module` directory relative to a module's realpath rather than the import path (symlink path). By using hard links, we can prevent this behavior and ensure that the `node_modules` directory is resolved using the production tree we set up in _Step 2_.
 		</details>
 
-4. Start developing and make changes to the _Dependency package_
+4. Start developing!
 
-	Now that you've linked the _Dependency package_, you can start developing. Any changes you make to the _Dependency package_ will be reflected in the `node_modules` directory of the _Consuming package_.
+	Any changes you make to the _Dependency package_ will be reflected in the `node_modules` directory of the _Consuming package_.
 
 	> **Note:** If the _Dependency package_ emits new files, you'll need to re-run `npx link publish <dependency-package-path>` to create new hard links.
 	
