@@ -27,11 +27,6 @@ const linkPackage = async (
 		 * If it's not, it might be a development directory and we don't want to overwrite it.
 		 */
 		const linkPathReal = await fs.realpath(linkPath);
-		console.log({
-			linkPathReal,
-			expectedPrefix,
-		});
-
 		if (linkPathReal.startsWith(expectedPrefix)) {
 			const edgesOut = new Map();
 			const [oldPublishFiles, publishFiles] = await Promise.all([
@@ -80,7 +75,6 @@ const linkPackage = async (
 				oldPublishFiles.map(async (file) => {
 					const cleanPath = path.join(linkPath, file);
 					await fs.rm(cleanPath);
-					console.log(`  ${green('✔')}`, 'Removed path', cleanPath);
 				}),
 			);
 			return;
