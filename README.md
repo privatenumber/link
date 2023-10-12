@@ -24,15 +24,21 @@ Why is `npm link` unsafe? Read the [blog post](https://hirok.io/posts/avoid-npm-
 
 ## Terminology
 
-- **Dependency package** - The package getting linked. This is usually a library.
+- **Dependency package**
 
-- **Consuming package** - The project you want to link the _Dependency package_ to. This is usually an application.
+	The package getting linked. This is usually a library.
+
+- **Consuming package**
+
+	The project you want to link the _Dependency package_ as a dependency of. This is usually an application.
+
+	`consuming-package/node_modules/dependency-package` → `dependency-package`
 
 
 ## Usage
 
 ### Symlinking a package
-`npx link` symlinks the _Dependency package_ to the _Consuming package_.
+`npx link` symlinks the _Dependency package_ as a dependency of the _Consuming package_.
 
 From the _Consuming package_ directory, run:
 
