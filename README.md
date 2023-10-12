@@ -60,9 +60,9 @@ Using symbolic links may not replicate the exact environment you get from a stan
 	<summary>Here's an example</summary>
 	<br>
 
-In a production environment, `npm install` detects common dependencies and installs only one instance of a shared dependency. However, when using a symbolic link to the package directory, the linked package pulls in its own copy from development.
+In a production environment, `npm install` detects common dependencies and installs only one instance of a shared dependency. However, when there's a symbolic link to the development directory of a dependency, separate copies of those dependencies are resolved from the development `node_modules`.
 
-Consider an example where there's an _App A_ with a dependency on _Package B_, and they both depend on _Library C_:
+Let's say there's an _App A_ with a dependency on _Package B_, and they both depend on _Library C_:
 
 - Production environment
 
