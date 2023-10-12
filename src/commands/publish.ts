@@ -27,7 +27,13 @@ const linkPackage = async (
 		 * If it's not, it might be a development directory and we don't want to overwrite it.
 		 */
 		const linkPathReal = await fs.realpath(linkPath);
-		if (linkPathReal.startsWith(path.join(basePackagePath, 'node_modules'))) {
+		const expectedPrefix = path.join(basePackagePath, 'node_modules');
+
+		console.log({
+			linkPathReal,
+			expectedPrefix
+		});
+		if (linkPathReal.startsWith(expectedPrefix)) {
 			const edgesOut = new Map();
 			const [oldPublishFiles, publishFiles] = await Promise.all([
 				packlist({
