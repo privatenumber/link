@@ -17,51 +17,85 @@ const linkPackage = async (
 	const packageJson = await readPackageJson(absoluteLinkPackagePath);
 	const linkPathRelative = `./${path.join('node_modules', packageJson.name)}`;
 	const linkPath = path.join(basePackagePath, linkPathRelative);
-	const linkPathStat = await fs.lstat(linkPath).catch(() => null);
+	const linkPathStat = await fs.stat(linkPath).catch(() => null);
 
-	// isDirectory() here returns false even if the path is a symlink directory
-	if (!linkPathStat?.isDirectory()) {
-		console.error(
-			outdent`
-			Error: Package is not set up at ${cyan(linkPathRelative)}
+	if (linkPathStat?.isDirectory()) {
+		/**
+		 * If it's a symlink, make sure it's in the node_modules directory of the base package.
+		 * e.g. This could happen with pnpm
+		 *
+		 * If it's not, it might be a development directory and we don't want to overwrite it.
+		 */
+		const linkPathReal = await fs.realpath(linkPath);
+		if (linkPathReal.startsWith(path.join(basePackagePath, 'node_modules'))) {
+			const edgesOut = new Map();
+			const [oldPublishFiles, publishFiles] = await Promise.all([
+				packlist({
+					path: linkPathReal,
 
-			${bold('Setup instructions')}
-			1. In the Dependency package, create a tarball:
-			  ${dim('$ npm pack')}
+					/**
+					 * This is evaluated in the context of the new package.json since that
+					 * defines which files belong to the package.
+					 */
+					package: packageJson,
+					// @ts-expect-error outdated types
+					edgesOut,
+				}),
+				packlist({
+					path: absoluteLinkPackagePath,
+					package: packageJson,
+					// @ts-expect-error outdated types
+					edgesOut,
+				}),
+			]);
 
-			2. In the Consuming package, install the tarball and link the Dependency:
-			  ${dim('$ npm install --no-save <dependency-tarball>')}
-			  ${dim('$ npx link publish <dependency-path>')}
+			console.log(`Symlinking ${magenta(packageJson.name)}:`);
+			await Promise.all(
+				publishFiles.map(async (file) => {
+					const sourcePath = path.join(absoluteLinkPackagePath, file);
+					const targetPath = path.join(linkPath, file);
 
-			3. Start developing!
+					await fs.mkdir(
+						path.dirname(targetPath),
+						{ recursive: true },
+					);
 
-			Learn more: https://npmjs.com/link
-			`,
-		);
-		return;
-	}
+					await hardlink(sourcePath, targetPath);
 
-	const files = await packlist({
-		path: absoluteLinkPackagePath,
-		package: packageJson,
-		// @ts-expect-error outdated types
-		edgesOut: new Map(),
-	});
+					const fileIndex = oldPublishFiles.indexOf(file);
+					if (fileIndex > -1) {
+						oldPublishFiles.splice(fileIndex, 1);
+					}
 
-	console.log(`Symlinking ${magenta(packageJson.name)}:`);
-	await Promise.all(
-		files.map(async (file) => {
-			const sourcePath = path.join(absoluteLinkPackagePath, file);
-			const targetPath = path.join(linkPath, file);
-
-			await fs.mkdir(
-				path.dirname(targetPath),
-				{ recursive: true },
+					console.log(`  ${green('✔')}`, cyan(path.relative(basePackagePath, targetPath)), '→', cyan(path.relative(basePackagePath, sourcePath)));
+				}),
 			);
 
-			await hardlink(sourcePath, targetPath);
-			console.log(`  ${green('✔')}`, cyan(path.relative(basePackagePath, targetPath)), '→', cyan(path.relative(basePackagePath, sourcePath)));
-		}),
+			await Promise.all(
+				oldPublishFiles.map(async (file) => {
+					await fs.rm(path.join(linkPath, file));
+				}),
+			);
+			return;
+		}
+	}
+
+	console.error(
+		outdent`
+		Error: Package is not set up at ${cyan(linkPathRelative)}
+
+		${bold('Setup instructions')}
+		1. In the Dependency package, create a tarball:
+			${dim('$ npm pack')}
+
+		2. In the Consuming package, install the tarball and link the Dependency:
+			${dim('$ npm install --no-save <dependency-tarball>')}
+			${dim('$ npx link publish <dependency-path>')}
+
+		3. Start developing!
+
+		Learn more: https://npmjs.com/link
+		`,
 	);
 };
 

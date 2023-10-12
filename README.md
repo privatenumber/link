@@ -87,6 +87,7 @@ _Publish mode_ helps replicate the production environment in your development se
 
 	This generates a tarball (`.tgz`) file in the current directory. Installing from this simulates the conditions of a published package without actually publishing it.
 
+	> Tip: If you already have this dependency installed, you can potentially skip this step if there are no changes to the dependency's `package.json`
 
 2. In the _Consuming package_
 
