@@ -23,5 +23,6 @@ export const link = async (
 		nodeOptions: [],
 		cwd,
 		nodePath,
+		reject: false,
 	},
-).catch(error => error);
+);
