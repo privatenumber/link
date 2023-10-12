@@ -146,7 +146,7 @@ type LinkConfig = {
 }
 ```
 
-> Note: It's not recommended to commit this file to source control since this is for local development with local paths.
+> **Note:** It's not recommended to commit this file to source control since this is for local development with local paths.
 
 
 To link the dependencies defined in `link.config.json`, run:
