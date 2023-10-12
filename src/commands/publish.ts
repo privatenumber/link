@@ -31,7 +31,7 @@ const linkPackage = async (
 
 		console.log({
 			linkPathReal,
-			expectedPrefix
+			expectedPrefix,
 		});
 		if (linkPathReal.startsWith(expectedPrefix)) {
 			const edgesOut = new Map();
