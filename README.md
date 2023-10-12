@@ -22,27 +22,34 @@ Why is `npm link` unsafe? Read the [blog post](https://hirok.io/posts/avoid-npm-
 	</a>
 </p>
 
+## Terminology
+
+- **Dependency package** - The package getting linked. This is usually a library.
+
+- **Consuming package** - The project you want to link the _Dependency package_ to. This is usually an application.
+
+
 ## Usage
 
 ### Symlinking a package
-`npx link`  symlinks the target package as a dependency in the current project.
+`npx link` symlinks the _Dependency package_ to the _Consuming package_.
 
-From the project directory you want to link a package to:
+From the _Consuming package_ directory, run:
 
 ```sh
-npx link <package-path>
+npx link <dependency-package-path>
 ```
 
 > **🛡️ Secure linking**
 >
-> Unlike `npm link`, it doesn't install the target package globally or re-install project dependencies.
+> Unlike `npm link`, it doesn't install the _Dependency package_ globally or re-install project dependencies.
 
 ### Publish mode
 
-Symlinking doesn't always replicate the exact environment you get from a standard `npm install`. This discrepancy primarily arises from symlinked packages retaining their development `node_modules` directory. This can lead to issues, especially when multiple packages depend on the same library. To address this, you can use _Publish mode_.
+Symlinking doesn't always replicate the exact environment you get from a standard `npm install`. This discrepancy primarily arises from symlinked packages retaining their development `node_modules` directory. This can lead to issues, especially when multiple packages depend on the same library.
 
 <details>
-	<summary>Why use Publish mode?</summary>
+	<summary>Here's an example</summary>
 	<br>
 
 In a production environment, `npm install` detects common dependencies and installs only one instance of a shared dependency. However, in a symlinked environment, the symlinked package pulls in its own copy from development.
@@ -51,26 +58,24 @@ Consider an example where there's an _App A_ with a dependency on _Package B_, a
 
 - Production environment
 
-	`npm install` detects that both _App A_ and _Package B_ depends on _Library C_ and installs one copy of _Library C_ for them to share.
+	`npm install` detects that both _App A_ and _Package B_ depends on _Library C_, and only installs one copy of _Library C_ for them to share.
 
 - Symlinked environment
 
 	_App A_ has its copy of _Library C_, and _Package B_ also has its development copy of _Library C_—possibly with different versions. Consequently, when you run the application, it will load two different versions of _Library C_, leading to unexpected outcomes.
 
-Publish mode helps replicate the production environment in your development setup.
-
 </details>
 
-#### Setup
+_Publish mode_ helps replicate the production environment in your development setup.
 
-To use Publish mode, follow these steps:
+#### Instructions
 
-1. Pack the target project
+1. Pack the _Dependency package_
 
 	Navigate to the directory of package you want to link and run `npm pack` to create a tarball:
 
 	```sh
-	cd target-package-path
+	cd dependency-package-path
 	npm pack
 	```
 
@@ -79,23 +84,23 @@ To use Publish mode, follow these steps:
 
 2. Install the tarball
 
-	In the current project, install the tarball created in _Step 1_. Replace `<target-tarball-path>` with the path to the tarball:
+	In the _Consuming package_, install the tarball created in _Step 1_. Replace `<dependency-tarball-path>` with the path to the tarball:
 
 	```sh
-	npm install --no-save <target-tarball-path>
+	npm install --no-save <dependency-tarball-path>
 	```
 
 	This allows npm (or the package manager of your choice) to set up the same `node_modules` tree used in a production environment.
 
-3. Link the target project
+3. Link the _Dependency package_
 
-	In the current project, link the target package in publish mode:
+	In the _Consuming package_, link the _Dependency package_ in publish mode:
 
 	```sh
-	npx link publish <target-package-path>
+	npx link publish <dependency-package-path>
 	```
 
-	This creates hard links in `node_modules` to the specific publish assets of the target package.
+	This creates hard links in `node_modules` to the specific publish assets of the _Dependency package_.
 
 	<details>
 	<summary><em>Why hard links?</em></summary>
@@ -104,22 +109,22 @@ To use Publish mode, follow these steps:
 	Another issue with the symlink approach is that Node.js, and popular bundlers, looks up the `node_module` directory relative to a module's realpath rather than the import path (symlink path). By using hard links, we can prevent this behavior and ensure that the `node_modules` directory is resolved using the production tree we set up in _Step 2_.
 	</details>
 
-4. Start developing and make changes to the target project
+4. Start developing and make changes to the _Dependency package_
 
-	Now that you've linked the target project, you can start developing. Any changes you make to the target project will be reflected in the linked project.
+	Now that you've linked the _Dependency package_, you can start developing. Any changes you make to the _Dependency package_ will be reflected in the `node_modules` directory of the _Consuming package_.
 
-	> **Note:** If the target project emits new files, you'll need to re-run `npx link publish <target-package-path>` to re-create the hard links.
+	> **Note:** If the _Dependency package_ emits new files, you'll need to re-run `npx link publish <dependency-package-path>` to re-create the hard links.
 	
 ### Configuration file
 
-Create a `link.config.json` (or `link.config.js`) configuration file at the root of your npm project to automatically setup links to multiple packages.
+Create a `link.config.json` (or `link.config.js`) configuration file at the root of the _Consuming package_ to automatically setup links to multiple _Dependency packages_.
 
 Example _link.config.json_:
 ```json5
 {
     "packages": [
-        "/path/to/package-path-a",
-        "../package-path-b"
+        "/path/to/dependency-path-a",
+        "../dependency-path-b"
     ]
 }
 ```
@@ -128,10 +133,10 @@ The configuration has the following type schema:
 ```ts
 type LinkConfig = {
 
-    // Whether to run link on linked packages with link.config.json
+    // Whether to run `npx link` on dependency packages with link.config.json
     deepLink?: boolean
 
-    // List of packages to link
+    // List of dependency packages to link
     packages?: string[]
 }
 ```
@@ -146,9 +151,9 @@ npx link
 
 ### Deep linking
 
-By default, `npx link` only links packages in the current project. However, there are cases where the linked packages also needs linking setup.
+By default, `npx link` only links packages in the _Consuming package_. However, there are cases where the _Dependency packages_ also needs linking setup.
 
-Deep linking recursively runs link on every linked package that has a `link.config.json` file.
+Deep linking recursively runs link on every linked dependency that has a `link.config.json` file.
 
 Enable with the `--deep` flag or `deepLink` property in `link.config.json`.
 
@@ -170,8 +175,8 @@ npx link --deep
 
 ## FAQ
 
-### Why should I use this over `npm link`?
-Because `npm link` has [footguns that make it dangerous to use](https://hirok.io/posts/avoid-npm-link).
+### Why should I use `npx link` over `npm link`?
+Because `npm link` [is complicated and could be dangerous to use](https://hirok.io/posts/avoid-npm-link). And `npx link` offers more features such as _Publish mode_.
 
 ### How do I remove the symlinks?
 Run `npm install` (or the equivalent in your preferred package manager) and it should remove them.
