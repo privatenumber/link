@@ -3,10 +3,10 @@ import { cli } from 'cleye';
 import outdent from 'outdent';
 import { linkPackage, linkFromConfig } from './link-package';
 import { loadConfig } from './utils/load-config';
-import { publish } from './commands/publish';
+import publish from './commands/publish';
 
 (async () => {
-	await cli({
+	const argv = cli({
 		name: 'link',
 		parameters: ['[package paths...]'],
 		flags: {
@@ -34,17 +34,20 @@ import { publish } from './commands/publish';
 			},
 		},
 		commands: [
-			publish,
+			publish.command,
 		],
-	}, async (argv) => {
-		const basePackagePath = await fs.realpath(process.cwd());
+	});
+
+	const cwdProjectPath = await fs.realpath(process.cwd());
+
+	if (!argv.command) {
 		const { packagePaths } = argv._;
 
 		if (packagePaths.length > 0) {
 			await Promise.all(
 				packagePaths.map(
 					linkPackagePath => linkPackage(
-						basePackagePath,
+						cwdProjectPath,
 						linkPackagePath,
 						argv.flags,
 					),
@@ -53,13 +56,13 @@ import { publish } from './commands/publish';
 			return;
 		}
 
-		const config = await loadConfig(basePackagePath);
+		const config = await loadConfig(cwdProjectPath);
 
 		if (!config) {
 			console.warn(
 				outdent`
 				Warning: Config file "link.config.json" not found in current directory.
-				         Read the documentation to learn more: https://www.npmjs.com/package/link
+							Read the documentation to learn more: https://www.npmjs.com/package/link
 				`,
 			);
 			argv.showHelp();
@@ -67,13 +70,15 @@ import { publish } from './commands/publish';
 		}
 
 		await linkFromConfig(
-			basePackagePath,
+			cwdProjectPath,
 			config,
 			{
 				deep: argv.flags.deep,
 			},
 		);
-	});
+	} else if (argv.command === 'publish') {
+		await publish.handler(cwdProjectPath, argv._);
+	}
 })().catch((error) => {
 	console.error('Error:', error.message);
 	process.exit(1);

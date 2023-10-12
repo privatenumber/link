@@ -100,31 +100,35 @@ const linkPackage = async (
 	);
 };
 
-export const publish = command({
-	name: 'publish',
-	parameters: ['[package paths...]'],
-	flags: {
-		// watch: {
-		// 	type: Boolean,
-		// 	alias: 'w',
-		// 	description: 'Watch for changes in the package and automatically relink',
-		// },
-	},
-	help: {
-		description: 'Link a package to simulate an environment similar to `npm install`',
-	},
-}, async (argv) => {
-	const cwdProjectPath = await fs.realpath(process.cwd());
-	const { packagePaths } = argv._;
+export default {
+	command: command({
+		name: 'publish',
+		parameters: ['<package paths...>'],
+		flags: {
+			// watch: {
+			// 	type: Boolean,
+			// 	alias: 'w',
+			// 	description: 'Watch for changes in the package and automatically relink',
+			// },
+		},
+		help: {
+			description: 'Link a package to simulate an environment similar to `npm install`',
+		},
+	}),
 
-	if (packagePaths.length > 0) {
-		await Promise.all(
-			packagePaths.map(
-				linkPackagePath => linkPackage(
-					cwdProjectPath,
-					linkPackagePath,
+	handler: async (
+		cwdProjectPath: string,
+		packagePaths: string[],
+	) => {
+		if (packagePaths.length > 0) {
+			await Promise.all(
+				packagePaths.map(
+					linkPackagePath => linkPackage(
+						cwdProjectPath,
+						linkPackagePath,
+					),
 				),
-			),
-		);
-	}
-});
+			);
+		}
+	},
+};
