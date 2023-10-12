@@ -15,8 +15,7 @@ const linkPackage = async (
 ) => {
 	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
 	const packageJson = await readPackageJson(absoluteLinkPackagePath);
-	const linkPathRelative = `./${path.join('node_modules', packageJson.name)}`;
-	const linkPath = path.join(basePackagePath, linkPathRelative);
+	const linkPath = path.join(basePackagePath, 'node_modules', packageJson.name);
 	const linkPathStat = await fs.stat(linkPath).catch(() => null);
 
 	if (linkPathStat?.isDirectory()) {
@@ -90,7 +89,7 @@ const linkPackage = async (
 
 	console.error(
 		outdent`
-		Error: Package is not set up at ${cyan(linkPathRelative)}
+		Error: Package ${magenta(packageJson.name)} is not set up
 
 		${bold('Setup instructions')}
 		1. In the Dependency package, create a tarball:
@@ -121,7 +120,7 @@ export const publish = command({
 		description: 'Link a package to simulate an environment similar to `npm install`',
 	},
 }, async (argv) => {
-	const cwdProjectPath = process.cwd();
+	const cwdProjectPath = await fs.realpath(process.cwd());
 	const { packagePaths } = argv._;
 
 	if (packagePaths.length > 0) {

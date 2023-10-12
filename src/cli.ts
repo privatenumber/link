@@ -1,3 +1,4 @@
+import fs from 'fs/promises';
 import { cli } from 'cleye';
 import outdent from 'outdent';
 import { linkPackage, linkFromConfig } from './link-package';
@@ -36,7 +37,7 @@ import { publish } from './commands/publish';
 			publish,
 		],
 	}, async (argv) => {
-		const basePackagePath = process.cwd();
+		const basePackagePath = await fs.realpath(process.cwd());
 		const { packagePaths } = argv._;
 
 		if (packagePaths.length > 0) {
