@@ -30,13 +30,15 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const statBeforeLink = await fs.stat(path.join(entryPackagePath, 'node_modules/package-files/package.json'));
 
-			await link([
+			const a = await link([
 				'publish',
 				packageFiles,
 			], {
 				cwd: entryPackagePath,
 				nodePath,
 			});
+
+			console.log(a);
 
 			const statAfterLink = await fs.stat(path.join(entryPackagePath, 'node_modules/package-files/package.json'));
 			expect(statBeforeLink.ino).not.toBe(statAfterLink.ino);

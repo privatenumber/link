@@ -73,7 +73,9 @@ const linkPackage = async (
 
 			await Promise.all(
 				oldPublishFiles.map(async (file) => {
-					await fs.rm(path.join(linkPath, file));
+					const cleanPath = path.join(linkPath, file);
+					await fs.rm(cleanPath);
+					console.log(`  ${green('✔')}`, 'Removed path', cleanPath);
 				}),
 			);
 			return;
