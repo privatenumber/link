@@ -4,7 +4,7 @@ import { command } from 'cleye';
 import packlist from 'npm-packlist';
 import outdent from 'outdent';
 import {
-	green, magenta, cyan, bold, dim, italic,
+	green, magenta, cyan, bold, dim,
 } from 'kolorist';
 import { readPackageJson } from '../utils/read-package-json';
 import { hardlink } from '../utils/symlink';
