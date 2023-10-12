@@ -180,10 +180,12 @@ npx link --deep
 ## FAQ
 
 ### Why should I use `npx link` over `npm link`?
-Because `npm link` [is complicated and could be dangerous to use](https://hirok.io/posts/avoid-npm-link). And `npx link` offers more features such as _Publish mode_.
+Because `npm link` [is complicated and dangerous to use](https://hirok.io/posts/avoid-npm-link). And `npx link` offers more features such as _Publish mode_.
 
 ### How do I remove the links?
-Run `npm install` (or the equivalent in your preferred package manager) and it should remove them.
+Run `npm install` and it should remove them.
+
+`npm install` enforces the integrity of `node_modules` by making sure all packages are correctly installed. Reverting the links is a side effect of this.
 
 ### Why does `npx link` point to `ln`?
 
