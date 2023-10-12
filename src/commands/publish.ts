@@ -15,7 +15,8 @@ const linkPackage = async (
 ) => {
 	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
 	const packageJson = await readPackageJson(absoluteLinkPackagePath);
-	const linkPath = path.join(basePackagePath, 'node_modules', packageJson.name);
+	const expectedPrefix = path.join(basePackagePath, 'node_modules/');
+	const linkPath = path.join(expectedPrefix, packageJson.name);
 	const linkPathStat = await fs.stat(linkPath).catch(() => null);
 
 	if (linkPathStat?.isDirectory()) {
@@ -26,12 +27,11 @@ const linkPackage = async (
 		 * If it's not, it might be a development directory and we don't want to overwrite it.
 		 */
 		const linkPathReal = await fs.realpath(linkPath);
-		const expectedPrefix = path.join(basePackagePath, 'node_modules');
-
 		console.log({
 			linkPathReal,
 			expectedPrefix,
 		});
+
 		if (linkPathReal.startsWith(expectedPrefix)) {
 			const edgesOut = new Map();
 			const [oldPublishFiles, publishFiles] = await Promise.all([
