@@ -1,6 +1,0 @@
-{
-	"name": "package-files",
-	"version": "0.0.0",
-	"files": ["lib"],
-	"main": "lib/index.js"
-}
