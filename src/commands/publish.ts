@@ -87,11 +87,11 @@ const linkPackage = async (
 
 		${bold('Setup instructions')}
 		1. In the Dependency package, create a tarball:
-			${dim('$ npm pack')}
+		  ${dim('$ npm pack')}
 
 		2. In the Consuming package, install the tarball and link the Dependency:
-			${dim('$ npm install --no-save <dependency-tarball>')}
-			${dim('$ npx link publish <dependency-path>')}
+		  ${dim('$ npm install --no-save <dependency-tarball>')}
+		  ${dim('$ npx link publish <dependency-path>')}
 
 		3. Start developing!
 
