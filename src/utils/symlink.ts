@@ -1,19 +1,16 @@
 import fs from 'fs/promises';
+import { fsExists } from './fs-exists';
 
+/**
+ * Helper to create a symlink
+ * Deletes the target path if it exists
+ */
 export const symlink = async (
 	targetPath: string,
 	symlinkPath: string,
 	type?: string,
 ) => {
-	// const targetPathResolvable = await fsExists(
-	// 	path.resolve(path.dirname(symlinkPath), targetPath),
-	// );
-	// if (!targetPathResolvable) {
-	// 	throw new Error('Target path is not resolvable: ' + targetPath);
-	// }
-
 	const stats = await fs.lstat(symlinkPath).catch(() => null);
-
 	if (stats) {
 		if (stats.isSymbolicLink()) {
 			const symlinkRealpath = await fs.realpath(symlinkPath).catch(() => null);
@@ -39,10 +36,19 @@ export const symlinkBinary = async (
 	binaryPath: string,
 	linkPath: string,
 ) => {
-	await symlink(
-		binaryPath,
-		linkPath,
-	);
-
+	await symlink(binaryPath, linkPath);
 	await fs.chmod(linkPath, 0o755);
+};
+
+export const hardlink = async (
+	sourcePath: string,
+	hardlinkPath: string,
+) => {
+	if (await fsExists(hardlinkPath)) {
+		await fs.rm(hardlinkPath, {
+			recursive: true,
+		});
+	}
+
+	await fs.link(sourcePath, hardlinkPath);
 };

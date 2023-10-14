@@ -1,6 +1,9 @@
+import fs from 'fs/promises';
 import { cli } from 'cleye';
+import outdent from 'outdent';
 import { linkPackage, linkFromConfig } from './link-package';
 import { loadConfig } from './utils/load-config';
+import publish from './commands/publish';
 
 (async () => {
 	const argv = cli({
@@ -30,39 +33,52 @@ import { loadConfig } from './utils/load-config';
 				return renderers.render(nodes);
 			},
 		},
+		commands: [
+			publish.command,
+		],
 	});
 
-	const basePackagePath = process.cwd();
-	const { packagePaths } = argv._;
+	const cwdProjectPath = await fs.realpath(process.cwd());
 
-	if (packagePaths.length > 0) {
-		await Promise.all(
-			packagePaths.map(
-				linkPackagePath => linkPackage(
-					basePackagePath,
-					linkPackagePath,
-					argv.flags.deep,
+	if (!argv.command) {
+		const { packagePaths } = argv._;
+
+		if (packagePaths.length > 0) {
+			await Promise.all(
+				packagePaths.map(
+					linkPackagePath => linkPackage(
+						cwdProjectPath,
+						linkPackagePath,
+						argv.flags,
+					),
 				),
-			),
+			);
+			return;
+		}
+
+		const config = await loadConfig(cwdProjectPath);
+
+		if (!config) {
+			console.warn(
+				outdent`
+				Warning: Config file "link.config.json" not found in current directory.
+							Read the documentation to learn more: https://www.npmjs.com/package/link
+				`,
+			);
+			argv.showHelp();
+			return;
+		}
+
+		await linkFromConfig(
+			cwdProjectPath,
+			config,
+			{
+				deep: argv.flags.deep,
+			},
 		);
-		return;
+	} else if (argv.command === 'publish') {
+		await publish.handler(cwdProjectPath, argv._);
 	}
-
-	const config = await loadConfig(basePackagePath);
-
-	if (!config) {
-		console.warn('Warning: Config file "link.config.json" not found in current directory.\n         Read the documentation to learn more: https://www.npmjs.com/package/link\n');
-		argv.showHelp();
-		return;
-	}
-
-	await linkFromConfig(
-		basePackagePath,
-		config,
-		{
-			deep: argv.flags.deep,
-		},
-	);
 })().catch((error) => {
 	console.error('Error:', error.message);
 	process.exit(1);
