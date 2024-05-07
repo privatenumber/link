@@ -27,7 +27,7 @@ export const symlinkPackage = async (
 	await symlink(
 		targetPath,
 		symlinkPath,
-		'dir',
+		'junction',
 	);
 
 	await linkBinaries(
