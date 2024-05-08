@@ -13,26 +13,26 @@ jobs:
         os: [ubuntu-latest, windows-latest]
     timeout-minutes: 10
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version-file: '.nvmrc'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
 
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v3
-      with:
-        version: 9
-        run_install: true
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+          run_install: true
 
-    - name: Build
-      run: pnpm build
+      - name: Build
+        run: pnpm build
 
-    - name: Test
-      run: pnpm test
+      - name: Test
+        run: pnpm test
 
-    - name: Lint
-      if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: pnpm lint
+      - name: Lint
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: pnpm lint

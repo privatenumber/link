@@ -1,15 +1,15 @@
 {
 	"compilerOptions": {
-		"moduleResolution": "node",
-		"isolatedModules": true,
-		"esModuleInterop": true,
-		"outDir": "dist",
-		"strict": true,
-		"skipLibCheck": true,
 
+		"target": "ES2022",
 		// Node 18
 		"module": "commonjs",
-		"target": "ES2022",
+		"moduleResolution": "node",
+		"strict": true,
+		"outDir": "dist",
+		"esModuleInterop": true,
+		"isolatedModules": true,
+		"skipLibCheck": true,
 	},
 	"include": [
 		"src"

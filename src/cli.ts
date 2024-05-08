@@ -19,7 +19,7 @@ import publish from './commands/publish';
 		help: {
 			description: 'A better `npm link` -- symlink local dependencies to the current project',
 
-			render(nodes, renderers) {
+			render: (nodes, renderers) => {
 				nodes[0].data = 'npx link\n';
 
 				nodes.splice(2, 0, {
