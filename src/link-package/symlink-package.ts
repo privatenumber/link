@@ -27,6 +27,13 @@ export const symlinkPackage = async (
 	await symlink(
 		targetPath,
 		symlinkPath,
+
+		/**
+		 * On Windows, 'dir' requires admin privileges so use 'junction' instead
+		 *
+		 * npm also uses junction:
+		 * https://github.com/npm/cli/blob/v9.9.3/workspaces/arborist/lib/arborist/reify.js#L738
+		 */
 		'junction',
 	);
 
