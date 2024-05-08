@@ -7,7 +7,7 @@ import { link } from '../utils';
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('link.config.json', ({ test, describe }) => {
 		test('symlink', async () => {
-			const fixture = await createFixture('./tests/fixtures/');
+			await using fixture = await createFixture('./tests/fixtures/');
 			const entryPackagePath = path.join(fixture.path, 'package-entry');
 
 			await fixture.writeJson('package-entry/link.config.json', {
@@ -56,13 +56,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const nonPublishFileExists = await fixture.exists('package-entry/node_modules/package-files/non-publish-file.js');
 			expect(nonPublishFileExists).toBe(true);
-
-			await fixture.rm();
 		});
 
 		describe('deep linking', ({ test }) => {
 			test('cli', async () => {
-				const fixture = await createFixture('./tests/fixtures/');
+				await using fixture = await createFixture('./tests/fixtures/');
 				const entryPackagePath = path.join(fixture.path, 'package-entry');
 
 				await fixture.writeJson('package-entry/link.config.json', {
@@ -94,12 +92,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 					},
 				);
 				expect(entryPackage.stdout).toBe('["package-entry","package-binary","package-files","@scope/package-scoped",["package-deep-link","package-files","@scope/package-scoped"]]');
-
-				await fixture.rm();
 			});
 
 			test('link.config', async () => {
-				const fixture = await createFixture('./tests/fixtures/');
+				await using fixture = await createFixture('./tests/fixtures/');
 				const entryPackagePath = path.join(fixture.path, 'package-entry');
 
 				await fixture.writeJson('package-entry/link.config.json', {
@@ -133,15 +129,13 @@ export default testSuite(({ describe }, nodePath: string) => {
 					},
 				);
 				expect(entryPackage.stdout).toBe('["package-entry","package-binary","package-files","@scope/package-scoped",["package-deep-link","package-files","@scope/package-scoped"]]');
-
-				await fixture.rm();
 			});
 		});
 	});
 
 	describe('link.config.js', ({ test }) => {
 		test('catches invalid config error', async () => {
-			const fixture = await createFixture('./tests/fixtures/');
+			await using fixture = await createFixture('./tests/fixtures/');
 			const entryPackagePath = path.join(fixture.path, 'package-entry');
 
 			await fixture.writeFile(
@@ -155,12 +149,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 			});
 
 			expect(linkProcess.stderr).toMatch('Error: Failed to load config file link.config.js:');
-
-			await fixture.rm();
 		});
 
 		test('symlink', async () => {
-			const fixture = await createFixture('./tests/fixtures/');
+			await using fixture = await createFixture('./tests/fixtures/');
 			const entryPackagePath = path.join(fixture.path, 'package-entry');
 
 			await fixture.writeFile(
@@ -212,8 +204,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const nonPublishFileExists = await fixture.exists('package-entry/node_modules/package-files/non-publish-file.js');
 			expect(nonPublishFileExists).toBe(true);
-
-			await fixture.rm();
 		});
 	});
 });

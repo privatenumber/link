@@ -8,7 +8,7 @@ import { link } from '../utils';
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('publish mode', ({ test }) => {
 		test('links', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixtures/');
+			await using fixture = await createFixture('./tests/fixtures/');
 			onTestFinish(async () => await fixture.rm());
 
 			const packageFiles = path.join(fixture.path, 'package-files');

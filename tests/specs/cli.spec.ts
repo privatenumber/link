@@ -9,7 +9,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 	describe('cli', ({ test, describe }) => {
 		describe('error-cases', ({ test }) => {
 			test('link package doesnt exist', async () => {
-				const fixture = await createFixture('./tests/fixtures/');
+				await using fixture = await createFixture('./tests/fixtures/');
 
 				const linkProcess = await link(['../non-existing'], {
 					cwd: path.join(fixture.path, 'package-entry'),
@@ -18,12 +18,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 				expect(linkProcess.exitCode).toBe(1);
 				expect(linkProcess.stderr).toBe('✖ Package path does not exist: ../non-existing');
-
-				await fixture.rm();
 			});
 
 			test('link package.json doesnt exist', async () => {
-				const fixture = await createFixture('./tests/fixtures/');
+				await using fixture = await createFixture('./tests/fixtures/');
 
 				await fixture.rm('package-files/package.json');
 
@@ -34,12 +32,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 				expect(linkProcess.exitCode).toBe(1);
 				expect(linkProcess.stderr).toMatch('✖ Failed to symlink ../package-files with error: package.json not found');
-
-				await fixture.rm();
 			});
 
 			test('single failure should exit 1', async () => {
-				const fixture = await createFixture('./tests/fixtures/');
+				await using fixture = await createFixture('./tests/fixtures/');
 
 				await fixture.rm('package-files/package.json');
 
@@ -56,12 +52,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				expect(linkProcess.stdout).toMatch('✔ Symlinked package-binary');
 				expect(linkProcess.stdout).toMatch('✔ Symlinked @scope/package-scoped');
 				expect(linkProcess.stderr).toMatch('✖ Failed to symlink');
-
-				await fixture.rm();
 			});
 
 			test('symlink exists', async () => {
-				const fixture = await createFixture('./tests/fixtures/');
+				await using fixture = await createFixture('./tests/fixtures/');
 				const packageEntryPath = path.join(fixture.path, 'package-entry');
 
 				await fs.mkdir(path.join(packageEntryPath, 'node_modules'));
@@ -76,12 +70,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				});
 
 				expect(linkProcess.exitCode).toBe(0);
-
-				await fixture.rm();
 			});
 
 			test('broken symlink exists', async () => {
-				const fixture = await createFixture('./tests/fixtures/');
+				await using fixture = await createFixture('./tests/fixtures/');
 				const packageEntryPath = path.join(fixture.path, 'package-entry');
 
 				await fs.mkdir(path.join(packageEntryPath, 'node_modules'));
@@ -96,12 +88,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				});
 
 				expect(linkProcess.exitCode).toBe(0);
-
-				await fixture.rm();
 			});
 
 			test('directory in-place of symlink', async () => {
-				const fixture = await createFixture('./tests/fixtures/');
+				await using fixture = await createFixture('./tests/fixtures/');
 				const packageEntryPath = path.join(fixture.path, 'package-entry');
 
 				await fs.mkdir(path.join(packageEntryPath, 'node_modules/package-files'), {
@@ -114,13 +104,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 				});
 
 				expect(linkProcess.exitCode).toBe(0);
-
-				await fixture.rm();
 			});
 		});
 
 		test('consecutive links', async () => {
-			const fixture = await createFixture('./tests/fixtures/');
+			await using fixture = await createFixture('./tests/fixtures/');
 
 			const entryPackagePath = path.join(fixture.path, 'package-entry');
 
@@ -169,12 +157,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(
 				await fixture.exists('package-entry/node_modules/package-files/non-publish-file.js'),
 			).toBe(true);
-
-			await fixture.rm();
 		});
 
 		test('multiple packages', async () => {
-			const fixture = await createFixture('./tests/fixtures/');
+			await using fixture = await createFixture('./tests/fixtures/');
 
 			const entryPackagePath = path.join(fixture.path, 'package-entry');
 
@@ -220,12 +206,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 			// Expect non publish files to exist in symlink
 			const nonPublishFileExists = await fixture.exists('package-entry/node_modules/package-files/non-publish-file.js');
 			expect(nonPublishFileExists).toBe(true);
-
-			await fixture.rm();
 		});
 
 		test('works without package.json in cwd', async () => {
-			const fixture = await createFixture('./tests/fixtures/');
+			await using fixture = await createFixture('./tests/fixtures/');
 			const entryPackagePath = path.join(fixture.path, 'package-entry');
 
 			await fixture.rm('package-entry/package.json');
@@ -253,12 +237,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				},
 			);
 			expect(entryPackage.stdout).toBe('["package-entry","package-binary","package-files","@scope/package-scoped",["package-deep-link",null,null]]');
-
-			await fixture.rm();
 		});
 
 		test('deep linking', async () => {
-			const fixture = await createFixture('./tests/fixtures/');
+			await using fixture = await createFixture('./tests/fixtures/');
 			const entryPackagePath = path.join(fixture.path, 'package-entry');
 
 			await fixture.rm('package-entry/package.json');
@@ -285,12 +267,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				},
 			);
 			expect(entryPackage.stdout).toBe('["package-entry","package-binary","package-files","@scope/package-scoped",["package-deep-link","package-files","@scope/package-scoped"]]');
-
-			await fixture.rm();
 		});
 
 		test('overwrites directory in place of symlink', async () => {
-			const fixture = await createFixture('./tests/fixtures/');
+			await using fixture = await createFixture('./tests/fixtures/');
 			const entryPackagePath = path.join(fixture.path, 'package-entry');
 
 			await fs.mkdir(
@@ -304,8 +284,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 			});
 
 			expect(linkBinary.exitCode).toBe(0);
-
-			await fixture.rm();
 		});
 	});
 });
