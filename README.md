@@ -1,4 +1,11 @@
-# npx link
+<p align="center">
+	<img width="180" src=".github/logo.webp">
+</p>
+<h1 align="center">
+	<sup>npx link</sup>
+	<br>
+	<a href="https://npm.im/link"><img src="https://badgen.net/npm/v/link"></a> <a href="https://npm.im/link"><img src="https://badgen.net/npm/dm/link"></a>
+</h1>
 
 A safer and enhanced version of [`npm link`](https://docs.npmjs.com/cli/v8/commands/npm-link).
 
