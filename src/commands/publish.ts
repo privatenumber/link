@@ -12,6 +12,7 @@ import { hardlink } from '../utils/symlink';
 const linkPackage = async (
 	basePackagePath: string,
 	linkPackagePath: string,
+	watch?: boolean,
 ) => {
 	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
 	const packageJson = await readPackageJson(absoluteLinkPackagePath);
@@ -105,11 +106,11 @@ export default {
 		name: 'publish',
 		parameters: ['<package paths...>'],
 		flags: {
-			// watch: {
-			// 	type: Boolean,
-			// 	alias: 'w',
-			// 	description: 'Watch for changes in the package and automatically relink',
-			// },
+			watch: {
+				type: Boolean,
+				alias: 'w',
+				description: 'Watch for changes in the package and automatically relink',
+			},
 		},
 		help: {
 			description: 'Link a package to simulate an environment similar to `npm install`',
@@ -119,6 +120,7 @@ export default {
 	handler: async (
 		cwdProjectPath: string,
 		packagePaths: string[],
+		flags: { watch?: boolean, help?: boolean},
 	) => {
 		if (packagePaths.length > 0) {
 			await Promise.all(
@@ -126,6 +128,7 @@ export default {
 					linkPackagePath => linkPackage(
 						cwdProjectPath,
 						linkPackagePath,
+						flags.watch,
 					),
 				),
 			);
