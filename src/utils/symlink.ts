@@ -1,4 +1,5 @@
 import fs from 'fs/promises';
+import chokidar from 'chokidar';
 import { fsExists } from './fs-exists';
 
 /**
@@ -52,3 +53,25 @@ export const hardlink = async (
 
 	await fs.link(sourcePath, hardlinkPath);
 };
+
+export const hardlinkAndWatch = async (
+	sourcePath: string,
+	hardlinkPath: string,
+) => {
+	// Initially create the hard link
+	await hardlink(sourcePath, hardlinkPath);
+
+	// Setup a watcher for the source file
+	const watcher = chokidar.watch(sourcePath, { persistent: true });
+	watcher.on('unlink', async () => {
+		console.warn(`Source file ${sourcePath} was deleted. Waiting for it to reappear...`);
+
+		// Wait until the source file is recreated before trying to re-create the hard link
+		watcher.once('add', async () => {
+			console.log(`Source file ${sourcePath} is recreated. Re-creating the hard link...`);
+			await hardlink(sourcePath, hardlinkPath);
+		});
+	});
+
+	console.log(`Watching ${sourcePath} for changes...`);
+}
