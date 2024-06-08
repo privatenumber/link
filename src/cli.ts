@@ -77,7 +77,7 @@ import publish from './commands/publish';
 			},
 		);
 	} else if (argv.command === 'publish') {
-		await publish.handler(cwdProjectPath, argv._);
+		await publish.handler(cwdProjectPath, argv._, argv.flags);
 	}
 })().catch((error) => {
 	console.error('Error:', error.message);
