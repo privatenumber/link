@@ -1,3 +1,4 @@
+import { watch } from 'fs';
 import fs from 'fs/promises';
 import { fsExists } from './fs-exists';
 
@@ -51,4 +52,26 @@ export const hardlink = async (
 	}
 
 	await fs.link(sourcePath, hardlinkPath);
+};
+
+export const hardlinkAndWatch = async (
+	sourcePath: string,
+	hardlinkPath: string,
+) => {
+	// Initially create the hard link
+	await hardlink(sourcePath, hardlinkPath);
+
+	// Setup a watcher for the source file
+	watch(sourcePath, {persistent: true}, async (eventType) => {
+		if (eventType === 'rename') {
+			const interval = setInterval(async () => {
+				const sourceFileExists = await fsExists(sourcePath);
+				if (!sourceFileExists) {
+					return;
+				}
+				await hardlink(sourcePath, hardlinkPath);
+				clearInterval(interval);
+			}, 50);
+		}
+	});
 };
