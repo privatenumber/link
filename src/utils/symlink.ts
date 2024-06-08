@@ -57,6 +57,8 @@ export const hardlink = async (
 export const hardlinkAndWatch = async (
 	sourcePath: string,
 	hardlinkPath: string,
+	onSourceFileDeleted: () => void,
+	onHardlinkReestablished: () => void,
 ) => {
 	// Initially create the hard link
 	await hardlink(sourcePath, hardlinkPath);
@@ -64,14 +66,20 @@ export const hardlinkAndWatch = async (
 	// Setup a watcher for the source file
 	watch(sourcePath, {persistent: true}, async (eventType) => {
 		if (eventType === 'rename') {
+			let sourceFileExists = await fsExists(sourcePath);
+			if (!sourceFileExists) {
+				onSourceFileDeleted();
+			}
+
 			const interval = setInterval(async () => {
-				const sourceFileExists = await fsExists(sourcePath);
+				sourceFileExists = await fsExists(sourcePath);
 				if (!sourceFileExists) {
 					return;
 				}
 				await hardlink(sourcePath, hardlinkPath);
+				onHardlinkReestablished();
 				clearInterval(interval);
-			}, 50);
+			}, 60);
 		}
 	});
 };

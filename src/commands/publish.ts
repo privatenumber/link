@@ -4,10 +4,18 @@ import { command } from 'cleye';
 import packlist from 'npm-packlist';
 import outdent from 'outdent';
 import {
-	green, magenta, cyan, bold, dim,
+	green, magenta, cyan, bold, dim, red,
 } from 'kolorist';
 import { readPackageJson } from '../utils/read-package-json';
 import { hardlink, hardlinkAndWatch } from '../utils/symlink';
+
+const logHardlink = (
+	basePackagePath: string,
+	sourcePath: string,
+	targetPath: string,
+) => {
+	console.log(`  ${green('✔')}`, cyan(path.relative(basePackagePath, targetPath)), '→', cyan(path.relative(basePackagePath, sourcePath)));
+}
 
 const linkPackage = async (
 	basePackagePath: string,
@@ -62,7 +70,12 @@ const linkPackage = async (
 					);
 
 					if (watch) {
-						await hardlinkAndWatch(sourcePath, targetPath);
+						await hardlinkAndWatch(
+							sourcePath,
+							targetPath,
+							() => console.log(`  ${red('x')}`, cyan(path.relative(basePackagePath, sourcePath))),
+							() => logHardlink(basePackagePath, sourcePath, targetPath),
+						);
 					} else {
 						await hardlink(sourcePath, targetPath);
 					}
@@ -72,7 +85,7 @@ const linkPackage = async (
 						oldPublishFiles.splice(fileIndex, 1);
 					}
 
-					console.log(`  ${green('✔')}`, cyan(path.relative(basePackagePath, targetPath)), '→', cyan(path.relative(basePackagePath, sourcePath)));
+					logHardlink(basePackagePath, sourcePath, targetPath);
 				}),
 			);
 
