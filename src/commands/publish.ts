@@ -7,7 +7,7 @@ import {
 	green, magenta, cyan, bold, dim,
 } from 'kolorist';
 import { readPackageJson } from '../utils/read-package-json';
-import { hardlink } from '../utils/symlink';
+import { hardlink, hardlinkAndWatch } from '../utils/symlink';
 
 const linkPackage = async (
 	basePackagePath: string,
@@ -61,7 +61,11 @@ const linkPackage = async (
 						{ recursive: true },
 					);
 
-					await hardlink(sourcePath, targetPath);
+					if (watch) {
+						await hardlinkAndWatch(sourcePath, targetPath);
+					} else {
+						await hardlink(sourcePath, targetPath);
+					}
 
 					const fileIndex = oldPublishFiles.indexOf(file);
 					if (fileIndex > -1) {
