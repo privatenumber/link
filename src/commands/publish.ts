@@ -7,11 +7,12 @@ import {
 	green, magenta, cyan, bold, dim,
 } from 'kolorist';
 import { readPackageJson } from '../utils/read-package-json';
-import { hardlink } from '../utils/symlink';
+import { hardlink, hardlinkAndWatch } from '../utils/symlink';
 
 const linkPackage = async (
 	basePackagePath: string,
 	linkPackagePath: string,
+	watch?: boolean,
 ) => {
 	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
 	const packageJson = await readPackageJson(absoluteLinkPackagePath);
@@ -60,7 +61,11 @@ const linkPackage = async (
 						{ recursive: true },
 					);
 
-					await hardlink(sourcePath, targetPath);
+					if (watch) {
+						await hardlinkAndWatch(sourcePath, targetPath);
+					} else {
+						await hardlink(sourcePath, targetPath);
+					}
 
 					const fileIndex = oldPublishFiles.indexOf(file);
 					if (fileIndex > -1) {
@@ -105,11 +110,11 @@ export default {
 		name: 'publish',
 		parameters: ['<package paths...>'],
 		flags: {
-			// watch: {
-			// 	type: Boolean,
-			// 	alias: 'w',
-			// 	description: 'Watch for changes in the package and automatically relink',
-			// },
+			watch: {
+				type: Boolean,
+				alias: 'w',
+				description: 'Watch for changes in the package and automatically relink',
+			},
 		},
 		help: {
 			description: 'Link a package to simulate an environment similar to `npm install`',
@@ -119,6 +124,7 @@ export default {
 	handler: async (
 		cwdProjectPath: string,
 		packagePaths: string[],
+		flags: { watch?: boolean, help?: boolean },
 	) => {
 		if (packagePaths.length > 0) {
 			await Promise.all(
@@ -126,6 +132,7 @@ export default {
 					linkPackagePath => linkPackage(
 						cwdProjectPath,
 						linkPackagePath,
+						flags.watch,
 					),
 				),
 			);
