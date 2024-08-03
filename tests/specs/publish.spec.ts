@@ -5,21 +5,24 @@ import { execa } from 'execa';
 import { createFixture } from 'fs-fixture';
 import { link } from '../utils';
 
+const npmPack = async (packageDirectory: string) => {
+	const pack = await execa('npm', ['pack'], {
+		cwd: packageDirectory,
+	});
+	return path.join(packageDirectory, pack.stdout);
+};
+
 export default testSuite(({ describe }, nodePath: string) => {
-	describe('publish mode', ({ test }) => {
-		test('links', async ({ onTestFinish }) => {
-			await using fixture = await createFixture('./tests/fixtures/');
-			onTestFinish(async () => await fixture.rm());
+	describe('publish mode', async ({ test }) => {
+		await using fixture = await createFixture('./tests/fixtures/');
 
-			const packageFiles = path.join(fixture.path, 'package-files');
-			const statOriginalFile = await fs.stat(path.join(packageFiles, 'package.json'));
+		// Prepare tarball to install
+		const packageFilesPath = fixture.getPath('package-files');
+		const statOriginalFile = await fs.stat(fixture.getPath('package-files/package.json'));
+		const tarballPath = await npmPack(packageFilesPath);
 
-			const pack = await execa('npm', ['pack'], {
-				cwd: packageFiles,
-			});
-			const tarballPath = path.join(packageFiles, pack.stdout);
-
-			const entryPackagePath = path.join(fixture.path, 'package-entry');
+		await test('links', async () => {
+			const entryPackagePath = fixture.getPath('package-entry');
 			await execa('npm', [
 				'install',
 				'--no-save',
@@ -29,21 +32,51 @@ export default testSuite(({ describe }, nodePath: string) => {
 			});
 
 			const statBeforeLink = await fs.stat(path.join(entryPackagePath, 'node_modules/package-files/package.json'));
+			expect(statBeforeLink.ino).not.toBe(statOriginalFile.ino);
 
 			const linked = await link([
 				'publish',
-				packageFiles,
+				packageFilesPath,
 			], {
 				cwd: entryPackagePath,
 				nodePath,
 			});
 			expect(linked.exitCode).toBe(0);
 
+			// Assert hardlink to be established by comparing inodes
 			const statAfterLink = await fs.stat(path.join(entryPackagePath, 'node_modules/package-files/package.json'));
-			expect(statBeforeLink.ino).not.toBe(statAfterLink.ino);
-
-			// Assert hardlink
 			expect(statAfterLink.ino).toBe(statOriginalFile.ino);
 		});
+
+		// await test('watch mode', async () => {
+		// 	const entryPackagePath = fixture.getPath('package-entry');
+		// 	await execa('npm', [
+		// 		'install',
+		// 		'--no-save',
+		// 		tarballPath,
+		// 	], {
+		// 		cwd: entryPackagePath,
+		// 	});
+
+		// 	const statBeforeLink = await fs.stat(path.join(entryPackagePath, 'node_modules/package-files/package.json'));
+		// 	expect(statBeforeLink.ino).not.toBe(statOriginalFile.ino);
+
+		// 	const watchMode = link([
+		// 		'publish',
+		// 		'--watch',
+		// 		packageFilesPath,
+		// 	], {
+		// 		cwd: entryPackagePath,
+		// 		nodePath,
+		// 	});
+
+		// 	watchMode.stdout?.on('data', async (data) => {
+		// 		console.log('data', data.toString());
+		// 	});
+
+		// 	// // Assert hardlink to be established by comparing inodes
+		// 	// const statAfterLink = await fs.stat(path.join(entryPackagePath, 'node_modules/package-files/package.json'));
+		// 	// expect(statAfterLink.ino).toBe(statOriginalFile.ino);
+		// });
 	});
 });

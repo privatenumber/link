@@ -8,13 +8,13 @@ type Options = {
 	nodePath: string;
 };
 
-export const link = async (
+export const link = (
 	cliArguments: string[],
 	{
 		cwd,
 		nodePath,
 	}: Options,
-) => await execaNode(
+) => execaNode(
 	linkBinPath,
 	cliArguments,
 	{
