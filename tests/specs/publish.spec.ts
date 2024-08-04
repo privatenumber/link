@@ -4,22 +4,18 @@ import { testSuite, expect } from 'manten';
 import { execa } from 'execa';
 import { createFixture } from 'fs-fixture';
 import { link } from '../utils/link.js';
+import { npmPack } from '../utils/npm-pack.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('publish mode', ({ test }) => {
-		test('links', async ({ onTestFinish }) => {
+		test('links', async () => {
 			await using fixture = await createFixture('./tests/fixtures/');
-			onTestFinish(async () => await fixture.rm());
 
-			const packageFiles = path.join(fixture.path, 'package-files');
-			const statOriginalFile = await fs.stat(path.join(packageFiles, 'package.json'));
+			const packageFilesPath = fixture.getPath('package-files');
+			const statOriginalFile = await fs.stat(fixture.getPath('package-files/package.json'));
+			const tarballPath = await npmPack(packageFilesPath);
+			const entryPackagePath = fixture.getPath('package-entry');
 
-			const pack = await execa('npm', ['pack'], {
-				cwd: packageFiles,
-			});
-			const tarballPath = path.join(packageFiles, pack.stdout);
-
-			const entryPackagePath = path.join(fixture.path, 'package-entry');
 			await execa('npm', [
 				'install',
 				'--no-save',
@@ -32,7 +28,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const linked = await link([
 				'publish',
-				packageFiles,
+				packageFilesPath,
 			], {
 				cwd: entryPackagePath,
 				nodePath,
