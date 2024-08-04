@@ -1,25 +1,23 @@
-import fs from 'fs/promises';
-import path from 'path';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import { testSuite, expect } from 'manten';
 import { execa } from 'execa';
 import { createFixture } from 'fs-fixture';
-import { link } from '../utils';
+import { link } from '../utils/link.js';
+import { streamWaitFor } from '../utils/stream-wait-for.js';
+import { npmPack } from '../utils/npm-pack.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
-	describe('publish mode', ({ test }) => {
-		test('links', async ({ onTestFinish }) => {
-			await using fixture = await createFixture('./tests/fixtures/');
-			onTestFinish(async () => await fixture.rm());
+	describe('publish mode', async ({ test }) => {
+		await using fixture = await createFixture('./tests/fixtures/');
 
-			const packageFiles = path.join(fixture.path, 'package-files');
-			const statOriginalFile = await fs.stat(path.join(packageFiles, 'package.json'));
+		// Prepare tarball to install
+		const packageFilesPath = fixture.getPath('package-files');
+		const statOriginalFile = await fs.stat(fixture.getPath('package-files/package.json'));
+		const tarballPath = await npmPack(packageFilesPath);
+		const entryPackagePath = fixture.getPath('package-entry');
 
-			const pack = await execa('npm', ['pack'], {
-				cwd: packageFiles,
-			});
-			const tarballPath = path.join(packageFiles, pack.stdout);
-
-			const entryPackagePath = path.join(fixture.path, 'package-entry');
+		await test('hard links', async () => {
 			await execa('npm', [
 				'install',
 				'--no-save',
@@ -29,21 +27,49 @@ export default testSuite(({ describe }, nodePath: string) => {
 			});
 
 			const statBeforeLink = await fs.stat(path.join(entryPackagePath, 'node_modules/package-files/package.json'));
+			expect(statBeforeLink.ino).not.toBe(statOriginalFile.ino);
 
 			const linked = await link([
 				'publish',
-				packageFiles,
+				packageFilesPath,
 			], {
 				cwd: entryPackagePath,
 				nodePath,
 			});
 			expect(linked.exitCode).toBe(0);
 
+			// Assert hardlink to be established by comparing inodes
 			const statAfterLink = await fs.stat(path.join(entryPackagePath, 'node_modules/package-files/package.json'));
-			expect(statBeforeLink.ino).not.toBe(statAfterLink.ino);
-
-			// Assert hardlink
 			expect(statAfterLink.ino).toBe(statOriginalFile.ino);
+		});
+
+		await test('watch mode', async () => {
+			const watchMode = link([
+				'publish',
+				'--watch',
+				packageFilesPath,
+			], {
+				cwd: entryPackagePath,
+				nodePath,
+			});
+
+			// Wait for initial hardlink
+			await streamWaitFor(watchMode.stdout!, '✔');
+
+			// Should trigger watch because lib is in files
+			fixture.writeFile('package-files/lib/file-a.js', 'file-a');
+			await streamWaitFor(watchMode.stdout!, 'lib/file-a.js');
+
+			// Should not trigger watch because it's not in lib
+			await fixture.writeFile('package-files/file-b.js', 'file-b');
+			await expect(
+				() => streamWaitFor(watchMode.stdout!, 'file-b.js', 1000),
+			).rejects.toThrow('Timeout');
+
+			watchMode.kill();
+			await watchMode;
+		}, {
+			timeout: 5000,
 		});
 	});
 });

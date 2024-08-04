@@ -5,6 +5,8 @@ import { readJsonFile } from './read-json-file';
 
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 
+export type PackageJsonWithName = WithRequired<PackageJson, 'name'>;
+
 export const readPackageJson = async (
 	packagePath: string,
 ) => {
@@ -21,5 +23,5 @@ export const readPackageJson = async (
 		throw new Error(`package.json must contain a name: ${packageJsonPath}`);
 	}
 
-	return packageJson as WithRequired<PackageJson, 'name'>;
+	return packageJson as PackageJsonWithName;
 };

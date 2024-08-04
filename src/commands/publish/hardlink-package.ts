@@ -10,6 +10,10 @@ export const hardlinkPackage = async (
 	linkPath: string,
 	absoluteLinkPackagePath: string,
 	packageJson: PackageJsonWithName,
+	publishFilesPromise: string[] | Promise<string[]> = getNpmPacklist(
+		absoluteLinkPackagePath,
+		packageJson,
+	),
 ) => {
 	const [oldPublishFiles, publishFiles] = await Promise.all([
 		getNpmPacklist(
@@ -21,10 +25,7 @@ export const hardlinkPackage = async (
 			 */
 			packageJson,
 		),
-		getNpmPacklist(
-			absoluteLinkPackagePath,
-			packageJson,
-		),
+		publishFilesPromise,
 	]);
 
 	console.log(`Linking ${magenta(packageJson.name)} in publish mode:`);
