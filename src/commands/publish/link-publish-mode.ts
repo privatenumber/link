@@ -12,6 +12,29 @@ import { cwdPath } from '../../utils/cwd-path.js';
 import { getPrettyTime } from '../../utils/get-pretty-time.js';
 import { hardlinkPackage } from './hardlink-package.js';
 
+const isValidSetup = async (
+	linkPath: string,
+	expectedPrefix: string,
+) => {
+	const linkPathStat = await fs.stat(linkPath).catch(() => null);
+	if (!linkPathStat?.isDirectory()) {
+		return false;
+	}
+
+	/**
+	 * If it's a symlink, make sure it's in the node_modules directory of the base package.
+	 * e.g. This could happen with pnpm
+	 *
+	 * If it's not, it might be a development directory and we don't want to overwrite it.
+	 */
+	const linkPathReal = await fs.realpath(linkPath);
+	if (!linkPathReal.startsWith(expectedPrefix)) {
+		return false;
+	}
+
+	return true;
+};
+
 export const linkPublishMode = async (
 	basePackagePath: string,
 	linkPackagePath: string,
@@ -21,9 +44,8 @@ export const linkPublishMode = async (
 	const packageJson = await readPackageJson(absoluteLinkPackagePath);
 	const expectedPrefix = path.join(basePackagePath, 'node_modules/');
 	const linkPath = path.join(expectedPrefix, packageJson.name);
-	const linkPathStat = await fs.stat(linkPath).catch(() => null);
 
-	if (!linkPathStat?.isDirectory()) {
+	if (!(await isValidSetup(linkPath, expectedPrefix))) {
 		console.error(
 			outdent`
 			Error: Package ${magenta(packageJson.name)} is not set up
@@ -44,19 +66,7 @@ export const linkPublishMode = async (
 		return;
 	}
 
-	/**
-	 * If it's a symlink, make sure it's in the node_modules directory of the base package.
-	 * e.g. This could happen with pnpm
-	 *
-	 * If it's not, it might be a development directory and we don't want to overwrite it.
-	 */
-	const linkPathReal = await fs.realpath(linkPath);
-	if (!linkPathReal.startsWith(expectedPrefix)) {
-		return;
-	}
-
 	const throttledHardlinkPackage = throttle(hardlinkPackage, 500);
-
 	await throttledHardlinkPackage(
 		linkPath,
 		absoluteLinkPackagePath,
