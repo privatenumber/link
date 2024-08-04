@@ -6,9 +6,9 @@ import outdent from 'outdent';
 import {
 	green, magenta, cyan, bold, dim,
 } from 'kolorist';
-import { readPackageJson } from '../utils/read-package-json.js';
-import { hardlink } from '../utils/symlink.js';
-import { cwdPath } from '../utils/cwd-path.js';
+import { readPackageJson } from '../../utils/read-package-json.js';
+import { hardlink } from '../../utils/symlink.js';
+import { cwdPath } from '../../utils/cwd-path.js';
 
 const linkPackage = async (
 	basePackagePath: string,
@@ -106,35 +106,33 @@ const linkPackage = async (
 	);
 };
 
-export default {
-	command: command({
-		name: 'publish',
-		parameters: ['<package paths...>'],
-		flags: {
-			// watch: {
-			// 	type: Boolean,
-			// 	alias: 'w',
-			// 	description: 'Watch for changes in the package and automatically relink',
-			// },
-		},
-		help: {
-			description: 'Link a package to simulate an environment similar to `npm install`',
-		},
-	}),
-
-	handler: async (
-		cwdProjectPath: string,
-		packagePaths: string[],
-	) => {
-		if (packagePaths.length > 0) {
-			await Promise.all(
-				packagePaths.map(
-					linkPackagePath => linkPackage(
-						cwdProjectPath,
-						linkPackagePath,
-					),
-				),
-			);
-		}
+export const publishCommand = command({
+	name: 'publish',
+	parameters: ['<package paths...>'],
+	flags: {
+		// watch: {
+		// 	type: Boolean,
+		// 	alias: 'w',
+		// 	description: 'Watch for changes in the package and automatically relink',
+		// },
 	},
+	help: {
+		description: 'Link a package to simulate an environment similar to `npm install`',
+	},
+});
+
+export const publishHandler = async (
+	cwdProjectPath: string,
+	packagePaths: string[],
+) => {
+	if (packagePaths.length > 0) {
+		await Promise.all(
+			packagePaths.map(
+				linkPackagePath => linkPackage(
+					cwdProjectPath,
+					linkPackagePath,
+				),
+			),
+		);
+	}
 };

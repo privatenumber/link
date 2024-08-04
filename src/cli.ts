@@ -3,7 +3,7 @@ import { cli } from 'cleye';
 import outdent from 'outdent';
 import { linkPackage, linkFromConfig } from './link-package';
 import { loadConfig } from './utils/load-config';
-import publish from './commands/publish';
+import { publishCommand, publishHandler } from './commands/publish';
 
 (async () => {
 	const argv = cli({
@@ -34,7 +34,7 @@ import publish from './commands/publish';
 			},
 		},
 		commands: [
-			publish.command,
+			publishCommand,
 		],
 	});
 
@@ -77,7 +77,7 @@ import publish from './commands/publish';
 			},
 		);
 	} else if (argv.command === 'publish') {
-		await publish.handler(cwdProjectPath, argv._);
+		await publishHandler(cwdProjectPath, argv._);
 	}
 })().catch((error) => {
 	console.error('Error:', error.message);
