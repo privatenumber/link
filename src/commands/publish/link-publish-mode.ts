@@ -28,11 +28,7 @@ const isValidSetup = async (
 	 * If it's not, it might be a development directory and we don't want to overwrite it.
 	 */
 	const linkPathReal = await fs.realpath(linkPath);
-	if (!linkPathReal.startsWith(expectedPrefix)) {
-		return false;
-	}
-
-	return true;
+	return linkPathReal.startsWith(expectedPrefix);
 };
 
 export const linkPublishMode = async (
