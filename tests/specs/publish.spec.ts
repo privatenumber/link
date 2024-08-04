@@ -1,5 +1,5 @@
-import fs from 'fs/promises';
-import path from 'path';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import { testSuite, expect } from 'manten';
 import { execa } from 'execa';
 import { createFixture } from 'fs-fixture';
@@ -8,7 +8,7 @@ import { npmPack } from '../utils/npm-pack.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('publish mode', ({ test }) => {
-		test('links', async () => {
+		test('hard links', async () => {
 			await using fixture = await createFixture('./tests/fixtures/');
 
 			const packageFilesPath = fixture.getPath('package-files');
@@ -25,6 +25,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			});
 
 			const statBeforeLink = await fs.stat(path.join(entryPackagePath, 'node_modules/package-files/package.json'));
+			expect(statBeforeLink.ino).not.toBe(statOriginalFile.ino);
 
 			const linked = await link([
 				'publish',
@@ -35,10 +36,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			});
 			expect(linked.exitCode).toBe(0);
 
+			// Assert hardlink to be established by comparing inodes
 			const statAfterLink = await fs.stat(path.join(entryPackagePath, 'node_modules/package-files/package.json'));
-			expect(statBeforeLink.ino).not.toBe(statAfterLink.ino);
-
-			// Assert hardlink
 			expect(statAfterLink.ino).toBe(statOriginalFile.ino);
 		});
 	});
