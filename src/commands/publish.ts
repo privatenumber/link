@@ -6,8 +6,9 @@ import outdent from 'outdent';
 import {
 	green, magenta, cyan, bold, dim,
 } from 'kolorist';
-import { readPackageJson } from '../utils/read-package-json';
-import { hardlink } from '../utils/symlink';
+import { readPackageJson } from '../utils/read-package-json.js';
+import { hardlink } from '../utils/symlink.js';
+import { cwdPath } from '../utils/cwd-path.js';
 
 const linkPackage = async (
 	basePackagePath: string,
@@ -49,7 +50,7 @@ const linkPackage = async (
 				}),
 			]);
 
-			console.log(`Symlinking ${magenta(packageJson.name)}:`);
+			console.log(`Linking ${magenta(packageJson.name)} in publish mode:`);
 			await Promise.all(
 				publishFiles.map(async (file) => {
 					const sourcePath = path.join(absoluteLinkPackagePath, file);
@@ -67,7 +68,12 @@ const linkPackage = async (
 						oldPublishFiles.splice(fileIndex, 1);
 					}
 
-					console.log(`  ${green('✔')}`, cyan(path.relative(basePackagePath, targetPath)), '→', cyan(path.relative(basePackagePath, sourcePath)));
+					console.log(
+						`  ${green('✔')}`,
+						cyan(cwdPath(targetPath)),
+						'→',
+						cyan(cwdPath(sourcePath)),
+					);
 				}),
 			);
 
