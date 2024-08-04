@@ -59,7 +59,19 @@ const linkPackage = async (
 
 	const throttledHardlinkPackage = throttle(hardlinkPackage, 500);
 
-	await throttledHardlinkPackage(basePackagePath, linkPath, absoluteLinkPackagePath, packageJson);
+	const publishFiles = await packlist({
+		path: absoluteLinkPackagePath,
+		package: packageJson,
+		// @ts-expect-error outdated types
+		edgesOut,
+	});
+	await throttledHardlinkPackage(
+		basePackagePath,
+		linkPath,
+		absoluteLinkPackagePath,
+		packageJson,
+		publishFiles,
+	);
 
 	if (watchMode) {
 		const options = {
@@ -111,7 +123,13 @@ const linkPackage = async (
 			}
 
 			console.log(eventType, path.join(absoluteLinkPackagePath, filename));
-			await throttledHardlinkPackage(basePackagePath, linkPath, absoluteLinkPackagePath, packageJson);
+			await throttledHardlinkPackage(
+				basePackagePath,
+				linkPath,
+				absoluteLinkPackagePath,
+				packageJson,
+				publishFiles,
+			);
 		}
 	}
 };
@@ -121,29 +139,19 @@ const hardlinkPackage = async (
 	linkPath: string,
 	absoluteLinkPackagePath: string,
 	packageJson: PackageJsonWithName,
+	publishFiles: string[],
 ) => {
-	const [
-		oldPublishFiles,
-		publishFiles,
-	] = await Promise.all([
-		packlist({
-			path: linkPath,
+	const oldPublishFiles = await packlist({
+		path: linkPath,
 
-			/**
-			 * This is evaluated in the context of the new package.json since that
-			 * defines which files belong to the package.
-			 */
-			package: packageJson,
-			// @ts-expect-error outdated types
-			edgesOut,
-		}),
-		packlist({
-			path: absoluteLinkPackagePath,
-			package: packageJson,
-			// @ts-expect-error outdated types
-			edgesOut,
-		}),
-	]);
+		/**
+		 * This is evaluated in the context of the new package.json since that
+		 * defines which files belong to the package.
+		 */
+		package: packageJson,
+		// @ts-expect-error outdated types
+		edgesOut,
+	});
 
 	console.log(`Symlinking ${magenta(packageJson.name)}:`);
 	await Promise.all(

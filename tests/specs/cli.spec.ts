@@ -3,7 +3,7 @@ import path from 'path';
 import { testSuite, expect } from 'manten';
 import { execa, execaNode } from 'execa';
 import { createFixture } from 'fs-fixture';
-import { link } from '../utils';
+import { link } from '../utils/link';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('cli', ({ test, describe }) => {

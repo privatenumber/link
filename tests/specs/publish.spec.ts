@@ -1,43 +1,11 @@
-import fs from 'fs/promises';
-import path from 'path';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import { testSuite, expect } from 'manten';
 import { execa } from 'execa';
 import { createFixture } from 'fs-fixture';
-import { link } from '../utils';
-import { Readable } from 'stream';
-
-const waitFor = (
-	stream: Readable,
-	match: string,
-	timeout = 5000,
-) => {
-	let listener: (data: Buffer) => void;
-	let timeoutId: NodeJS.Timeout;
-	return new Promise<void>((resolve, reject) => {
-		listener = (data) => {
-			const str = data.toString();
-			if (str.includes(match)) {
-				resolve();
-			}
-		};
-	
-		stream.on('data', listener);
-		timeoutId = setTimeout(
-			() => reject(new Error('Timeout')),
-			timeout,
-		);
-	}).finally(() => {
-		clearTimeout(timeoutId);
-		stream.off('data', listener);	
-	});
-};
-
-const npmPack = async (packageDirectory: string) => {
-	const pack = await execa('npm', ['pack'], {
-		cwd: packageDirectory,
-	});
-	return path.join(packageDirectory, pack.stdout);
-};
+import { link } from '../utils/link';
+import { streamWaitFor } from '../utils/stream-wait-for';
+import { npmPack } from '../utils/npm-pack';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('publish mode', async ({ test }) => {
@@ -86,16 +54,16 @@ export default testSuite(({ describe }, nodePath: string) => {
 			});
 
 			// Wait for initial hardlink
-			await waitFor(watchMode.stdout!, '✔');
+			await streamWaitFor(watchMode.stdout!, '✔');
 
 			// Should trigger watch because lib is in files
 			fixture.writeFile('package-files/lib/file-a.js', 'file-a');
-			await waitFor(watchMode.stdout!, 'lib/file-a.js');
+			await streamWaitFor(watchMode.stdout!, 'lib/file-a.js');
 
 			// Should not trigger watch because it's not in lib
 			await fixture.writeFile('package-files/file-b.js', 'file-b');
 
-			await expect(() => waitFor(watchMode.stdout!, 'file-b.js', 1000)).rejects.toThrow('Timeout');
+			await expect(() => streamWaitFor(watchMode.stdout!, 'file-b.js', 1000)).rejects.toThrow('Timeout');
 			watchMode.kill();
 
 			await watchMode;
