@@ -70,10 +70,15 @@ export const linkPublishMode = async (
 	);
 
 	if (watchMode) {
-		const options = {
+		const globOptions = {
 			globstar: true,
 			extended: true,
 		};
+
+		/**
+		 * npm-packlist ignore list:
+		 * https://github.com/npm/npm-packlist/blob/v8.0.2/lib/index.js#L15-L38
+		 */
 		const ignoreFiles = [
 			// Files
 			'**/{npm-debug.log,*.orig,package-lock.json,yarn.lock,pnpm-lock.yaml}',
@@ -86,7 +91,7 @@ export const linkPublishMode = async (
 
 			// Hidden folders
 			'**/.{_*,git,svn,hg,CVS}/**',
-		].map(glob => globToRegexp(glob, options));
+		].map(glob => globToRegexp(glob, globOptions));
 
 		const ac = new AbortController();
 		const watcher = fs.watch(

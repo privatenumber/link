@@ -15,7 +15,7 @@ const logHardlink = (
 	targetPath: string,
 ) => {
 	console.log(`  ${green('✔')}`, cyan(path.relative(basePackagePath, targetPath)), '→', cyan(path.relative(basePackagePath, sourcePath)));
-}
+};
 
 const linkPackage = async (
 	basePackagePath: string,
@@ -137,7 +137,8 @@ export default {
 	handler: async (
 		cwdProjectPath: string,
 		packagePaths: string[],
-		flags: { watch?: boolean, help?: boolean},
+		flags: { watch?: boolean;
+			help?: boolean; },
 	) => {
 		if (packagePaths.length > 0) {
 			await Promise.all(
