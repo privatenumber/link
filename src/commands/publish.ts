@@ -1,7 +1,6 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { command } from 'cleye';
-import packlist from 'npm-packlist';
 import outdent from 'outdent';
 import throttle from 'throttleit';
 import globToRegexp from 'glob-to-regexp';
@@ -10,9 +9,7 @@ import {
 } from 'kolorist';
 import { readPackageJson, type PackageJsonWithName } from '../utils/read-package-json';
 import { hardlink } from '../utils/symlink';
-
-// Only to silence types
-const edgesOut = new Map();
+import { getNpmPacklist } from '../utils/get-npm-packlist';
 
 const linkPackage = async (
 	basePackagePath: string,
@@ -59,18 +56,11 @@ const linkPackage = async (
 
 	const throttledHardlinkPackage = throttle(hardlinkPackage, 500);
 
-	const publishFiles = await packlist({
-		path: absoluteLinkPackagePath,
-		package: packageJson,
-		// @ts-expect-error outdated types
-		edgesOut,
-	});
 	await throttledHardlinkPackage(
 		basePackagePath,
 		linkPath,
 		absoluteLinkPackagePath,
 		packageJson,
-		publishFiles,
 	);
 
 	if (watchMode) {
@@ -111,12 +101,10 @@ const linkPackage = async (
 				continue;
 			}
 
-			const publishFiles = await packlist({
-				path: absoluteLinkPackagePath,
-				package: packageJson,
-				// @ts-expect-error outdated types
-				edgesOut,
-			});
+			const publishFiles = await getNpmPacklist(
+				absoluteLinkPackagePath,
+				packageJson,
+			);
 
 			if (!publishFiles.includes(filename)) {
 				continue;
@@ -139,19 +127,23 @@ const hardlinkPackage = async (
 	linkPath: string,
 	absoluteLinkPackagePath: string,
 	packageJson: PackageJsonWithName,
-	publishFiles: string[],
+	publishFilesPromise: string[] | Promise<string[]> = getNpmPacklist(
+		absoluteLinkPackagePath,
+		packageJson,
+	),
 ) => {
-	const oldPublishFiles = await packlist({
-		path: linkPath,
+	const [oldPublishFiles, publishFiles] = await Promise.all([
+		getNpmPacklist(
+			linkPath,
 
-		/**
-		 * This is evaluated in the context of the new package.json since that
-		 * defines which files belong to the package.
-		 */
-		package: packageJson,
-		// @ts-expect-error outdated types
-		edgesOut,
-	});
+			/**
+			 * This is evaluated in the context of the new package.json since that
+			 * defines which files belong to the package.
+			 */
+			packageJson,
+		),
+		publishFilesPromise,
+	]);
 
 	console.log(`Symlinking ${magenta(packageJson.name)}:`);
 	await Promise.all(
