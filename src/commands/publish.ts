@@ -1,17 +1,23 @@
-import path from 'path';
-import fs from 'fs/promises';
+import path from 'node:path';
+import fs from 'node:fs/promises';
 import { command } from 'cleye';
 import packlist from 'npm-packlist';
 import outdent from 'outdent';
+import throttle from 'throttleit';
+import globToRegexp from 'glob-to-regexp';
 import {
 	green, magenta, cyan, bold, dim,
 } from 'kolorist';
-import { readPackageJson } from '../utils/read-package-json';
+import { readPackageJson, type PackageJsonWithName } from '../utils/read-package-json';
 import { hardlink } from '../utils/symlink';
+
+// Only to silence types
+const edgesOut = new Map();
 
 const linkPackage = async (
 	basePackagePath: string,
 	linkPackagePath: string,
+	watchMode?: boolean,
 ) => {
 	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
 	const packageJson = await readPackageJson(absoluteLinkPackagePath);
@@ -51,10 +57,77 @@ const linkPackage = async (
 		return;
 	}
 
-	const edgesOut = new Map();
-	const [oldPublishFiles, publishFiles] = await Promise.all([
+	const throttledHardlinkPackage = throttle(hardlinkPackage, 500);
+
+	await throttledHardlinkPackage(basePackagePath, linkPath, absoluteLinkPackagePath, packageJson);
+
+	if (watchMode) {
+		const options = {
+			globstar: true,
+			extended: true,
+		};
+		const ignoreFiles = [
+			// Files
+			globToRegexp('**/{npm-debug.log,*.orig,package-lock.json,yarn.lock,pnpm-lock.yaml}', options),
+
+			// Folders
+			globToRegexp('**/node_modules/**', options),
+
+			// Hidden files
+			globToRegexp('**/.{_*,*.swp,DS_Store,gitignore,npmrc,npmignore,lock-wscript,.wafpickle-*}', options),
+
+			// Hidden folders
+			globToRegexp('**/.{_*,git,svn,hg,CVS}/**', options),
+		];
+
+		const ac = new AbortController();
+		const watcher = fs.watch(
+			absoluteLinkPackagePath,
+			{
+				recursive: true,
+				signal: ac.signal,
+			},
+		);
+
+		for await (const { eventType, filename } of watcher) {
+			if (!filename) {
+				continue;
+			}
+
+			const shouldIgnore = ignoreFiles.some(ignoreFile => ignoreFile.test(filename));
+			if (shouldIgnore) {
+				continue;
+			}
+
+			const publishFiles = await packlist({
+				path: absoluteLinkPackagePath,
+				package: packageJson,
+				// @ts-expect-error outdated types
+				edgesOut,
+			});
+
+			if (!publishFiles.includes(filename)) {
+				continue;
+			}
+
+			console.log(eventType, path.join(absoluteLinkPackagePath, filename));
+			await throttledHardlinkPackage(basePackagePath, linkPath, absoluteLinkPackagePath, packageJson);
+		}
+	}
+};
+
+const hardlinkPackage = async (
+	basePackagePath: string,
+	linkPath: string,
+	absoluteLinkPackagePath: string,
+	packageJson: PackageJsonWithName,
+) => {
+	const [
+		oldPublishFiles,
+		publishFiles,
+	] = await Promise.all([
 		packlist({
-			path: linkPathReal,
+			path: linkPath,
 
 			/**
 			 * This is evaluated in the context of the new package.json since that
@@ -129,6 +202,7 @@ export default {
 					linkPackagePath => linkPackage(
 						cwdProjectPath,
 						linkPackagePath,
+						flags.watch,
 					),
 				),
 			);

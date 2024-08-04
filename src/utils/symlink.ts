@@ -45,6 +45,17 @@ export const hardlink = async (
 	hardlinkPath: string,
 ) => {
 	if (await fsExists(hardlinkPath)) {
+		const [
+			existingStat,
+			sourceStat,
+		] = await Promise.all([
+			fs.stat(hardlinkPath),
+			fs.stat(sourcePath),
+		]);
+		if (existingStat.ino === sourceStat.ino) {
+			return;
+		}
+
 		await fs.rm(hardlinkPath, {
 			recursive: true,
 		});
