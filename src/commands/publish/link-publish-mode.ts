@@ -1,6 +1,5 @@
 import path from 'path';
 import fs from 'fs/promises';
-import packlist from 'npm-packlist';
 import outdent from 'outdent';
 import {
 	green, magenta, cyan, bold, dim,
@@ -8,6 +7,7 @@ import {
 import { readPackageJson } from '../../utils/read-package-json.js';
 import { hardlink } from '../../utils/symlink.js';
 import { cwdPath } from '../../utils/cwd-path.js';
+import { getNpmPacklist } from '../../utils/get-npm-packlist.js';
 
 export const linkPublishMode = async (
 	basePackagePath: string,
@@ -28,25 +28,20 @@ export const linkPublishMode = async (
 		 */
 		const linkPathReal = await fs.realpath(linkPath);
 		if (linkPathReal.startsWith(expectedPrefix)) {
-			const edgesOut = new Map();
 			const [oldPublishFiles, publishFiles] = await Promise.all([
-				packlist({
-					path: linkPathReal,
+				getNpmPacklist(
+					linkPathReal,
 
 					/**
 					 * This is evaluated in the context of the new package.json since that
 					 * defines which files belong to the package.
 					 */
-					package: packageJson,
-					// @ts-expect-error outdated types
-					edgesOut,
-				}),
-				packlist({
-					path: absoluteLinkPackagePath,
-					package: packageJson,
-					// @ts-expect-error outdated types
-					edgesOut,
-				}),
+					packageJson,
+				),
+				getNpmPacklist(
+					absoluteLinkPackagePath,
+					packageJson,
+				),
 			]);
 
 			console.log(`Linking ${magenta(packageJson.name)} in publish mode:`);
