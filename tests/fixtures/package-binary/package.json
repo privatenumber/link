@@ -1,6 +1,0 @@
-{
-	"name": "package-binary",
-	"bin": {
-		"binary": "./binary.js"
-	}
-}
