@@ -4,9 +4,9 @@ import { green, magenta, cyan } from 'kolorist';
 import type { PackageJsonWithName } from '../../utils/read-package-json';
 import { hardlink } from '../../utils/symlink';
 import { getNpmPacklist } from '../../utils/get-npm-packlist';
+import { cwdPath } from '../../utils/cwd-path.js';
 
 export const hardlinkPackage = async (
-	basePackagePath: string,
 	linkPath: string,
 	absoluteLinkPackagePath: string,
 	packageJson: PackageJsonWithName,
@@ -28,7 +28,7 @@ export const hardlinkPackage = async (
 		publishFilesPromise,
 	]);
 
-	console.log(`Symlinking ${magenta(packageJson.name)}:`);
+	console.log(`Linking ${magenta(packageJson.name)} in publish mode:`);
 	await Promise.all(
 		publishFiles.map(async (file) => {
 			const sourcePath = path.join(absoluteLinkPackagePath, file);
@@ -48,9 +48,9 @@ export const hardlinkPackage = async (
 
 			console.log(
 				`  ${green('✔')}`,
-				cyan(path.relative(basePackagePath, targetPath)),
+				cyan(cwdPath(targetPath)),
 				'→',
-				cyan(path.relative(basePackagePath, sourcePath)),
+				cyan(cwdPath(sourcePath)),
 			);
 		}),
 	);
