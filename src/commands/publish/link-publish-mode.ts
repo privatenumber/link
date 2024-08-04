@@ -9,14 +9,8 @@ import {
 import { readPackageJson } from '../../utils/read-package-json.js';
 import { getNpmPacklist } from '../../utils/get-npm-packlist.js';
 import { cwdPath } from '../../utils/cwd-path.js';
+import { getPrettyTime } from '../../utils/get-pretty-time.js';
 import { hardlinkPackage } from './hardlink-package.js';
-
-const getTime = () => (new Date()).toLocaleTimeString(undefined, {
-	hour: 'numeric',
-	minute: 'numeric',
-	second: 'numeric',
-	hour12: true,
-});
 
 export const linkPublishMode = async (
 	basePackagePath: string,
@@ -116,7 +110,7 @@ export const linkPublishMode = async (
 				continue;
 			}
 
-			console.log(`\n${dim(getTime())}`, 'Detected', yellow(eventType), 'in', `${cyan(cwdPath(path.join(absoluteLinkPackagePath, filename)))}\n`);
+			console.log(`\n${dim(getPrettyTime())}`, 'Detected', yellow(eventType), 'in', `${cyan(cwdPath(path.join(absoluteLinkPackagePath, filename)))}\n`);
 			await throttledHardlinkPackage(
 				linkPath,
 				absoluteLinkPackagePath,
