@@ -93,13 +93,9 @@ export const linkPublishMode = async (
 			'**/.{_*,git,svn,hg,CVS}/**',
 		].map(glob => globToRegexp(glob, globOptions));
 
-		const ac = new AbortController();
 		const watcher = fs.watch(
 			absoluteLinkPackagePath,
-			{
-				recursive: true,
-				signal: ac.signal,
-			},
+			{ recursive: true },
 		);
 
 		for await (const { eventType, filename } of watcher) {
