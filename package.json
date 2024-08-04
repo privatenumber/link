@@ -24,6 +24,7 @@
 		"test": "tsx tests/index.ts",
 		"dev": "tsx watch tests/index.ts",
 		"lint": "lintroll --cache --ignore-pattern=tests/fixtures .",
+		"type-check": "tsc",
 		"prepack": "pnpm build && clean-pkg-json"
 	},
 	"devDependencies": {
