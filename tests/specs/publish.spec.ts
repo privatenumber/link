@@ -17,7 +17,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 		const tarballPath = await npmPack(packageFilesPath);
 		const entryPackagePath = fixture.getPath('package-entry');
 
-		await test('links', async () => {
+		await test('hard links', async () => {
 			await execa('npm', [
 				'install',
 				'--no-save',
@@ -62,10 +62,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			// Should not trigger watch because it's not in lib
 			await fixture.writeFile('package-files/file-b.js', 'file-b');
+			await expect(
+				() => streamWaitFor(watchMode.stdout!, 'file-b.js', 1000),
+			).rejects.toThrow('Timeout');
 
-			await expect(() => streamWaitFor(watchMode.stdout!, 'file-b.js', 1000)).rejects.toThrow('Timeout');
 			watchMode.kill();
-
 			await watchMode;
 		}, {
 			timeout: 5000,
