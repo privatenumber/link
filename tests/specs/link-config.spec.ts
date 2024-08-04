@@ -2,7 +2,7 @@ import path from 'path';
 import { testSuite, expect } from 'manten';
 import { execa, execaNode } from 'execa';
 import { createFixture } from 'fs-fixture';
-import { link } from '../utils/link';
+import { link } from '../utils/link.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('link.config.json', ({ test, describe }) => {

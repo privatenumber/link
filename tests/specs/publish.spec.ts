@@ -3,9 +3,9 @@ import path from 'node:path';
 import { testSuite, expect } from 'manten';
 import { execa } from 'execa';
 import { createFixture } from 'fs-fixture';
-import { link } from '../utils/link';
-import { streamWaitFor } from '../utils/stream-wait-for';
-import { npmPack } from '../utils/npm-pack';
+import { link } from '../utils/link.js';
+import { streamWaitFor } from '../utils/stream-wait-for.js';
+import { npmPack } from '../utils/npm-pack.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('publish mode', async ({ test }) => {
