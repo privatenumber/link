@@ -3871,7 +3871,18 @@ const hardlinkPackage = async (linkPath, absoluteLinkPackagePath, packageJson, p
         path$2.dirname(targetPath),
         { recursive: true }
       );
-      await hardlink(sourcePath, targetPath);
+      try {
+        await hardlink(sourcePath, targetPath);
+      } catch (error) {
+        console.warn(
+          `  ${red("\u2716 Failed to link")}`,
+          cyan(cwdPath(targetPath)),
+          "\u2192",
+          cyan(cwdPath(sourcePath)),
+          error.message ?? error
+        );
+        return;
+      }
       const fileIndex = oldPublishFiles.indexOf(file);
       if (fileIndex > -1) {
         oldPublishFiles.splice(fileIndex, 1);
@@ -3886,8 +3897,10 @@ const hardlinkPackage = async (linkPath, absoluteLinkPackagePath, packageJson, p
   );
   await Promise.all(
     oldPublishFiles.map(async (file) => {
-      const cleanPath = path$2.join(linkPath, file);
-      await fs$2.rm(cleanPath);
+      try {
+        await fs$2.rm(path$2.join(linkPath, file));
+      } catch {
+      }
     })
   );
 };
