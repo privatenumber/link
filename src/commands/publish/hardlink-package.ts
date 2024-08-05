@@ -1,6 +1,8 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
-import { green, magenta, cyan } from 'kolorist';
+import {
+	green, red, magenta, cyan,
+} from 'kolorist';
 import type { PackageJsonWithName } from '../../utils/read-package-json';
 import { hardlink } from '../../utils/symlink';
 import { getNpmPacklist } from '../../utils/get-npm-packlist';
@@ -39,8 +41,20 @@ export const hardlinkPackage = async (
 				{ recursive: true },
 			);
 
-			await hardlink(sourcePath, targetPath);
+			try {
+				await hardlink(sourcePath, targetPath);
+			} catch (error) {
+				console.warn(
+					`  ${red('✖ Failed to link')}`,
+					cyan(cwdPath(targetPath)),
+					'→',
+					cyan(cwdPath(sourcePath)),
+					(error as Error).message ?? error,
+				);
+				return;
+			}
 
+			// Don't delete files that are still in the new publish list
 			const fileIndex = oldPublishFiles.indexOf(file);
 			if (fileIndex > -1) {
 				oldPublishFiles.splice(fileIndex, 1);
@@ -57,8 +71,9 @@ export const hardlinkPackage = async (
 
 	await Promise.all(
 		oldPublishFiles.map(async (file) => {
-			const cleanPath = path.join(linkPath, file);
-			await fs.rm(cleanPath);
+			try {
+				await fs.rm(path.join(linkPath, file));
+			} catch {}
 		}),
 	);
 };
