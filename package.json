@@ -20,7 +20,7 @@
 	"bin": "dist/cli.js",
 	"packageManager": "pnpm@9.4.0",
 	"scripts": {
-		"build": "pkgroll --minify",
+		"build": "pkgroll",
 		"test": "tsx tests/index.ts",
 		"dev": "tsx watch tests/index.ts",
 		"lint": "lintroll --cache --ignore-pattern=tests/fixtures .",
