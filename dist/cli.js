@@ -1,117 +1,4078 @@
 #!/usr/bin/env node
-"use strict";var ju=Object.defineProperty;var r=(t,e)=>ju(t,"name",{value:e,configurable:!0});var x=require("fs/promises"),xu=require("tty"),k=require("path"),ji=require("module"),G=require("node:path"),re=require("node:fs/promises"),ht=require("fs"),Tu=require("events"),xi=typeof document<"u"?document.currentScript:null;const Ru="known-flag",Pu="unknown-flag",Lu="argument",{stringify:ae}=JSON,Mu=/\B([A-Z])/g,Iu=r(t=>t.replace(Mu,"-$1").toLowerCase(),"v$1"),{hasOwnProperty:Nu}=Object.prototype,oe=r((t,e)=>Nu.call(t,e),"w$2"),_u=r(t=>Array.isArray(t),"L$2"),pt=r(t=>typeof t=="function"?[t,!1]:_u(t)?[t[0],!0]:pt(t.type),"b$2"),Wu=r((t,e)=>t===Boolean?e!=="false":e,"d$2"),Gu=r((t,e)=>typeof e=="boolean"?e:t===Number&&e===""?Number.NaN:t(e),"m$1"),qu=/[\s.:=]/,zu=r(t=>{const e=`Flag name ${ae(t)}`;if(t.length===0)throw new Error(`${e} cannot be empty`);if(t.length===1)throw new Error(`${e} must be longer than a character`);const u=t.match(qu);if(u)throw new Error(`${e} cannot contain ${ae(u?.[0])}`)},"B"),Ju=r(t=>{const e={},u=r((D,n)=>{if(oe(e,D))throw new Error(`Duplicate flags named ${ae(D)}`);e[D]=n},"r");for(const D in t){if(!oe(t,D))continue;zu(D);const n=t[D],i=[[],...pt(n),n];u(D,i);const s=Iu(D);if(D!==s&&u(s,i),"alias"in n&&typeof n.alias=="string"){const{alias:a}=n,l=`Flag alias ${ae(a)} for flag ${ae(D)}`;if(a.length===0)throw new Error(`${l} cannot be empty`);if(a.length>1)throw new Error(`${l} must be a single character`);u(a,i)}}return e},"K$1"),Vu=r((t,e)=>{const u={};for(const D in t){if(!oe(t,D))continue;const[n,,i,s]=e[D];if(n.length===0&&"default"in s){let{default:a}=s;typeof a=="function"&&(a=a()),u[D]=a}else u[D]=i?n:n.pop()}return u},"_$2"),Be="--",Uu=/[.:=]/,Hu=/^-{1,2}\w/,Zu=r(t=>{if(!Hu.test(t))return;const e=!t.startsWith(Be);let u=t.slice(e?1:2),D;const n=u.match(Uu);if(n){const{index:i}=n;D=u.slice(i+1),u=u.slice(0,i)}return[u,D,e]},"N"),Xu=r((t,{onFlag:e,onArgument:u})=>{let D;const n=r((i,s)=>{if(typeof D!="function")return!0;D(i,s),D=void 0},"o");for(let i=0;i<t.length;i+=1){const s=t[i];if(s===Be){n();const l=t.slice(i+1);u?.(l,[i],!0);break}const a=Zu(s);if(a){if(n(),!e)continue;const[l,h,F]=a;if(F)for(let m=0;m<l.length;m+=1){n();const d=m===l.length-1;D=e(l[m],d?h:void 0,[i,m+1,d])}else D=e(l,h,[i])}else n(s,[i])&&u?.([s],[i])}n()},"$$1"),Yu=r((t,e)=>{for(const[u,D,n]of e.reverse()){if(D){const i=t[u];let s=i.slice(0,D);if(n||(s+=i.slice(D+1)),s!=="-"){t[u]=s;continue}}t.splice(u,1)}},"E"),Ku=r((t,e=process.argv.slice(2),{ignore:u}={})=>{const D=[],n=Ju(t),i={},s=[];return s[Be]=[],Xu(e,{onFlag(a,l,h){const F=oe(n,a);if(!u?.(F?Ru:Pu,a,l)){if(F){const[m,d]=n[a],C=Wu(d,l),w=r((y,S)=>{D.push(h),S&&D.push(S),m.push(Gu(d,y||""))},"p");return C===void 0?w:w(C)}oe(i,a)||(i[a]=[]),i[a].push(l===void 0?!0:l),D.push(h)}},onArgument(a,l,h){u?.(Lu,e[l[0]])||(s.push(...a),h?(s[Be]=a,e.splice(l[0])):D.push(l))}}),Yu(e,D),{flags:Vu(t,n),unknownFlags:i,_:s}},"U$2");var Qu=Object.create,ye=Object.defineProperty,eD=Object.defineProperties,tD=Object.getOwnPropertyDescriptor,uD=Object.getOwnPropertyDescriptors,DD=Object.getOwnPropertyNames,ft=Object.getOwnPropertySymbols,nD=Object.getPrototypeOf,Ft=Object.prototype.hasOwnProperty,iD=Object.prototype.propertyIsEnumerable,dt=r((t,e,u)=>e in t?ye(t,e,{enumerable:!0,configurable:!0,writable:!0,value:u}):t[e]=u,"W$1"),be=r((t,e)=>{for(var u in e||(e={}))Ft.call(e,u)&&dt(t,u,e[u]);if(ft)for(var u of ft(e))iD.call(e,u)&&dt(t,u,e[u]);return t},"p"),Ie=r((t,e)=>eD(t,uD(e)),"c"),sD=r(t=>ye(t,"__esModule",{value:!0}),"nD"),rD=r((t,e)=>()=>(t&&(e=t(t=0)),e),"rD"),aD=r((t,e)=>()=>(e||t((e={exports:{}}).exports,e),e.exports),"iD"),oD=r((t,e,u,D)=>{if(e&&typeof e=="object"||typeof e=="function")for(let n of DD(e))!Ft.call(t,n)&&n!=="default"&&ye(t,n,{get:r(()=>e[n],"get"),enumerable:!(D=tD(e,n))||D.enumerable});return t},"oD"),lD=r((t,e)=>oD(sD(ye(t!=null?Qu(nD(t)):{},"default",{value:t,enumerable:!0})),t),"BD"),T=rD(()=>{}),cD=aD((t,e)=>{T(),e.exports=function(){return/\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62(?:\uDB40\uDC77\uDB40\uDC6C\uDB40\uDC73|\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74|\uDB40\uDC65\uDB40\uDC6E\uDB40\uDC67)\uDB40\uDC7F|(?:\uD83E\uDDD1\uD83C\uDFFF\u200D\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D)?\uD83E\uDDD1|\uD83D\uDC69\uD83C\uDFFF\u200D\uD83E\uDD1D\u200D(?:\uD83D[\uDC68\uDC69]))(?:\uD83C[\uDFFB-\uDFFE])|(?:\uD83E\uDDD1\uD83C\uDFFE\u200D\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D)?\uD83E\uDDD1|\uD83D\uDC69\uD83C\uDFFE\u200D\uD83E\uDD1D\u200D(?:\uD83D[\uDC68\uDC69]))(?:\uD83C[\uDFFB-\uDFFD\uDFFF])|(?:\uD83E\uDDD1\uD83C\uDFFD\u200D\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D)?\uD83E\uDDD1|\uD83D\uDC69\uD83C\uDFFD\u200D\uD83E\uDD1D\u200D(?:\uD83D[\uDC68\uDC69]))(?:\uD83C[\uDFFB\uDFFC\uDFFE\uDFFF])|(?:\uD83E\uDDD1\uD83C\uDFFC\u200D\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D)?\uD83E\uDDD1|\uD83D\uDC69\uD83C\uDFFC\u200D\uD83E\uDD1D\u200D(?:\uD83D[\uDC68\uDC69]))(?:\uD83C[\uDFFB\uDFFD-\uDFFF])|(?:\uD83E\uDDD1\uD83C\uDFFB\u200D\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D)?\uD83E\uDDD1|\uD83D\uDC69\uD83C\uDFFB\u200D\uD83E\uDD1D\u200D(?:\uD83D[\uDC68\uDC69]))(?:\uD83C[\uDFFC-\uDFFF])|\uD83D\uDC68(?:\uD83C\uDFFB(?:\u200D(?:\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D\uD83D\uDC68(?:\uD83C[\uDFFB-\uDFFF])|\uD83D\uDC68(?:\uD83C[\uDFFB-\uDFFF]))|\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFC-\uDFFF])|[\u2695\u2696\u2708]\uFE0F|\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD]))?|(?:\uD83C[\uDFFC-\uDFFF])\u200D\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D\uD83D\uDC68(?:\uD83C[\uDFFB-\uDFFF])|\uD83D\uDC68(?:\uD83C[\uDFFB-\uDFFF]))|\u200D(?:\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D)?\uD83D\uDC68|(?:\uD83D[\uDC68\uDC69])\u200D(?:\uD83D\uDC66\u200D\uD83D\uDC66|\uD83D\uDC67\u200D(?:\uD83D[\uDC66\uDC67]))|\uD83D\uDC66\u200D\uD83D\uDC66|\uD83D\uDC67\u200D(?:\uD83D[\uDC66\uDC67])|\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFF\u200D(?:\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFB-\uDFFE])|\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFE\u200D(?:\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFB-\uDFFD\uDFFF])|\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFD\u200D(?:\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFB\uDFFC\uDFFE\uDFFF])|\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFC\u200D(?:\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFB\uDFFD-\uDFFF])|\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|(?:\uD83C\uDFFF\u200D[\u2695\u2696\u2708]|\uD83C\uDFFE\u200D[\u2695\u2696\u2708]|\uD83C\uDFFD\u200D[\u2695\u2696\u2708]|\uD83C\uDFFC\u200D[\u2695\u2696\u2708]|\u200D[\u2695\u2696\u2708])\uFE0F|\u200D(?:(?:\uD83D[\uDC68\uDC69])\u200D(?:\uD83D[\uDC66\uDC67])|\uD83D[\uDC66\uDC67])|\uD83C\uDFFF|\uD83C\uDFFE|\uD83C\uDFFD|\uD83C\uDFFC)?|(?:\uD83D\uDC69(?:\uD83C\uDFFB\u200D\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D(?:\uD83D[\uDC68\uDC69])|\uD83D[\uDC68\uDC69])|(?:\uD83C[\uDFFC-\uDFFF])\u200D\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D(?:\uD83D[\uDC68\uDC69])|\uD83D[\uDC68\uDC69]))|\uD83E\uDDD1(?:\uD83C[\uDFFB-\uDFFF])\u200D\uD83E\uDD1D\u200D\uD83E\uDDD1)(?:\uD83C[\uDFFB-\uDFFF])|\uD83D\uDC69\u200D\uD83D\uDC69\u200D(?:\uD83D\uDC66\u200D\uD83D\uDC66|\uD83D\uDC67\u200D(?:\uD83D[\uDC66\uDC67]))|\uD83D\uDC69(?:\u200D(?:\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D(?:\uD83D[\uDC68\uDC69])|\uD83D[\uDC68\uDC69])|\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFF\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFE\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFD\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFC\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFB\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD]))|\uD83E\uDDD1(?:\u200D(?:\uD83E\uDD1D\u200D\uD83E\uDDD1|\uD83C[\uDF3E\uDF73\uDF7C\uDF84\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFF\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF84\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFE\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF84\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFD\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF84\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFC\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF84\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFB\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF84\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD]))|\uD83D\uDC69\u200D\uD83D\uDC66\u200D\uD83D\uDC66|\uD83D\uDC69\u200D\uD83D\uDC69\u200D(?:\uD83D[\uDC66\uDC67])|\uD83D\uDC69\u200D\uD83D\uDC67\u200D(?:\uD83D[\uDC66\uDC67])|(?:\uD83D\uDC41\uFE0F\u200D\uD83D\uDDE8|\uD83E\uDDD1(?:\uD83C\uDFFF\u200D[\u2695\u2696\u2708]|\uD83C\uDFFE\u200D[\u2695\u2696\u2708]|\uD83C\uDFFD\u200D[\u2695\u2696\u2708]|\uD83C\uDFFC\u200D[\u2695\u2696\u2708]|\uD83C\uDFFB\u200D[\u2695\u2696\u2708]|\u200D[\u2695\u2696\u2708])|\uD83D\uDC69(?:\uD83C\uDFFF\u200D[\u2695\u2696\u2708]|\uD83C\uDFFE\u200D[\u2695\u2696\u2708]|\uD83C\uDFFD\u200D[\u2695\u2696\u2708]|\uD83C\uDFFC\u200D[\u2695\u2696\u2708]|\uD83C\uDFFB\u200D[\u2695\u2696\u2708]|\u200D[\u2695\u2696\u2708])|\uD83D\uDE36\u200D\uD83C\uDF2B|\uD83C\uDFF3\uFE0F\u200D\u26A7|\uD83D\uDC3B\u200D\u2744|(?:(?:\uD83C[\uDFC3\uDFC4\uDFCA]|\uD83D[\uDC6E\uDC70\uDC71\uDC73\uDC77\uDC81\uDC82\uDC86\uDC87\uDE45-\uDE47\uDE4B\uDE4D\uDE4E\uDEA3\uDEB4-\uDEB6]|\uD83E[\uDD26\uDD35\uDD37-\uDD39\uDD3D\uDD3E\uDDB8\uDDB9\uDDCD-\uDDCF\uDDD4\uDDD6-\uDDDD])(?:\uD83C[\uDFFB-\uDFFF])|\uD83D\uDC6F|\uD83E[\uDD3C\uDDDE\uDDDF])\u200D[\u2640\u2642]|(?:\u26F9|\uD83C[\uDFCB\uDFCC]|\uD83D\uDD75)(?:\uFE0F|\uD83C[\uDFFB-\uDFFF])\u200D[\u2640\u2642]|\uD83C\uDFF4\u200D\u2620|(?:\uD83C[\uDFC3\uDFC4\uDFCA]|\uD83D[\uDC6E\uDC70\uDC71\uDC73\uDC77\uDC81\uDC82\uDC86\uDC87\uDE45-\uDE47\uDE4B\uDE4D\uDE4E\uDEA3\uDEB4-\uDEB6]|\uD83E[\uDD26\uDD35\uDD37-\uDD39\uDD3D\uDD3E\uDDB8\uDDB9\uDDCD-\uDDCF\uDDD4\uDDD6-\uDDDD])\u200D[\u2640\u2642]|[\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u2328\u23CF\u23ED-\u23EF\u23F1\u23F2\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB\u25FC\u2600-\u2604\u260E\u2611\u2618\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u2692\u2694-\u2697\u2699\u269B\u269C\u26A0\u26A7\u26B0\u26B1\u26C8\u26CF\u26D1\u26D3\u26E9\u26F0\u26F1\u26F4\u26F7\u26F8\u2702\u2708\u2709\u270F\u2712\u2714\u2716\u271D\u2721\u2733\u2734\u2744\u2747\u2763\u27A1\u2934\u2935\u2B05-\u2B07\u3030\u303D\u3297\u3299]|\uD83C[\uDD70\uDD71\uDD7E\uDD7F\uDE02\uDE37\uDF21\uDF24-\uDF2C\uDF36\uDF7D\uDF96\uDF97\uDF99-\uDF9B\uDF9E\uDF9F\uDFCD\uDFCE\uDFD4-\uDFDF\uDFF5\uDFF7]|\uD83D[\uDC3F\uDCFD\uDD49\uDD4A\uDD6F\uDD70\uDD73\uDD76-\uDD79\uDD87\uDD8A-\uDD8D\uDDA5\uDDA8\uDDB1\uDDB2\uDDBC\uDDC2-\uDDC4\uDDD1-\uDDD3\uDDDC-\uDDDE\uDDE1\uDDE3\uDDE8\uDDEF\uDDF3\uDDFA\uDECB\uDECD-\uDECF\uDEE0-\uDEE5\uDEE9\uDEF0\uDEF3])\uFE0F|\uD83C\uDFF3\uFE0F\u200D\uD83C\uDF08|\uD83D\uDC69\u200D\uD83D\uDC67|\uD83D\uDC69\u200D\uD83D\uDC66|\uD83D\uDE35\u200D\uD83D\uDCAB|\uD83D\uDE2E\u200D\uD83D\uDCA8|\uD83D\uDC15\u200D\uD83E\uDDBA|\uD83E\uDDD1(?:\uD83C\uDFFF|\uD83C\uDFFE|\uD83C\uDFFD|\uD83C\uDFFC|\uD83C\uDFFB)?|\uD83D\uDC69(?:\uD83C\uDFFF|\uD83C\uDFFE|\uD83C\uDFFD|\uD83C\uDFFC|\uD83C\uDFFB)?|\uD83C\uDDFD\uD83C\uDDF0|\uD83C\uDDF6\uD83C\uDDE6|\uD83C\uDDF4\uD83C\uDDF2|\uD83D\uDC08\u200D\u2B1B|\u2764\uFE0F\u200D(?:\uD83D\uDD25|\uD83E\uDE79)|\uD83D\uDC41\uFE0F|\uD83C\uDFF3\uFE0F|\uD83C\uDDFF(?:\uD83C[\uDDE6\uDDF2\uDDFC])|\uD83C\uDDFE(?:\uD83C[\uDDEA\uDDF9])|\uD83C\uDDFC(?:\uD83C[\uDDEB\uDDF8])|\uD83C\uDDFB(?:\uD83C[\uDDE6\uDDE8\uDDEA\uDDEC\uDDEE\uDDF3\uDDFA])|\uD83C\uDDFA(?:\uD83C[\uDDE6\uDDEC\uDDF2\uDDF3\uDDF8\uDDFE\uDDFF])|\uD83C\uDDF9(?:\uD83C[\uDDE6\uDDE8\uDDE9\uDDEB-\uDDED\uDDEF-\uDDF4\uDDF7\uDDF9\uDDFB\uDDFC\uDDFF])|\uD83C\uDDF8(?:\uD83C[\uDDE6-\uDDEA\uDDEC-\uDDF4\uDDF7-\uDDF9\uDDFB\uDDFD-\uDDFF])|\uD83C\uDDF7(?:\uD83C[\uDDEA\uDDF4\uDDF8\uDDFA\uDDFC])|\uD83C\uDDF5(?:\uD83C[\uDDE6\uDDEA-\uDDED\uDDF0-\uDDF3\uDDF7-\uDDF9\uDDFC\uDDFE])|\uD83C\uDDF3(?:\uD83C[\uDDE6\uDDE8\uDDEA-\uDDEC\uDDEE\uDDF1\uDDF4\uDDF5\uDDF7\uDDFA\uDDFF])|\uD83C\uDDF2(?:\uD83C[\uDDE6\uDDE8-\uDDED\uDDF0-\uDDFF])|\uD83C\uDDF1(?:\uD83C[\uDDE6-\uDDE8\uDDEE\uDDF0\uDDF7-\uDDFB\uDDFE])|\uD83C\uDDF0(?:\uD83C[\uDDEA\uDDEC-\uDDEE\uDDF2\uDDF3\uDDF5\uDDF7\uDDFC\uDDFE\uDDFF])|\uD83C\uDDEF(?:\uD83C[\uDDEA\uDDF2\uDDF4\uDDF5])|\uD83C\uDDEE(?:\uD83C[\uDDE8-\uDDEA\uDDF1-\uDDF4\uDDF6-\uDDF9])|\uD83C\uDDED(?:\uD83C[\uDDF0\uDDF2\uDDF3\uDDF7\uDDF9\uDDFA])|\uD83C\uDDEC(?:\uD83C[\uDDE6\uDDE7\uDDE9-\uDDEE\uDDF1-\uDDF3\uDDF5-\uDDFA\uDDFC\uDDFE])|\uD83C\uDDEB(?:\uD83C[\uDDEE-\uDDF0\uDDF2\uDDF4\uDDF7])|\uD83C\uDDEA(?:\uD83C[\uDDE6\uDDE8\uDDEA\uDDEC\uDDED\uDDF7-\uDDFA])|\uD83C\uDDE9(?:\uD83C[\uDDEA\uDDEC\uDDEF\uDDF0\uDDF2\uDDF4\uDDFF])|\uD83C\uDDE8(?:\uD83C[\uDDE6\uDDE8\uDDE9\uDDEB-\uDDEE\uDDF0-\uDDF5\uDDF7\uDDFA-\uDDFF])|\uD83C\uDDE7(?:\uD83C[\uDDE6\uDDE7\uDDE9-\uDDEF\uDDF1-\uDDF4\uDDF6-\uDDF9\uDDFB\uDDFC\uDDFE\uDDFF])|\uD83C\uDDE6(?:\uD83C[\uDDE8-\uDDEC\uDDEE\uDDF1\uDDF2\uDDF4\uDDF6-\uDDFA\uDDFC\uDDFD\uDDFF])|[#\*0-9]\uFE0F\u20E3|\u2764\uFE0F|(?:\uD83C[\uDFC3\uDFC4\uDFCA]|\uD83D[\uDC6E\uDC70\uDC71\uDC73\uDC77\uDC81\uDC82\uDC86\uDC87\uDE45-\uDE47\uDE4B\uDE4D\uDE4E\uDEA3\uDEB4-\uDEB6]|\uD83E[\uDD26\uDD35\uDD37-\uDD39\uDD3D\uDD3E\uDDB8\uDDB9\uDDCD-\uDDCF\uDDD4\uDDD6-\uDDDD])(?:\uD83C[\uDFFB-\uDFFF])|(?:\u26F9|\uD83C[\uDFCB\uDFCC]|\uD83D\uDD75)(?:\uFE0F|\uD83C[\uDFFB-\uDFFF])|\uD83C\uDFF4|(?:[\u270A\u270B]|\uD83C[\uDF85\uDFC2\uDFC7]|\uD83D[\uDC42\uDC43\uDC46-\uDC50\uDC66\uDC67\uDC6B-\uDC6D\uDC72\uDC74-\uDC76\uDC78\uDC7C\uDC83\uDC85\uDC8F\uDC91\uDCAA\uDD7A\uDD95\uDD96\uDE4C\uDE4F\uDEC0\uDECC]|\uD83E[\uDD0C\uDD0F\uDD18-\uDD1C\uDD1E\uDD1F\uDD30-\uDD34\uDD36\uDD77\uDDB5\uDDB6\uDDBB\uDDD2\uDDD3\uDDD5])(?:\uD83C[\uDFFB-\uDFFF])|(?:[\u261D\u270C\u270D]|\uD83D[\uDD74\uDD90])(?:\uFE0F|\uD83C[\uDFFB-\uDFFF])|[\u270A\u270B]|\uD83C[\uDF85\uDFC2\uDFC7]|\uD83D[\uDC08\uDC15\uDC3B\uDC42\uDC43\uDC46-\uDC50\uDC66\uDC67\uDC6B-\uDC6D\uDC72\uDC74-\uDC76\uDC78\uDC7C\uDC83\uDC85\uDC8F\uDC91\uDCAA\uDD7A\uDD95\uDD96\uDE2E\uDE35\uDE36\uDE4C\uDE4F\uDEC0\uDECC]|\uD83E[\uDD0C\uDD0F\uDD18-\uDD1C\uDD1E\uDD1F\uDD30-\uDD34\uDD36\uDD77\uDDB5\uDDB6\uDDBB\uDDD2\uDDD3\uDDD5]|\uD83C[\uDFC3\uDFC4\uDFCA]|\uD83D[\uDC6E\uDC70\uDC71\uDC73\uDC77\uDC81\uDC82\uDC86\uDC87\uDE45-\uDE47\uDE4B\uDE4D\uDE4E\uDEA3\uDEB4-\uDEB6]|\uD83E[\uDD26\uDD35\uDD37-\uDD39\uDD3D\uDD3E\uDDB8\uDDB9\uDDCD-\uDDCF\uDDD4\uDDD6-\uDDDD]|\uD83D\uDC6F|\uD83E[\uDD3C\uDDDE\uDDDF]|[\u231A\u231B\u23E9-\u23EC\u23F0\u23F3\u25FD\u25FE\u2614\u2615\u2648-\u2653\u267F\u2693\u26A1\u26AA\u26AB\u26BD\u26BE\u26C4\u26C5\u26CE\u26D4\u26EA\u26F2\u26F3\u26F5\u26FA\u26FD\u2705\u2728\u274C\u274E\u2753-\u2755\u2757\u2795-\u2797\u27B0\u27BF\u2B1B\u2B1C\u2B50\u2B55]|\uD83C[\uDC04\uDCCF\uDD8E\uDD91-\uDD9A\uDE01\uDE1A\uDE2F\uDE32-\uDE36\uDE38-\uDE3A\uDE50\uDE51\uDF00-\uDF20\uDF2D-\uDF35\uDF37-\uDF7C\uDF7E-\uDF84\uDF86-\uDF93\uDFA0-\uDFC1\uDFC5\uDFC6\uDFC8\uDFC9\uDFCF-\uDFD3\uDFE0-\uDFF0\uDFF8-\uDFFF]|\uD83D[\uDC00-\uDC07\uDC09-\uDC14\uDC16-\uDC3A\uDC3C-\uDC3E\uDC40\uDC44\uDC45\uDC51-\uDC65\uDC6A\uDC79-\uDC7B\uDC7D-\uDC80\uDC84\uDC88-\uDC8E\uDC90\uDC92-\uDCA9\uDCAB-\uDCFC\uDCFF-\uDD3D\uDD4B-\uDD4E\uDD50-\uDD67\uDDA4\uDDFB-\uDE2D\uDE2F-\uDE34\uDE37-\uDE44\uDE48-\uDE4A\uDE80-\uDEA2\uDEA4-\uDEB3\uDEB7-\uDEBF\uDEC1-\uDEC5\uDED0-\uDED2\uDED5-\uDED7\uDEEB\uDEEC\uDEF4-\uDEFC\uDFE0-\uDFEB]|\uD83E[\uDD0D\uDD0E\uDD10-\uDD17\uDD1D\uDD20-\uDD25\uDD27-\uDD2F\uDD3A\uDD3F-\uDD45\uDD47-\uDD76\uDD78\uDD7A-\uDDB4\uDDB7\uDDBA\uDDBC-\uDDCB\uDDD0\uDDE0-\uDDFF\uDE70-\uDE74\uDE78-\uDE7A\uDE80-\uDE86\uDE90-\uDEA8\uDEB0-\uDEB6\uDEC0-\uDEC2\uDED0-\uDED6]|(?:[\u231A\u231B\u23E9-\u23EC\u23F0\u23F3\u25FD\u25FE\u2614\u2615\u2648-\u2653\u267F\u2693\u26A1\u26AA\u26AB\u26BD\u26BE\u26C4\u26C5\u26CE\u26D4\u26EA\u26F2\u26F3\u26F5\u26FA\u26FD\u2705\u270A\u270B\u2728\u274C\u274E\u2753-\u2755\u2757\u2795-\u2797\u27B0\u27BF\u2B1B\u2B1C\u2B50\u2B55]|\uD83C[\uDC04\uDCCF\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE1A\uDE2F\uDE32-\uDE36\uDE38-\uDE3A\uDE50\uDE51\uDF00-\uDF20\uDF2D-\uDF35\uDF37-\uDF7C\uDF7E-\uDF93\uDFA0-\uDFCA\uDFCF-\uDFD3\uDFE0-\uDFF0\uDFF4\uDFF8-\uDFFF]|\uD83D[\uDC00-\uDC3E\uDC40\uDC42-\uDCFC\uDCFF-\uDD3D\uDD4B-\uDD4E\uDD50-\uDD67\uDD7A\uDD95\uDD96\uDDA4\uDDFB-\uDE4F\uDE80-\uDEC5\uDECC\uDED0-\uDED2\uDED5-\uDED7\uDEEB\uDEEC\uDEF4-\uDEFC\uDFE0-\uDFEB]|\uD83E[\uDD0C-\uDD3A\uDD3C-\uDD45\uDD47-\uDD78\uDD7A-\uDDCB\uDDCD-\uDDFF\uDE70-\uDE74\uDE78-\uDE7A\uDE80-\uDE86\uDE90-\uDEA8\uDEB0-\uDEB6\uDEC0-\uDEC2\uDED0-\uDED6])|(?:[#\*0-9\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2697\u2699\u269B\u269C\u26A0\u26A1\u26A7\u26AA\u26AB\u26B0\u26B1\u26BD\u26BE\u26C4\u26C5\u26C8\u26CE\u26CF\u26D1\u26D3\u26D4\u26E9\u26EA\u26F0-\u26F5\u26F7-\u26FA\u26FD\u2702\u2705\u2708-\u270D\u270F\u2712\u2714\u2716\u271D\u2721\u2728\u2733\u2734\u2744\u2747\u274C\u274E\u2753-\u2755\u2757\u2763\u2764\u2795-\u2797\u27A1\u27B0\u27BF\u2934\u2935\u2B05-\u2B07\u2B1B\u2B1C\u2B50\u2B55\u3030\u303D\u3297\u3299]|\uD83C[\uDC04\uDCCF\uDD70\uDD71\uDD7E\uDD7F\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE02\uDE1A\uDE2F\uDE32-\uDE3A\uDE50\uDE51\uDF00-\uDF21\uDF24-\uDF93\uDF96\uDF97\uDF99-\uDF9B\uDF9E-\uDFF0\uDFF3-\uDFF5\uDFF7-\uDFFF]|\uD83D[\uDC00-\uDCFD\uDCFF-\uDD3D\uDD49-\uDD4E\uDD50-\uDD67\uDD6F\uDD70\uDD73-\uDD7A\uDD87\uDD8A-\uDD8D\uDD90\uDD95\uDD96\uDDA4\uDDA5\uDDA8\uDDB1\uDDB2\uDDBC\uDDC2-\uDDC4\uDDD1-\uDDD3\uDDDC-\uDDDE\uDDE1\uDDE3\uDDE8\uDDEF\uDDF3\uDDFA-\uDE4F\uDE80-\uDEC5\uDECB-\uDED2\uDED5-\uDED7\uDEE0-\uDEE5\uDEE9\uDEEB\uDEEC\uDEF0\uDEF3-\uDEFC\uDFE0-\uDFEB]|\uD83E[\uDD0C-\uDD3A\uDD3C-\uDD45\uDD47-\uDD78\uDD7A-\uDDCB\uDDCD-\uDDFF\uDE70-\uDE74\uDE78-\uDE7A\uDE80-\uDE86\uDE90-\uDEA8\uDEB0-\uDEB6\uDEC0-\uDEC2\uDED0-\uDED6])\uFE0F|(?:[\u261D\u26F9\u270A-\u270D]|\uD83C[\uDF85\uDFC2-\uDFC4\uDFC7\uDFCA-\uDFCC]|\uD83D[\uDC42\uDC43\uDC46-\uDC50\uDC66-\uDC78\uDC7C\uDC81-\uDC83\uDC85-\uDC87\uDC8F\uDC91\uDCAA\uDD74\uDD75\uDD7A\uDD90\uDD95\uDD96\uDE45-\uDE47\uDE4B-\uDE4F\uDEA3\uDEB4-\uDEB6\uDEC0\uDECC]|\uD83E[\uDD0C\uDD0F\uDD18-\uDD1F\uDD26\uDD30-\uDD39\uDD3C-\uDD3E\uDD77\uDDB5\uDDB6\uDDB8\uDDB9\uDDBB\uDDCD-\uDDCF\uDDD1-\uDDDD])/g}});T(),T(),T();var hD=r(t=>{var e,u,D;let n=(e=process.stdout.columns)!=null?e:Number.POSITIVE_INFINITY;return typeof t=="function"&&(t=t(n)),t||(t={}),Array.isArray(t)?{columns:t,stdoutColumns:n}:{columns:(u=t.columns)!=null?u:[],stdoutColumns:(D=t.stdoutColumns)!=null?D:n}},"v");T(),T(),T(),T(),T();function pD({onlyFirst:t=!1}={}){let e=["[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)","(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))"].join("|");return new RegExp(e,t?void 0:"g")}r(pD,"w$1");function Ct(t){if(typeof t!="string")throw new TypeError(`Expected a \`string\`, got \`${typeof t}\``);return t.replace(pD(),"")}r(Ct,"d$1"),T();function fD(t){return Number.isInteger(t)?t>=4352&&(t<=4447||t===9001||t===9002||11904<=t&&t<=12871&&t!==12351||12880<=t&&t<=19903||19968<=t&&t<=42182||43360<=t&&t<=43388||44032<=t&&t<=55203||63744<=t&&t<=64255||65040<=t&&t<=65049||65072<=t&&t<=65131||65281<=t&&t<=65376||65504<=t&&t<=65510||110592<=t&&t<=110593||127488<=t&&t<=127569||131072<=t&&t<=262141):!1}r(fD,"y$1");var FD=lD(cD());function H(t){if(typeof t!="string"||t.length===0||(t=Ct(t),t.length===0))return 0;t=t.replace((0,FD.default)(),"  ");let e=0;for(let u=0;u<t.length;u++){let D=t.codePointAt(u);D<=31||D>=127&&D<=159||D>=768&&D<=879||(D>65535&&u++,e+=fD(D)?2:1)}return e}r(H,"g");var gt=r(t=>Math.max(...t.split(`
-`).map(H)),"b$1"),dD=r(t=>{let e=[];for(let u of t){let{length:D}=u,n=D-e.length;for(let i=0;i<n;i+=1)e.push(0);for(let i=0;i<D;i+=1){let s=gt(u[i]);s>e[i]&&(e[i]=s)}}return e},"k$1");T();var Et=/^\d+%$/,mt={width:"auto",align:"left",contentWidth:0,paddingLeft:0,paddingRight:0,paddingTop:0,paddingBottom:0,horizontalPadding:0,paddingLeftString:"",paddingRightString:""},CD=r((t,e)=>{var u;let D=[];for(let n=0;n<t.length;n+=1){let i=(u=e[n])!=null?u:"auto";if(typeof i=="number"||i==="auto"||i==="content-width"||typeof i=="string"&&Et.test(i)){D.push(Ie(be({},mt),{width:i,contentWidth:t[n]}));continue}if(i&&typeof i=="object"){let s=Ie(be(be({},mt),i),{contentWidth:t[n]});s.horizontalPadding=s.paddingLeft+s.paddingRight,D.push(s);continue}throw new Error(`Invalid column width: ${JSON.stringify(i)}`)}return D},"sD");function gD(t,e){for(let u of t){let{width:D}=u;if(D==="content-width"&&(u.width=u.contentWidth),D==="auto"){let l=Math.min(20,u.contentWidth);u.width=l,u.autoOverflow=u.contentWidth-l}if(typeof D=="string"&&Et.test(D)){let l=Number.parseFloat(D.slice(0,-1))/100;u.width=Math.floor(e*l)-(u.paddingLeft+u.paddingRight)}let{horizontalPadding:n}=u,i=1,s=i+n;if(s>=e){let l=s-e,h=Math.ceil(u.paddingLeft/n*l),F=l-h;u.paddingLeft-=h,u.paddingRight-=F,u.horizontalPadding=u.paddingLeft+u.paddingRight}u.paddingLeftString=u.paddingLeft?" ".repeat(u.paddingLeft):"",u.paddingRightString=u.paddingRight?" ".repeat(u.paddingRight):"";let a=e-u.horizontalPadding;u.width=Math.max(Math.min(u.width,a),i)}}r(gD,"aD");var wt=r(()=>Object.assign([],{columns:0}),"G$1");function ED(t,e){let u=[wt()],[D]=u;for(let n of t){let i=n.width+n.horizontalPadding;D.columns+i>e&&(D=wt(),u.push(D)),D.push(n),D.columns+=i}for(let n of u){let i=n.reduce((d,C)=>d+C.width+C.horizontalPadding,0),s=e-i;if(s===0)continue;let a=n.filter(d=>"autoOverflow"in d),l=a.filter(d=>d.autoOverflow>0),h=l.reduce((d,C)=>d+C.autoOverflow,0),F=Math.min(h,s);for(let d of l){let C=Math.floor(d.autoOverflow/h*F);d.width+=C,s-=C}let m=Math.floor(s/a.length);for(let d=0;d<a.length;d+=1){let C=a[d];d===a.length-1?C.width+=s:C.width+=m,s-=m}}return u}r(ED,"lD");function mD(t,e,u){let D=CD(u,e);return gD(D,t),ED(D,t)}r(mD,"Z$1"),T(),T(),T();var Ne=10,Bt=r((t=0)=>e=>`\x1B[${e+t}m`,"U$1"),yt=r((t=0)=>e=>`\x1B[${38+t};5;${e}m`,"V$1"),bt=r((t=0)=>(e,u,D)=>`\x1B[${38+t};2;${e};${u};${D}m`,"Y");function wD(){let t=new Map,e={modifier:{reset:[0,0],bold:[1,22],dim:[2,22],italic:[3,23],underline:[4,24],overline:[53,55],inverse:[7,27],hidden:[8,28],strikethrough:[9,29]},color:{black:[30,39],red:[31,39],green:[32,39],yellow:[33,39],blue:[34,39],magenta:[35,39],cyan:[36,39],white:[37,39],blackBright:[90,39],redBright:[91,39],greenBright:[92,39],yellowBright:[93,39],blueBright:[94,39],magentaBright:[95,39],cyanBright:[96,39],whiteBright:[97,39]},bgColor:{bgBlack:[40,49],bgRed:[41,49],bgGreen:[42,49],bgYellow:[43,49],bgBlue:[44,49],bgMagenta:[45,49],bgCyan:[46,49],bgWhite:[47,49],bgBlackBright:[100,49],bgRedBright:[101,49],bgGreenBright:[102,49],bgYellowBright:[103,49],bgBlueBright:[104,49],bgMagentaBright:[105,49],bgCyanBright:[106,49],bgWhiteBright:[107,49]}};e.color.gray=e.color.blackBright,e.bgColor.bgGray=e.bgColor.bgBlackBright,e.color.grey=e.color.blackBright,e.bgColor.bgGrey=e.bgColor.bgBlackBright;for(let[u,D]of Object.entries(e)){for(let[n,i]of Object.entries(D))e[n]={open:`\x1B[${i[0]}m`,close:`\x1B[${i[1]}m`},D[n]=e[n],t.set(i[0],i[1]);Object.defineProperty(e,u,{value:D,enumerable:!1})}return Object.defineProperty(e,"codes",{value:t,enumerable:!1}),e.color.close="\x1B[39m",e.bgColor.close="\x1B[49m",e.color.ansi=Bt(),e.color.ansi256=yt(),e.color.ansi16m=bt(),e.bgColor.ansi=Bt(Ne),e.bgColor.ansi256=yt(Ne),e.bgColor.ansi16m=bt(Ne),Object.defineProperties(e,{rgbToAnsi256:{value:r((u,D,n)=>u===D&&D===n?u<8?16:u>248?231:Math.round((u-8)/247*24)+232:16+36*Math.round(u/255*5)+6*Math.round(D/255*5)+Math.round(n/255*5),"value"),enumerable:!1},hexToRgb:{value:r(u=>{let D=/(?<colorString>[a-f\d]{6}|[a-f\d]{3})/i.exec(u.toString(16));if(!D)return[0,0,0];let{colorString:n}=D.groups;n.length===3&&(n=n.split("").map(s=>s+s).join(""));let i=Number.parseInt(n,16);return[i>>16&255,i>>8&255,i&255]},"value"),enumerable:!1},hexToAnsi256:{value:r(u=>e.rgbToAnsi256(...e.hexToRgb(u)),"value"),enumerable:!1},ansi256ToAnsi:{value:r(u=>{if(u<8)return 30+u;if(u<16)return 90+(u-8);let D,n,i;if(u>=232)D=((u-232)*10+8)/255,n=D,i=D;else{u-=16;let l=u%36;D=Math.floor(u/36)/5,n=Math.floor(l/6)/5,i=l%6/5}let s=Math.max(D,n,i)*2;if(s===0)return 30;let a=30+(Math.round(i)<<2|Math.round(n)<<1|Math.round(D));return s===2&&(a+=60),a},"value"),enumerable:!1},rgbToAnsi:{value:r((u,D,n)=>e.ansi256ToAnsi(e.rgbToAnsi256(u,D,n)),"value"),enumerable:!1},hexToAnsi:{value:r(u=>e.ansi256ToAnsi(e.hexToAnsi256(u)),"value"),enumerable:!1}}),e}r(wD,"AD");var BD=wD(),yD=BD,$e=new Set(["\x1B","\x9B"]),bD=39,_e="\x07",$t="[",$D="]",vt="m",We=`${$D}8;;`,At=r(t=>`${$e.values().next().value}${$t}${t}${vt}`,"J$1"),St=r(t=>`${$e.values().next().value}${We}${t}${_e}`,"Q"),vD=r(t=>t.split(" ").map(e=>H(e)),"hD"),Ge=r((t,e,u)=>{let D=[...e],n=!1,i=!1,s=H(Ct(t[t.length-1]));for(let[a,l]of D.entries()){let h=H(l);if(s+h<=u?t[t.length-1]+=l:(t.push(l),s=0),$e.has(l)&&(n=!0,i=D.slice(a+1).join("").startsWith(We)),n){i?l===_e&&(n=!1,i=!1):l===vt&&(n=!1);continue}s+=h,s===u&&a<D.length-1&&(t.push(""),s=0)}!s&&t[t.length-1].length>0&&t.length>1&&(t[t.length-2]+=t.pop())},"S$1"),AD=r(t=>{let e=t.split(" "),u=e.length;for(;u>0&&!(H(e[u-1])>0);)u--;return u===e.length?t:e.slice(0,u).join(" ")+e.slice(u).join("")},"cD"),SD=r((t,e,u={})=>{if(u.trim!==!1&&t.trim()==="")return"";let D="",n,i,s=vD(t),a=[""];for(let[h,F]of t.split(" ").entries()){u.trim!==!1&&(a[a.length-1]=a[a.length-1].trimStart());let m=H(a[a.length-1]);if(h!==0&&(m>=e&&(u.wordWrap===!1||u.trim===!1)&&(a.push(""),m=0),(m>0||u.trim===!1)&&(a[a.length-1]+=" ",m++)),u.hard&&s[h]>e){let d=e-m,C=1+Math.floor((s[h]-d-1)/e);Math.floor((s[h]-1)/e)<C&&a.push(""),Ge(a,F,e);continue}if(m+s[h]>e&&m>0&&s[h]>0){if(u.wordWrap===!1&&m<e){Ge(a,F,e);continue}a.push("")}if(m+s[h]>e&&u.wordWrap===!1){Ge(a,F,e);continue}a[a.length-1]+=F}u.trim!==!1&&(a=a.map(h=>AD(h)));let l=[...a.join(`
-`)];for(let[h,F]of l.entries()){if(D+=F,$e.has(F)){let{groups:d}=new RegExp(`(?:\\${$t}(?<code>\\d+)m|\\${We}(?<uri>.*)${_e})`).exec(l.slice(h).join(""))||{groups:{}};if(d.code!==void 0){let C=Number.parseFloat(d.code);n=C===bD?void 0:C}else d.uri!==void 0&&(i=d.uri.length===0?void 0:d.uri)}let m=yD.codes.get(Number(n));l[h+1]===`
-`?(i&&(D+=St("")),n&&m&&(D+=At(m))):F===`
-`&&(n&&m&&(D+=At(n)),i&&(D+=St(i)))}return D},"dD");function kD(t,e,u){return String(t).normalize().replace(/\r\n/g,`
+'use strict';
+
+var fs$1 = require('fs/promises');
+var N$1 = require('tty');
+var path$1 = require('path');
+var module$1 = require('module');
+var path$2 = require('node:path');
+var fs$2 = require('node:fs/promises');
+var require$$0 = require('fs');
+var require$$2 = require('events');
+
+var _documentCurrentScript = typeof document !== 'undefined' ? document.currentScript : null;
+const V$2="known-flag",k$2="unknown-flag",C$1="argument",{stringify:h}=JSON,O$1=/\B([A-Z])/g,v$1=t=>t.replace(O$1,"-$1").toLowerCase(),{hasOwnProperty:D$1}=Object.prototype,w$2=(t,n)=>D$1.call(t,n),L$2=t=>Array.isArray(t),b$2=t=>typeof t=="function"?[t,!1]:L$2(t)?[t[0],!0]:b$2(t.type),d$2=(t,n)=>t===Boolean?n!=="false":n,m$1=(t,n)=>typeof n=="boolean"?n:t===Number&&n===""?Number.NaN:t(n),R$2=/[\s.:=]/,B=t=>{const n=`Flag name ${h(t)}`;if(t.length===0)throw new Error(`${n} cannot be empty`);if(t.length===1)throw new Error(`${n} must be longer than a character`);const r=t.match(R$2);if(r)throw new Error(`${n} cannot contain ${h(r?.[0])}`)},K$1=t=>{const n={},r=(e,o)=>{if(w$2(n,e))throw new Error(`Duplicate flags named ${h(e)}`);n[e]=o;};for(const e in t){if(!w$2(t,e))continue;B(e);const o=t[e],s=[[],...b$2(o),o];r(e,s);const i=v$1(e);if(e!==i&&r(i,s),"alias"in o&&typeof o.alias=="string"){const{alias:a}=o,l=`Flag alias ${h(a)} for flag ${h(e)}`;if(a.length===0)throw new Error(`${l} cannot be empty`);if(a.length>1)throw new Error(`${l} must be a single character`);r(a,s);}}return n},_$2=(t,n)=>{const r={};for(const e in t){if(!w$2(t,e))continue;const[o,,s,i]=n[e];if(o.length===0&&"default"in i){let{default:a}=i;typeof a=="function"&&(a=a()),r[e]=a;}else r[e]=s?o:o.pop();}return r},F$1="--",G$2=/[.:=]/,T$2=/^-{1,2}\w/,N=t=>{if(!T$2.test(t))return;const n=!t.startsWith(F$1);let r=t.slice(n?1:2),e;const o=r.match(G$2);if(o){const{index:s}=o;e=r.slice(s+1),r=r.slice(0,s);}return [r,e,n]},$$1=(t,{onFlag:n,onArgument:r})=>{let e;const o=(s,i)=>{if(typeof e!="function")return !0;e(s,i),e=void 0;};for(let s=0;s<t.length;s+=1){const i=t[s];if(i===F$1){o();const l=t.slice(s+1);r?.(l,[s],!0);break}const a=N(i);if(a){if(o(),!n)continue;const[l,f,g]=a;if(g)for(let c=0;c<l.length;c+=1){o();const u=c===l.length-1;e=n(l[c],u?f:void 0,[s,c+1,u]);}else e=n(l,f,[s]);}else o(i,[s])&&r?.([i],[s]);}o();},E=(t,n)=>{for(const[r,e,o]of n.reverse()){if(e){const s=t[r];let i=s.slice(0,e);if(o||(i+=s.slice(e+1)),i!=="-"){t[r]=i;continue}}t.splice(r,1);}},U$2=(t,n=process.argv.slice(2),{ignore:r}={})=>{const e=[],o=K$1(t),s={},i=[];return i[F$1]=[],$$1(n,{onFlag(a,l,f){const g=w$2(o,a);if(!r?.(g?V$2:k$2,a,l)){if(g){const[c,u]=o[a],y=d$2(u,l),p=(P,A)=>{e.push(f),A&&e.push(A),c.push(m$1(u,P||""));};return y===void 0?p:p(y)}w$2(s,a)||(s[a]=[]),s[a].push(l===void 0?!0:l),e.push(f);}},onArgument(a,l,f){r?.(C$1,n[l[0]])||(i.push(...a),f?(i[F$1]=a,n.splice(l[0])):e.push(l));}}),E(n,e),{flags:_$2(t,o),unknownFlags:s,_:i}};
+
+var DD=Object.create;var m=Object.defineProperty,uD=Object.defineProperties,FD=Object.getOwnPropertyDescriptor,CD=Object.getOwnPropertyDescriptors,tD=Object.getOwnPropertyNames,I$1=Object.getOwnPropertySymbols,ED=Object.getPrototypeOf,L$1=Object.prototype.hasOwnProperty,eD=Object.prototype.propertyIsEnumerable;var W$1=(D,F,u)=>F in D?m(D,F,{enumerable:!0,configurable:!0,writable:!0,value:u}):D[F]=u,p=(D,F)=>{for(var u in F||(F={}))L$1.call(F,u)&&W$1(D,u,F[u]);if(I$1)for(var u of I$1(F))eD.call(F,u)&&W$1(D,u,F[u]);return D},c=(D,F)=>uD(D,CD(F)),nD=D=>m(D,"__esModule",{value:!0});var rD=(D,F)=>()=>(D&&(F=D(D=0)),F);var iD=(D,F)=>()=>(F||D((F={exports:{}}).exports,F),F.exports);var oD=(D,F,u,C)=>{if(F&&typeof F=="object"||typeof F=="function")for(let t of tD(F))!L$1.call(D,t)&&(t!=="default")&&m(D,t,{get:()=>F[t],enumerable:!(C=FD(F,t))||C.enumerable});return D},BD=(D,F)=>oD(nD(m(D!=null?DD(ED(D)):{},"default",{value:D,enumerable:!0})),D);var i=rD(()=>{});var $=iD((LD,N)=>{i();N.exports=function(){return /\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62(?:\uDB40\uDC77\uDB40\uDC6C\uDB40\uDC73|\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74|\uDB40\uDC65\uDB40\uDC6E\uDB40\uDC67)\uDB40\uDC7F|(?:\uD83E\uDDD1\uD83C\uDFFF\u200D\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D)?\uD83E\uDDD1|\uD83D\uDC69\uD83C\uDFFF\u200D\uD83E\uDD1D\u200D(?:\uD83D[\uDC68\uDC69]))(?:\uD83C[\uDFFB-\uDFFE])|(?:\uD83E\uDDD1\uD83C\uDFFE\u200D\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D)?\uD83E\uDDD1|\uD83D\uDC69\uD83C\uDFFE\u200D\uD83E\uDD1D\u200D(?:\uD83D[\uDC68\uDC69]))(?:\uD83C[\uDFFB-\uDFFD\uDFFF])|(?:\uD83E\uDDD1\uD83C\uDFFD\u200D\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D)?\uD83E\uDDD1|\uD83D\uDC69\uD83C\uDFFD\u200D\uD83E\uDD1D\u200D(?:\uD83D[\uDC68\uDC69]))(?:\uD83C[\uDFFB\uDFFC\uDFFE\uDFFF])|(?:\uD83E\uDDD1\uD83C\uDFFC\u200D\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D)?\uD83E\uDDD1|\uD83D\uDC69\uD83C\uDFFC\u200D\uD83E\uDD1D\u200D(?:\uD83D[\uDC68\uDC69]))(?:\uD83C[\uDFFB\uDFFD-\uDFFF])|(?:\uD83E\uDDD1\uD83C\uDFFB\u200D\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D)?\uD83E\uDDD1|\uD83D\uDC69\uD83C\uDFFB\u200D\uD83E\uDD1D\u200D(?:\uD83D[\uDC68\uDC69]))(?:\uD83C[\uDFFC-\uDFFF])|\uD83D\uDC68(?:\uD83C\uDFFB(?:\u200D(?:\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D\uD83D\uDC68(?:\uD83C[\uDFFB-\uDFFF])|\uD83D\uDC68(?:\uD83C[\uDFFB-\uDFFF]))|\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFC-\uDFFF])|[\u2695\u2696\u2708]\uFE0F|\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD]))?|(?:\uD83C[\uDFFC-\uDFFF])\u200D\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D\uD83D\uDC68(?:\uD83C[\uDFFB-\uDFFF])|\uD83D\uDC68(?:\uD83C[\uDFFB-\uDFFF]))|\u200D(?:\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D)?\uD83D\uDC68|(?:\uD83D[\uDC68\uDC69])\u200D(?:\uD83D\uDC66\u200D\uD83D\uDC66|\uD83D\uDC67\u200D(?:\uD83D[\uDC66\uDC67]))|\uD83D\uDC66\u200D\uD83D\uDC66|\uD83D\uDC67\u200D(?:\uD83D[\uDC66\uDC67])|\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFF\u200D(?:\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFB-\uDFFE])|\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFE\u200D(?:\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFB-\uDFFD\uDFFF])|\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFD\u200D(?:\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFB\uDFFC\uDFFE\uDFFF])|\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFC\u200D(?:\uD83E\uDD1D\u200D\uD83D\uDC68(?:\uD83C[\uDFFB\uDFFD-\uDFFF])|\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|(?:\uD83C\uDFFF\u200D[\u2695\u2696\u2708]|\uD83C\uDFFE\u200D[\u2695\u2696\u2708]|\uD83C\uDFFD\u200D[\u2695\u2696\u2708]|\uD83C\uDFFC\u200D[\u2695\u2696\u2708]|\u200D[\u2695\u2696\u2708])\uFE0F|\u200D(?:(?:\uD83D[\uDC68\uDC69])\u200D(?:\uD83D[\uDC66\uDC67])|\uD83D[\uDC66\uDC67])|\uD83C\uDFFF|\uD83C\uDFFE|\uD83C\uDFFD|\uD83C\uDFFC)?|(?:\uD83D\uDC69(?:\uD83C\uDFFB\u200D\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D(?:\uD83D[\uDC68\uDC69])|\uD83D[\uDC68\uDC69])|(?:\uD83C[\uDFFC-\uDFFF])\u200D\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D(?:\uD83D[\uDC68\uDC69])|\uD83D[\uDC68\uDC69]))|\uD83E\uDDD1(?:\uD83C[\uDFFB-\uDFFF])\u200D\uD83E\uDD1D\u200D\uD83E\uDDD1)(?:\uD83C[\uDFFB-\uDFFF])|\uD83D\uDC69\u200D\uD83D\uDC69\u200D(?:\uD83D\uDC66\u200D\uD83D\uDC66|\uD83D\uDC67\u200D(?:\uD83D[\uDC66\uDC67]))|\uD83D\uDC69(?:\u200D(?:\u2764\uFE0F\u200D(?:\uD83D\uDC8B\u200D(?:\uD83D[\uDC68\uDC69])|\uD83D[\uDC68\uDC69])|\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFF\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFE\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFD\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFC\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFB\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD]))|\uD83E\uDDD1(?:\u200D(?:\uD83E\uDD1D\u200D\uD83E\uDDD1|\uD83C[\uDF3E\uDF73\uDF7C\uDF84\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFF\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF84\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFE\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF84\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFD\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF84\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFC\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF84\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD])|\uD83C\uDFFB\u200D(?:\uD83C[\uDF3E\uDF73\uDF7C\uDF84\uDF93\uDFA4\uDFA8\uDFEB\uDFED]|\uD83D[\uDCBB\uDCBC\uDD27\uDD2C\uDE80\uDE92]|\uD83E[\uDDAF-\uDDB3\uDDBC\uDDBD]))|\uD83D\uDC69\u200D\uD83D\uDC66\u200D\uD83D\uDC66|\uD83D\uDC69\u200D\uD83D\uDC69\u200D(?:\uD83D[\uDC66\uDC67])|\uD83D\uDC69\u200D\uD83D\uDC67\u200D(?:\uD83D[\uDC66\uDC67])|(?:\uD83D\uDC41\uFE0F\u200D\uD83D\uDDE8|\uD83E\uDDD1(?:\uD83C\uDFFF\u200D[\u2695\u2696\u2708]|\uD83C\uDFFE\u200D[\u2695\u2696\u2708]|\uD83C\uDFFD\u200D[\u2695\u2696\u2708]|\uD83C\uDFFC\u200D[\u2695\u2696\u2708]|\uD83C\uDFFB\u200D[\u2695\u2696\u2708]|\u200D[\u2695\u2696\u2708])|\uD83D\uDC69(?:\uD83C\uDFFF\u200D[\u2695\u2696\u2708]|\uD83C\uDFFE\u200D[\u2695\u2696\u2708]|\uD83C\uDFFD\u200D[\u2695\u2696\u2708]|\uD83C\uDFFC\u200D[\u2695\u2696\u2708]|\uD83C\uDFFB\u200D[\u2695\u2696\u2708]|\u200D[\u2695\u2696\u2708])|\uD83D\uDE36\u200D\uD83C\uDF2B|\uD83C\uDFF3\uFE0F\u200D\u26A7|\uD83D\uDC3B\u200D\u2744|(?:(?:\uD83C[\uDFC3\uDFC4\uDFCA]|\uD83D[\uDC6E\uDC70\uDC71\uDC73\uDC77\uDC81\uDC82\uDC86\uDC87\uDE45-\uDE47\uDE4B\uDE4D\uDE4E\uDEA3\uDEB4-\uDEB6]|\uD83E[\uDD26\uDD35\uDD37-\uDD39\uDD3D\uDD3E\uDDB8\uDDB9\uDDCD-\uDDCF\uDDD4\uDDD6-\uDDDD])(?:\uD83C[\uDFFB-\uDFFF])|\uD83D\uDC6F|\uD83E[\uDD3C\uDDDE\uDDDF])\u200D[\u2640\u2642]|(?:\u26F9|\uD83C[\uDFCB\uDFCC]|\uD83D\uDD75)(?:\uFE0F|\uD83C[\uDFFB-\uDFFF])\u200D[\u2640\u2642]|\uD83C\uDFF4\u200D\u2620|(?:\uD83C[\uDFC3\uDFC4\uDFCA]|\uD83D[\uDC6E\uDC70\uDC71\uDC73\uDC77\uDC81\uDC82\uDC86\uDC87\uDE45-\uDE47\uDE4B\uDE4D\uDE4E\uDEA3\uDEB4-\uDEB6]|\uD83E[\uDD26\uDD35\uDD37-\uDD39\uDD3D\uDD3E\uDDB8\uDDB9\uDDCD-\uDDCF\uDDD4\uDDD6-\uDDDD])\u200D[\u2640\u2642]|[\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u2328\u23CF\u23ED-\u23EF\u23F1\u23F2\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB\u25FC\u2600-\u2604\u260E\u2611\u2618\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u2692\u2694-\u2697\u2699\u269B\u269C\u26A0\u26A7\u26B0\u26B1\u26C8\u26CF\u26D1\u26D3\u26E9\u26F0\u26F1\u26F4\u26F7\u26F8\u2702\u2708\u2709\u270F\u2712\u2714\u2716\u271D\u2721\u2733\u2734\u2744\u2747\u2763\u27A1\u2934\u2935\u2B05-\u2B07\u3030\u303D\u3297\u3299]|\uD83C[\uDD70\uDD71\uDD7E\uDD7F\uDE02\uDE37\uDF21\uDF24-\uDF2C\uDF36\uDF7D\uDF96\uDF97\uDF99-\uDF9B\uDF9E\uDF9F\uDFCD\uDFCE\uDFD4-\uDFDF\uDFF5\uDFF7]|\uD83D[\uDC3F\uDCFD\uDD49\uDD4A\uDD6F\uDD70\uDD73\uDD76-\uDD79\uDD87\uDD8A-\uDD8D\uDDA5\uDDA8\uDDB1\uDDB2\uDDBC\uDDC2-\uDDC4\uDDD1-\uDDD3\uDDDC-\uDDDE\uDDE1\uDDE3\uDDE8\uDDEF\uDDF3\uDDFA\uDECB\uDECD-\uDECF\uDEE0-\uDEE5\uDEE9\uDEF0\uDEF3])\uFE0F|\uD83C\uDFF3\uFE0F\u200D\uD83C\uDF08|\uD83D\uDC69\u200D\uD83D\uDC67|\uD83D\uDC69\u200D\uD83D\uDC66|\uD83D\uDE35\u200D\uD83D\uDCAB|\uD83D\uDE2E\u200D\uD83D\uDCA8|\uD83D\uDC15\u200D\uD83E\uDDBA|\uD83E\uDDD1(?:\uD83C\uDFFF|\uD83C\uDFFE|\uD83C\uDFFD|\uD83C\uDFFC|\uD83C\uDFFB)?|\uD83D\uDC69(?:\uD83C\uDFFF|\uD83C\uDFFE|\uD83C\uDFFD|\uD83C\uDFFC|\uD83C\uDFFB)?|\uD83C\uDDFD\uD83C\uDDF0|\uD83C\uDDF6\uD83C\uDDE6|\uD83C\uDDF4\uD83C\uDDF2|\uD83D\uDC08\u200D\u2B1B|\u2764\uFE0F\u200D(?:\uD83D\uDD25|\uD83E\uDE79)|\uD83D\uDC41\uFE0F|\uD83C\uDFF3\uFE0F|\uD83C\uDDFF(?:\uD83C[\uDDE6\uDDF2\uDDFC])|\uD83C\uDDFE(?:\uD83C[\uDDEA\uDDF9])|\uD83C\uDDFC(?:\uD83C[\uDDEB\uDDF8])|\uD83C\uDDFB(?:\uD83C[\uDDE6\uDDE8\uDDEA\uDDEC\uDDEE\uDDF3\uDDFA])|\uD83C\uDDFA(?:\uD83C[\uDDE6\uDDEC\uDDF2\uDDF3\uDDF8\uDDFE\uDDFF])|\uD83C\uDDF9(?:\uD83C[\uDDE6\uDDE8\uDDE9\uDDEB-\uDDED\uDDEF-\uDDF4\uDDF7\uDDF9\uDDFB\uDDFC\uDDFF])|\uD83C\uDDF8(?:\uD83C[\uDDE6-\uDDEA\uDDEC-\uDDF4\uDDF7-\uDDF9\uDDFB\uDDFD-\uDDFF])|\uD83C\uDDF7(?:\uD83C[\uDDEA\uDDF4\uDDF8\uDDFA\uDDFC])|\uD83C\uDDF5(?:\uD83C[\uDDE6\uDDEA-\uDDED\uDDF0-\uDDF3\uDDF7-\uDDF9\uDDFC\uDDFE])|\uD83C\uDDF3(?:\uD83C[\uDDE6\uDDE8\uDDEA-\uDDEC\uDDEE\uDDF1\uDDF4\uDDF5\uDDF7\uDDFA\uDDFF])|\uD83C\uDDF2(?:\uD83C[\uDDE6\uDDE8-\uDDED\uDDF0-\uDDFF])|\uD83C\uDDF1(?:\uD83C[\uDDE6-\uDDE8\uDDEE\uDDF0\uDDF7-\uDDFB\uDDFE])|\uD83C\uDDF0(?:\uD83C[\uDDEA\uDDEC-\uDDEE\uDDF2\uDDF3\uDDF5\uDDF7\uDDFC\uDDFE\uDDFF])|\uD83C\uDDEF(?:\uD83C[\uDDEA\uDDF2\uDDF4\uDDF5])|\uD83C\uDDEE(?:\uD83C[\uDDE8-\uDDEA\uDDF1-\uDDF4\uDDF6-\uDDF9])|\uD83C\uDDED(?:\uD83C[\uDDF0\uDDF2\uDDF3\uDDF7\uDDF9\uDDFA])|\uD83C\uDDEC(?:\uD83C[\uDDE6\uDDE7\uDDE9-\uDDEE\uDDF1-\uDDF3\uDDF5-\uDDFA\uDDFC\uDDFE])|\uD83C\uDDEB(?:\uD83C[\uDDEE-\uDDF0\uDDF2\uDDF4\uDDF7])|\uD83C\uDDEA(?:\uD83C[\uDDE6\uDDE8\uDDEA\uDDEC\uDDED\uDDF7-\uDDFA])|\uD83C\uDDE9(?:\uD83C[\uDDEA\uDDEC\uDDEF\uDDF0\uDDF2\uDDF4\uDDFF])|\uD83C\uDDE8(?:\uD83C[\uDDE6\uDDE8\uDDE9\uDDEB-\uDDEE\uDDF0-\uDDF5\uDDF7\uDDFA-\uDDFF])|\uD83C\uDDE7(?:\uD83C[\uDDE6\uDDE7\uDDE9-\uDDEF\uDDF1-\uDDF4\uDDF6-\uDDF9\uDDFB\uDDFC\uDDFE\uDDFF])|\uD83C\uDDE6(?:\uD83C[\uDDE8-\uDDEC\uDDEE\uDDF1\uDDF2\uDDF4\uDDF6-\uDDFA\uDDFC\uDDFD\uDDFF])|[#\*0-9]\uFE0F\u20E3|\u2764\uFE0F|(?:\uD83C[\uDFC3\uDFC4\uDFCA]|\uD83D[\uDC6E\uDC70\uDC71\uDC73\uDC77\uDC81\uDC82\uDC86\uDC87\uDE45-\uDE47\uDE4B\uDE4D\uDE4E\uDEA3\uDEB4-\uDEB6]|\uD83E[\uDD26\uDD35\uDD37-\uDD39\uDD3D\uDD3E\uDDB8\uDDB9\uDDCD-\uDDCF\uDDD4\uDDD6-\uDDDD])(?:\uD83C[\uDFFB-\uDFFF])|(?:\u26F9|\uD83C[\uDFCB\uDFCC]|\uD83D\uDD75)(?:\uFE0F|\uD83C[\uDFFB-\uDFFF])|\uD83C\uDFF4|(?:[\u270A\u270B]|\uD83C[\uDF85\uDFC2\uDFC7]|\uD83D[\uDC42\uDC43\uDC46-\uDC50\uDC66\uDC67\uDC6B-\uDC6D\uDC72\uDC74-\uDC76\uDC78\uDC7C\uDC83\uDC85\uDC8F\uDC91\uDCAA\uDD7A\uDD95\uDD96\uDE4C\uDE4F\uDEC0\uDECC]|\uD83E[\uDD0C\uDD0F\uDD18-\uDD1C\uDD1E\uDD1F\uDD30-\uDD34\uDD36\uDD77\uDDB5\uDDB6\uDDBB\uDDD2\uDDD3\uDDD5])(?:\uD83C[\uDFFB-\uDFFF])|(?:[\u261D\u270C\u270D]|\uD83D[\uDD74\uDD90])(?:\uFE0F|\uD83C[\uDFFB-\uDFFF])|[\u270A\u270B]|\uD83C[\uDF85\uDFC2\uDFC7]|\uD83D[\uDC08\uDC15\uDC3B\uDC42\uDC43\uDC46-\uDC50\uDC66\uDC67\uDC6B-\uDC6D\uDC72\uDC74-\uDC76\uDC78\uDC7C\uDC83\uDC85\uDC8F\uDC91\uDCAA\uDD7A\uDD95\uDD96\uDE2E\uDE35\uDE36\uDE4C\uDE4F\uDEC0\uDECC]|\uD83E[\uDD0C\uDD0F\uDD18-\uDD1C\uDD1E\uDD1F\uDD30-\uDD34\uDD36\uDD77\uDDB5\uDDB6\uDDBB\uDDD2\uDDD3\uDDD5]|\uD83C[\uDFC3\uDFC4\uDFCA]|\uD83D[\uDC6E\uDC70\uDC71\uDC73\uDC77\uDC81\uDC82\uDC86\uDC87\uDE45-\uDE47\uDE4B\uDE4D\uDE4E\uDEA3\uDEB4-\uDEB6]|\uD83E[\uDD26\uDD35\uDD37-\uDD39\uDD3D\uDD3E\uDDB8\uDDB9\uDDCD-\uDDCF\uDDD4\uDDD6-\uDDDD]|\uD83D\uDC6F|\uD83E[\uDD3C\uDDDE\uDDDF]|[\u231A\u231B\u23E9-\u23EC\u23F0\u23F3\u25FD\u25FE\u2614\u2615\u2648-\u2653\u267F\u2693\u26A1\u26AA\u26AB\u26BD\u26BE\u26C4\u26C5\u26CE\u26D4\u26EA\u26F2\u26F3\u26F5\u26FA\u26FD\u2705\u2728\u274C\u274E\u2753-\u2755\u2757\u2795-\u2797\u27B0\u27BF\u2B1B\u2B1C\u2B50\u2B55]|\uD83C[\uDC04\uDCCF\uDD8E\uDD91-\uDD9A\uDE01\uDE1A\uDE2F\uDE32-\uDE36\uDE38-\uDE3A\uDE50\uDE51\uDF00-\uDF20\uDF2D-\uDF35\uDF37-\uDF7C\uDF7E-\uDF84\uDF86-\uDF93\uDFA0-\uDFC1\uDFC5\uDFC6\uDFC8\uDFC9\uDFCF-\uDFD3\uDFE0-\uDFF0\uDFF8-\uDFFF]|\uD83D[\uDC00-\uDC07\uDC09-\uDC14\uDC16-\uDC3A\uDC3C-\uDC3E\uDC40\uDC44\uDC45\uDC51-\uDC65\uDC6A\uDC79-\uDC7B\uDC7D-\uDC80\uDC84\uDC88-\uDC8E\uDC90\uDC92-\uDCA9\uDCAB-\uDCFC\uDCFF-\uDD3D\uDD4B-\uDD4E\uDD50-\uDD67\uDDA4\uDDFB-\uDE2D\uDE2F-\uDE34\uDE37-\uDE44\uDE48-\uDE4A\uDE80-\uDEA2\uDEA4-\uDEB3\uDEB7-\uDEBF\uDEC1-\uDEC5\uDED0-\uDED2\uDED5-\uDED7\uDEEB\uDEEC\uDEF4-\uDEFC\uDFE0-\uDFEB]|\uD83E[\uDD0D\uDD0E\uDD10-\uDD17\uDD1D\uDD20-\uDD25\uDD27-\uDD2F\uDD3A\uDD3F-\uDD45\uDD47-\uDD76\uDD78\uDD7A-\uDDB4\uDDB7\uDDBA\uDDBC-\uDDCB\uDDD0\uDDE0-\uDDFF\uDE70-\uDE74\uDE78-\uDE7A\uDE80-\uDE86\uDE90-\uDEA8\uDEB0-\uDEB6\uDEC0-\uDEC2\uDED0-\uDED6]|(?:[\u231A\u231B\u23E9-\u23EC\u23F0\u23F3\u25FD\u25FE\u2614\u2615\u2648-\u2653\u267F\u2693\u26A1\u26AA\u26AB\u26BD\u26BE\u26C4\u26C5\u26CE\u26D4\u26EA\u26F2\u26F3\u26F5\u26FA\u26FD\u2705\u270A\u270B\u2728\u274C\u274E\u2753-\u2755\u2757\u2795-\u2797\u27B0\u27BF\u2B1B\u2B1C\u2B50\u2B55]|\uD83C[\uDC04\uDCCF\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE1A\uDE2F\uDE32-\uDE36\uDE38-\uDE3A\uDE50\uDE51\uDF00-\uDF20\uDF2D-\uDF35\uDF37-\uDF7C\uDF7E-\uDF93\uDFA0-\uDFCA\uDFCF-\uDFD3\uDFE0-\uDFF0\uDFF4\uDFF8-\uDFFF]|\uD83D[\uDC00-\uDC3E\uDC40\uDC42-\uDCFC\uDCFF-\uDD3D\uDD4B-\uDD4E\uDD50-\uDD67\uDD7A\uDD95\uDD96\uDDA4\uDDFB-\uDE4F\uDE80-\uDEC5\uDECC\uDED0-\uDED2\uDED5-\uDED7\uDEEB\uDEEC\uDEF4-\uDEFC\uDFE0-\uDFEB]|\uD83E[\uDD0C-\uDD3A\uDD3C-\uDD45\uDD47-\uDD78\uDD7A-\uDDCB\uDDCD-\uDDFF\uDE70-\uDE74\uDE78-\uDE7A\uDE80-\uDE86\uDE90-\uDEA8\uDEB0-\uDEB6\uDEC0-\uDEC2\uDED0-\uDED6])|(?:[#\*0-9\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2697\u2699\u269B\u269C\u26A0\u26A1\u26A7\u26AA\u26AB\u26B0\u26B1\u26BD\u26BE\u26C4\u26C5\u26C8\u26CE\u26CF\u26D1\u26D3\u26D4\u26E9\u26EA\u26F0-\u26F5\u26F7-\u26FA\u26FD\u2702\u2705\u2708-\u270D\u270F\u2712\u2714\u2716\u271D\u2721\u2728\u2733\u2734\u2744\u2747\u274C\u274E\u2753-\u2755\u2757\u2763\u2764\u2795-\u2797\u27A1\u27B0\u27BF\u2934\u2935\u2B05-\u2B07\u2B1B\u2B1C\u2B50\u2B55\u3030\u303D\u3297\u3299]|\uD83C[\uDC04\uDCCF\uDD70\uDD71\uDD7E\uDD7F\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE02\uDE1A\uDE2F\uDE32-\uDE3A\uDE50\uDE51\uDF00-\uDF21\uDF24-\uDF93\uDF96\uDF97\uDF99-\uDF9B\uDF9E-\uDFF0\uDFF3-\uDFF5\uDFF7-\uDFFF]|\uD83D[\uDC00-\uDCFD\uDCFF-\uDD3D\uDD49-\uDD4E\uDD50-\uDD67\uDD6F\uDD70\uDD73-\uDD7A\uDD87\uDD8A-\uDD8D\uDD90\uDD95\uDD96\uDDA4\uDDA5\uDDA8\uDDB1\uDDB2\uDDBC\uDDC2-\uDDC4\uDDD1-\uDDD3\uDDDC-\uDDDE\uDDE1\uDDE3\uDDE8\uDDEF\uDDF3\uDDFA-\uDE4F\uDE80-\uDEC5\uDECB-\uDED2\uDED5-\uDED7\uDEE0-\uDEE5\uDEE9\uDEEB\uDEEC\uDEF0\uDEF3-\uDEFC\uDFE0-\uDFEB]|\uD83E[\uDD0C-\uDD3A\uDD3C-\uDD45\uDD47-\uDD78\uDD7A-\uDDCB\uDDCD-\uDDFF\uDE70-\uDE74\uDE78-\uDE7A\uDE80-\uDE86\uDE90-\uDEA8\uDEB0-\uDEB6\uDEC0-\uDEC2\uDED0-\uDED6])\uFE0F|(?:[\u261D\u26F9\u270A-\u270D]|\uD83C[\uDF85\uDFC2-\uDFC4\uDFC7\uDFCA-\uDFCC]|\uD83D[\uDC42\uDC43\uDC46-\uDC50\uDC66-\uDC78\uDC7C\uDC81-\uDC83\uDC85-\uDC87\uDC8F\uDC91\uDCAA\uDD74\uDD75\uDD7A\uDD90\uDD95\uDD96\uDE45-\uDE47\uDE4B-\uDE4F\uDEA3\uDEB4-\uDEB6\uDEC0\uDECC]|\uD83E[\uDD0C\uDD0F\uDD18-\uDD1F\uDD26\uDD30-\uDD39\uDD3C-\uDD3E\uDD77\uDDB5\uDDB6\uDDB8\uDDB9\uDDBB\uDDCD-\uDDCF\uDDD1-\uDDDD])/g};});i();i();i();var v=D=>{var u,C,t;let F=(u=process.stdout.columns)!=null?u:Number.POSITIVE_INFINITY;return typeof D=="function"&&(D=D(F)),D||(D={}),Array.isArray(D)?{columns:D,stdoutColumns:F}:{columns:(C=D.columns)!=null?C:[],stdoutColumns:(t=D.stdoutColumns)!=null?t:F}};i();i();i();i();i();function w$1({onlyFirst:D=!1}={}){let F=["[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)","(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))"].join("|");return new RegExp(F,D?void 0:"g")}function d$1(D){if(typeof D!="string")throw new TypeError(`Expected a \`string\`, got \`${typeof D}\``);return D.replace(w$1(),"")}i();function y$1(D){return Number.isInteger(D)?D>=4352&&(D<=4447||D===9001||D===9002||11904<=D&&D<=12871&&D!==12351||12880<=D&&D<=19903||19968<=D&&D<=42182||43360<=D&&D<=43388||44032<=D&&D<=55203||63744<=D&&D<=64255||65040<=D&&D<=65049||65072<=D&&D<=65131||65281<=D&&D<=65376||65504<=D&&D<=65510||110592<=D&&D<=110593||127488<=D&&D<=127569||131072<=D&&D<=262141):!1}var j=BD($());function g(D){if(typeof D!="string"||D.length===0||(D=d$1(D),D.length===0))return 0;D=D.replace((0, j.default)(),"  ");let F=0;for(let u=0;u<D.length;u++){let C=D.codePointAt(u);C<=31||C>=127&&C<=159||C>=768&&C<=879||(C>65535&&u++,F+=y$1(C)?2:1);}return F}var b$1=D=>Math.max(...D.split(`
+`).map(g));var k$1=D=>{let F=[];for(let u of D){let{length:C}=u,t=C-F.length;for(let E=0;E<t;E+=1)F.push(0);for(let E=0;E<C;E+=1){let e=b$1(u[E]);e>F[E]&&(F[E]=e);}}return F};i();var _$1=/^\d+%$/,z$1={width:"auto",align:"left",contentWidth:0,paddingLeft:0,paddingRight:0,paddingTop:0,paddingBottom:0,horizontalPadding:0,paddingLeftString:"",paddingRightString:""},sD=(D,F)=>{var C;let u=[];for(let t=0;t<D.length;t+=1){let E=(C=F[t])!=null?C:"auto";if(typeof E=="number"||E==="auto"||E==="content-width"||typeof E=="string"&&_$1.test(E)){u.push(c(p({},z$1),{width:E,contentWidth:D[t]}));continue}if(E&&typeof E=="object"){let e=c(p(p({},z$1),E),{contentWidth:D[t]});e.horizontalPadding=e.paddingLeft+e.paddingRight,u.push(e);continue}throw new Error(`Invalid column width: ${JSON.stringify(E)}`)}return u};function aD(D,F){for(let u of D){let{width:C}=u;if(C==="content-width"&&(u.width=u.contentWidth),C==="auto"){let n=Math.min(20,u.contentWidth);u.width=n,u.autoOverflow=u.contentWidth-n;}if(typeof C=="string"&&_$1.test(C)){let n=Number.parseFloat(C.slice(0,-1))/100;u.width=Math.floor(F*n)-(u.paddingLeft+u.paddingRight);}let{horizontalPadding:t}=u,E=1,e=E+t;if(e>=F){let n=e-F,o=Math.ceil(u.paddingLeft/t*n),B=n-o;u.paddingLeft-=o,u.paddingRight-=B,u.horizontalPadding=u.paddingLeft+u.paddingRight;}u.paddingLeftString=u.paddingLeft?" ".repeat(u.paddingLeft):"",u.paddingRightString=u.paddingRight?" ".repeat(u.paddingRight):"";let r=F-u.horizontalPadding;u.width=Math.max(Math.min(u.width,r),E);}}var G$1=()=>Object.assign([],{columns:0});function lD(D,F){let u=[G$1()],[C]=u;for(let t of D){let E=t.width+t.horizontalPadding;C.columns+E>F&&(C=G$1(),u.push(C)),C.push(t),C.columns+=E;}for(let t of u){let E=t.reduce((s,l)=>s+l.width+l.horizontalPadding,0),e=F-E;if(e===0)continue;let r=t.filter(s=>"autoOverflow"in s),n=r.filter(s=>s.autoOverflow>0),o=n.reduce((s,l)=>s+l.autoOverflow,0),B=Math.min(o,e);for(let s of n){let l=Math.floor(s.autoOverflow/o*B);s.width+=l,e-=l;}let a=Math.floor(e/r.length);for(let s=0;s<r.length;s+=1){let l=r[s];s===r.length-1?l.width+=e:l.width+=a,e-=a;}}return u}function Z$1(D,F,u){let C=sD(u,F);return aD(C,D),lD(C,D)}i();i();i();var O=10,U$1=(D=0)=>F=>`[${F+D}m`,V$1=(D=0)=>F=>`[${38+D};5;${F}m`,Y=(D=0)=>(F,u,C)=>`[${38+D};2;${F};${u};${C}m`;function AD(){let D=new Map,F={modifier:{reset:[0,0],bold:[1,22],dim:[2,22],italic:[3,23],underline:[4,24],overline:[53,55],inverse:[7,27],hidden:[8,28],strikethrough:[9,29]},color:{black:[30,39],red:[31,39],green:[32,39],yellow:[33,39],blue:[34,39],magenta:[35,39],cyan:[36,39],white:[37,39],blackBright:[90,39],redBright:[91,39],greenBright:[92,39],yellowBright:[93,39],blueBright:[94,39],magentaBright:[95,39],cyanBright:[96,39],whiteBright:[97,39]},bgColor:{bgBlack:[40,49],bgRed:[41,49],bgGreen:[42,49],bgYellow:[43,49],bgBlue:[44,49],bgMagenta:[45,49],bgCyan:[46,49],bgWhite:[47,49],bgBlackBright:[100,49],bgRedBright:[101,49],bgGreenBright:[102,49],bgYellowBright:[103,49],bgBlueBright:[104,49],bgMagentaBright:[105,49],bgCyanBright:[106,49],bgWhiteBright:[107,49]}};F.color.gray=F.color.blackBright,F.bgColor.bgGray=F.bgColor.bgBlackBright,F.color.grey=F.color.blackBright,F.bgColor.bgGrey=F.bgColor.bgBlackBright;for(let[u,C]of Object.entries(F)){for(let[t,E]of Object.entries(C))F[t]={open:`[${E[0]}m`,close:`[${E[1]}m`},C[t]=F[t],D.set(E[0],E[1]);Object.defineProperty(F,u,{value:C,enumerable:!1});}return Object.defineProperty(F,"codes",{value:D,enumerable:!1}),F.color.close="[39m",F.bgColor.close="[49m",F.color.ansi=U$1(),F.color.ansi256=V$1(),F.color.ansi16m=Y(),F.bgColor.ansi=U$1(O),F.bgColor.ansi256=V$1(O),F.bgColor.ansi16m=Y(O),Object.defineProperties(F,{rgbToAnsi256:{value:(u,C,t)=>u===C&&C===t?u<8?16:u>248?231:Math.round((u-8)/247*24)+232:16+36*Math.round(u/255*5)+6*Math.round(C/255*5)+Math.round(t/255*5),enumerable:!1},hexToRgb:{value:u=>{let C=/(?<colorString>[a-f\d]{6}|[a-f\d]{3})/i.exec(u.toString(16));if(!C)return [0,0,0];let{colorString:t}=C.groups;t.length===3&&(t=t.split("").map(e=>e+e).join(""));let E=Number.parseInt(t,16);return [E>>16&255,E>>8&255,E&255]},enumerable:!1},hexToAnsi256:{value:u=>F.rgbToAnsi256(...F.hexToRgb(u)),enumerable:!1},ansi256ToAnsi:{value:u=>{if(u<8)return 30+u;if(u<16)return 90+(u-8);let C,t,E;if(u>=232)C=((u-232)*10+8)/255,t=C,E=C;else {u-=16;let n=u%36;C=Math.floor(u/36)/5,t=Math.floor(n/6)/5,E=n%6/5;}let e=Math.max(C,t,E)*2;if(e===0)return 30;let r=30+(Math.round(E)<<2|Math.round(t)<<1|Math.round(C));return e===2&&(r+=60),r},enumerable:!1},rgbToAnsi:{value:(u,C,t)=>F.ansi256ToAnsi(F.rgbToAnsi256(u,C,t)),enumerable:!1},hexToAnsi:{value:u=>F.ansi256ToAnsi(F.hexToAnsi256(u)),enumerable:!1}}),F}var fD=AD(),K=fD;var x$1=new Set(["","\x9B"]),gD=39,R$1="\x07",q$1="[",pD="]",H$1="m",M$1=`${pD}8;;`,J$1=D=>`${x$1.values().next().value}${q$1}${D}${H$1}`,Q=D=>`${x$1.values().next().value}${M$1}${D}${R$1}`,hD=D=>D.split(" ").map(F=>g(F)),S$1=(D,F,u)=>{let C=[...F],t=!1,E=!1,e=g(d$1(D[D.length-1]));for(let[r,n]of C.entries()){let o=g(n);if(e+o<=u?D[D.length-1]+=n:(D.push(n),e=0),x$1.has(n)&&(t=!0,E=C.slice(r+1).join("").startsWith(M$1)),t){E?n===R$1&&(t=!1,E=!1):n===H$1&&(t=!1);continue}e+=o,e===u&&r<C.length-1&&(D.push(""),e=0);}!e&&D[D.length-1].length>0&&D.length>1&&(D[D.length-2]+=D.pop());},cD=D=>{let F=D.split(" "),u=F.length;for(;u>0&&!(g(F[u-1])>0);)u--;return u===F.length?D:F.slice(0,u).join(" ")+F.slice(u).join("")},dD=(D,F,u={})=>{if(u.trim!==!1&&D.trim()==="")return "";let C="",t,E,e=hD(D),r=[""];for(let[o,B]of D.split(" ").entries()){u.trim!==!1&&(r[r.length-1]=r[r.length-1].trimStart());let a=g(r[r.length-1]);if(o!==0&&(a>=F&&(u.wordWrap===!1||u.trim===!1)&&(r.push(""),a=0),(a>0||u.trim===!1)&&(r[r.length-1]+=" ",a++)),u.hard&&e[o]>F){let s=F-a,l=1+Math.floor((e[o]-s-1)/F);Math.floor((e[o]-1)/F)<l&&r.push(""),S$1(r,B,F);continue}if(a+e[o]>F&&a>0&&e[o]>0){if(u.wordWrap===!1&&a<F){S$1(r,B,F);continue}r.push("");}if(a+e[o]>F&&u.wordWrap===!1){S$1(r,B,F);continue}r[r.length-1]+=B;}u.trim!==!1&&(r=r.map(o=>cD(o)));let n=[...r.join(`
+`)];for(let[o,B]of n.entries()){if(C+=B,x$1.has(B)){let{groups:s}=new RegExp(`(?:\\${q$1}(?<code>\\d+)m|\\${M$1}(?<uri>.*)${R$1})`).exec(n.slice(o).join(""))||{groups:{}};if(s.code!==void 0){let l=Number.parseFloat(s.code);t=l===gD?void 0:l;}else s.uri!==void 0&&(E=s.uri.length===0?void 0:s.uri);}let a=K.codes.get(Number(t));n[o+1]===`
+`?(E&&(C+=Q("")),t&&a&&(C+=J$1(a))):B===`
+`&&(t&&a&&(C+=J$1(t)),E&&(C+=Q(E)));}return C};function T$1(D,F,u){return String(D).normalize().replace(/\r\n/g,`
 `).split(`
-`).map(D=>SD(D,e,u)).join(`
-`)}r(kD,"T$1");var kt=r(t=>Array.from({length:t}).fill(""),"X");function OD(t,e){let u=[],D=0;for(let n of t){let i=0,s=n.map(l=>{var h;let F=(h=e[D])!=null?h:"";D+=1,l.preprocess&&(F=l.preprocess(F)),gt(F)>l.width&&(F=kD(F,l.width,{hard:!0}));let m=F.split(`
-`);if(l.postprocess){let{postprocess:d}=l;m=m.map((C,w)=>d.call(l,C,w))}return l.paddingTop&&m.unshift(...kt(l.paddingTop)),l.paddingBottom&&m.push(...kt(l.paddingBottom)),m.length>i&&(i=m.length),Ie(be({},l),{lines:m})}),a=[];for(let l=0;l<i;l+=1){let h=s.map(F=>{var m;let d=(m=F.lines[l])!=null?m:"",C=Number.isFinite(F.width)?" ".repeat(F.width-H(d)):"",w=F.paddingLeftString;return F.align==="right"&&(w+=C),w+=d,F.align==="left"&&(w+=C),w+F.paddingRightString}).join("");a.push(h)}u.push(a.join(`
-`))}return u.join(`
-`)}r(OD,"P");function jD(t,e){if(!t||t.length===0)return"";let u=dD(t),D=u.length;if(D===0)return"";let{stdoutColumns:n,columns:i}=hD(e);if(i.length>D)throw new Error(`${i.length} columns defined, but only ${D} columns found`);let s=mD(n,i,u);return t.map(a=>OD(s,a)).join(`
-`)}r(jD,"mD"),T();var xD=["<",">","=",">=","<="];function TD(t){if(!xD.includes(t))throw new TypeError(`Invalid breakpoint operator: ${t}`)}r(TD,"xD");function RD(t){let e=Object.keys(t).map(u=>{let[D,n]=u.split(" ");TD(D);let i=Number.parseInt(n,10);if(Number.isNaN(i))throw new TypeError(`Invalid breakpoint value: ${n}`);let s=t[u];return{operator:D,breakpoint:i,value:s}}).sort((u,D)=>D.breakpoint-u.breakpoint);return u=>{var D;return(D=e.find(({operator:n,breakpoint:i})=>n==="="&&u===i||n===">"&&u>i||n==="<"&&u<i||n===">="&&u>=i||n==="<="&&u<=i))==null?void 0:D.value}}r(RD,"wD");const PD=r(t=>t.replace(/[\W_]([a-z\d])?/gi,(e,u)=>u?u.toUpperCase():""),"S"),LD=r(t=>t.replace(/\B([A-Z])/g,"-$1").toLowerCase(),"q"),MD={"> 80":[{width:"content-width",paddingLeft:2,paddingRight:8},{width:"auto"}],"> 40":[{width:"auto",paddingLeft:2,paddingRight:8,preprocess:r(t=>t.trim(),"preprocess")},{width:"100%",paddingLeft:2,paddingBottom:1}],"> 0":{stdoutColumns:1e3,columns:[{width:"content-width",paddingLeft:2,paddingRight:8},{width:"content-width"}]}};function ID(t){let e=!1;return{type:"table",data:{tableData:Object.keys(t).sort((u,D)=>u.localeCompare(D)).map(u=>{const D=t[u],n="alias"in D;return n&&(e=!0),{name:u,flag:D,flagFormatted:`--${LD(u)}`,aliasesEnabled:e,aliasFormatted:n?`-${D.alias}`:void 0}}).map(u=>(u.aliasesEnabled=e,[{type:"flagName",data:u},{type:"flagDescription",data:u}])),tableBreakpoints:MD}}}r(ID,"D");const Ot=r(t=>!t||(t.version??(t.help?t.help.version:void 0)),"A"),jt=r(t=>{const e="parent"in t&&t.parent?.name;return(e?`${e} `:"")+t.name},"C");function ND(t){const e=[];t.name&&e.push(jt(t));const u=Ot(t)??("parent"in t&&Ot(t.parent));if(u&&e.push(`v${u}`),e.length!==0)return{id:"name",type:"text",data:`${e.join(" ")}
-`}}r(ND,"R");function _D(t){const{help:e}=t;if(!(!e||!e.description))return{id:"description",type:"text",data:`${e.description}
-`}}r(_D,"L");function WD(t){const e=t.help||{};if("usage"in e)return e.usage?{id:"usage",type:"section",data:{title:"Usage:",body:Array.isArray(e.usage)?e.usage.join(`
-`):e.usage}}:void 0;if(t.name){const u=[],D=[jt(t)];if(t.flags&&Object.keys(t.flags).length>0&&D.push("[flags...]"),t.parameters&&t.parameters.length>0){const{parameters:n}=t,i=n.indexOf("--"),s=i>-1&&n.slice(i+1).some(a=>a.startsWith("<"));D.push(n.map(a=>a!=="--"?a:s?"--":"[--]").join(" "))}if(D.length>1&&u.push(D.join(" ")),"commands"in t&&t.commands?.length&&u.push(`${t.name} <command>`),u.length>0)return{id:"usage",type:"section",data:{title:"Usage:",body:u.join(`
-`)}}}}r(WD,"T");function GD(t){return!("commands"in t)||!t.commands?.length?void 0:{id:"commands",type:"section",data:{title:"Commands:",body:{type:"table",data:{tableData:t.commands.map(e=>[e.options.name,e.options.help?e.options.help.description:""]),tableOptions:[{width:"content-width",paddingLeft:2,paddingRight:8}]}},indentBody:0}}}r(GD,"_");function qD(t){if(!(!t.flags||Object.keys(t.flags).length===0))return{id:"flags",type:"section",data:{title:"Flags:",body:ID(t.flags),indentBody:0}}}r(qD,"k");function zD(t){const{help:e}=t;if(!e||!e.examples||e.examples.length===0)return;let{examples:u}=e;if(Array.isArray(u)&&(u=u.join(`
-`)),u)return{id:"examples",type:"section",data:{title:"Examples:",body:u}}}r(zD,"F");function JD(t){if(!("alias"in t)||!t.alias)return;const{alias:e}=t;return{id:"aliases",type:"section",data:{title:"Aliases:",body:Array.isArray(e)?e.join(", "):e}}}r(JD,"H");const VD=r(t=>[ND,_D,WD,GD,qD,zD,JD].map(e=>e(t)).filter(Boolean),"U"),UD=xu.WriteStream.prototype.hasColors();class HD{static{r(this,"M")}text(e){return e}bold(e){return UD?`\x1B[1m${e}\x1B[22m`:e.toLocaleUpperCase()}indentText({text:e,spaces:u}){return e.replace(/^/gm," ".repeat(u))}heading(e){return this.bold(e)}section({title:e,body:u,indentBody:D=2}){return`${(e?`${this.heading(e)}
-`:"")+(u?this.indentText({text:this.render(u),spaces:D}):"")}
-`}table({tableData:e,tableOptions:u,tableBreakpoints:D}){return jD(e.map(n=>n.map(i=>this.render(i))),D?RD(D):u)}flagParameter(e){return e===Boolean?"":e===String?"<string>":e===Number?"<number>":Array.isArray(e)?this.flagParameter(e[0]):"<value>"}flagOperator(e){return" "}flagName(e){const{flag:u,flagFormatted:D,aliasesEnabled:n,aliasFormatted:i}=e;let s="";if(i?s+=`${i}, `:n&&(s+="    "),s+=D,"placeholder"in u&&typeof u.placeholder=="string")s+=`${this.flagOperator(e)}${u.placeholder}`;else{const a=this.flagParameter("type"in u?u.type:u);a&&(s+=`${this.flagOperator(e)}${a}`)}return s}flagDefault(e){return JSON.stringify(e)}flagDescription({flag:e}){let u="description"in e?e.description??"":"";if("default"in e){let{default:D}=e;typeof D=="function"&&(D=D()),D&&(u+=` (default: ${this.flagDefault(D)})`)}return u}render(e){if(typeof e=="string")return e;if(Array.isArray(e))return e.map(u=>this.render(u)).join(`
-`);if("type"in e&&this[e.type]){const u=this[e.type];if(typeof u=="function")return u.call(this,e.data)}throw new Error(`Invalid node type: ${JSON.stringify(e)}`)}}const qe=/^[\w.-]+$/,{stringify:_}=JSON,ZD=/[|\\{}()[\]^$+*?.]/;function ze(t){const e=[];let u,D;for(const n of t){if(D)throw new Error(`Invalid parameter: Spread parameter ${_(D)} must be last`);const i=n[0],s=n[n.length-1];let a;if(i==="<"&&s===">"&&(a=!0,u))throw new Error(`Invalid parameter: Required parameter ${_(n)} cannot come after optional parameter ${_(u)}`);if(i==="["&&s==="]"&&(a=!1,u=n),a===void 0)throw new Error(`Invalid parameter: ${_(n)}. Must be wrapped in <> (required parameter) or [] (optional parameter)`);let l=n.slice(1,-1);const h=l.slice(-3)==="...";h&&(D=n,l=l.slice(0,-3));const F=l.match(ZD);if(F)throw new Error(`Invalid parameter: ${_(n)}. Invalid character found ${_(F[0])}`);e.push({name:l,required:a,spread:h})}return e}r(ze,"w");function Je(t,e,u,D){for(let n=0;n<e.length;n+=1){const{name:i,required:s,spread:a}=e[n],l=PD(i);if(l in t)throw new Error(`Invalid parameter: ${_(i)} is used more than once.`);const h=a?u.slice(n):u[n];if(a&&(n=e.length),s&&(!h||a&&h.length===0))return console.error(`Error: Missing required parameter ${_(i)}
-`),D(),process.exit(1);t[l]=h}}r(Je,"b");function XD(t){return t===void 0||t!==!1}r(XD,"W");function xt(t,e,u,D){const n={...e.flags},i=e.version;i&&(n.version={type:Boolean,description:"Show version"});const{help:s}=e,a=XD(s);a&&!("help"in n)&&(n.help={type:Boolean,alias:"h",description:"Show help"});const l=Ku(n,D,{ignore:e.ignoreArgv}),h=r(()=>{console.log(e.version)},"f");if(i&&l.flags.version===!0)return h(),process.exit(0);const F=new HD,m=a&&s?.render?s.render:w=>F.render(w),d=r(w=>{const y=VD({...e,...w?{help:w}:{},flags:n});console.log(m(y,F))},"u");if(a&&l.flags.help===!0)return d(),process.exit(0);if(e.parameters){let{parameters:w}=e,y=l._;const S=w.indexOf("--"),P=w.slice(S+1),I=Object.create(null);if(S>-1&&P.length>0){w=w.slice(0,S);const z=l._["--"];y=y.slice(0,-z.length||void 0),Je(I,ze(w),y,d),Je(I,ze(P),z,d)}else Je(I,ze(w),y,d);Object.assign(l._,I)}const C={...l,showVersion:h,showHelp:d};return typeof u=="function"&&u(C),{command:t,...C}}r(xt,"x");function YD(t,e){const u=new Map;for(const D of e){const n=[D.options.name],{alias:i}=D.options;i&&(Array.isArray(i)?n.push(...i):n.push(i));for(const s of n){if(u.has(s))throw new Error(`Duplicate command name found: ${_(s)}`);u.set(s,D)}}return u.get(t)}r(YD,"z");function KD(t,e,u=process.argv.slice(2)){if(!t)throw new Error("Options is required");if("name"in t&&(!t.name||!qe.test(t.name)))throw new Error(`Invalid script name: ${_(t.name)}`);const D=u[0];if(t.commands&&qe.test(D)){const n=YD(D,t.commands);if(n)return xt(n.options.name,{...n.options,parent:t},n.callback,u.slice(1))}return xt(void 0,t,e,u)}r(KD,"Z");function QD(t,e){if(!t)throw new Error("Command options are required");const{name:u}=t;if(t.name===void 0)throw new Error("Command name is required");if(!qe.test(u))throw new Error(`Invalid command name ${JSON.stringify(u)}. Command names must be one word.`);return{options:t,callback:e}}r(QD,"G");function ve(){}r(ve,"noop");function Tt(){return typeof WeakMap<"u"?new WeakMap:en()}r(Tt,"createWeakMap");function en(){return{add:ve,delete:ve,get:ve,set:ve,has:r(function(t){return!1},"has")}}r(en,"fakeSetOrMap");var tn=Object.prototype.hasOwnProperty,Ve=r(function(t,e){return tn.call(t,e)},"has");function Ue(t,e){for(var u in e)Ve(e,u)&&(t[u]=e[u]);return t}r(Ue,"extend");var un=/^[ \t]*(?:\r\n|\r|\n)/,Dn=/(?:\r\n|\r|\n)[ \t]*$/,nn=/^(?:[\r\n]|$)/,sn=/(?:\r\n|\r|\n)([ \t]*)(?:[^ \t\r\n]|$)/,rn=/^[ \t]*[\r\n][ \t\r\n]*$/;function Rt(t,e,u){var D=0,n=t[0].match(sn);n&&(D=n[1].length);var i="(\\r\\n|\\r|\\n).{0,"+D+"}",s=new RegExp(i,"g");e&&(t=t.slice(1));var a=u.newline,l=u.trimLeadingNewline,h=u.trimTrailingNewline,F=typeof a=="string",m=t.length,d=t.map(function(C,w){return C=C.replace(s,"$1"),w===0&&l&&(C=C.replace(un,"")),w===m-1&&h&&(C=C.replace(Dn,"")),F&&(C=C.replace(/\r\n|\n|\r/g,function(y){return a})),C});return d}r(Rt,"_outdentArray");function an(t,e){for(var u="",D=0,n=t.length;D<n;D++)u+=t[D],D<n-1&&(u+=e[D]);return u}r(an,"concatStringsAndValues");function on(t){return Ve(t,"raw")&&Ve(t,"length")}r(on,"isTemplateStringsArray");function Pt(t){var e=Tt(),u=Tt();function D(i){for(var s=[],a=1;a<arguments.length;a++)s[a-1]=arguments[a];if(on(i)){var l=i,h=(s[0]===D||s[0]===q)&&rn.test(l[0])&&nn.test(l[1]),F=h?u:e,m=F.get(l);if(m||(m=Rt(l,h,t),F.set(l,m)),s.length===0)return m[0];var d=an(m,h?s.slice(1):s);return d}else return Pt(Ue(Ue({},t),i||{}))}r(D,"outdent");var n=Ue(D,{string:r(function(i){return Rt([i],!1,t)[0]},"string")});return n}r(Pt,"createInstance");var q=Pt({trimLeadingNewline:!0,trimTrailingNewline:!0});if(typeof module<"u")try{module.exports=q,Object.defineProperty(q,"__esModule",{value:!0}),q.default=q,q.outdent=q}catch{}let Z=!0;const K=typeof self<"u"?self:typeof window<"u"?window:typeof global<"u"?global:{};let le=0;if(K.process&&K.process.env&&K.process.stdout){const{FORCE_COLOR:t,NODE_DISABLE_COLORS:e,NO_COLOR:u,TERM:D,COLORTERM:n}=K.process.env;e||u||t==="0"?Z=!1:t==="1"||t==="2"||t==="3"?Z=!0:D==="dumb"?Z=!1:"CI"in K.process.env&&["TRAVIS","CIRCLECI","APPVEYOR","GITLAB_CI","GITHUB_ACTIONS","BUILDKITE","DRONE"].some(i=>i in K.process.env)?Z=!0:Z=process.stdout.isTTY,Z&&(process.platform==="win32"||n&&(n==="truecolor"||n==="24bit")?le=3:D&&(D.endsWith("-256color")||D.endsWith("256"))?le=2:le=1)}let Lt={enabled:Z,supportLevel:le};function X(t,e,u=1){const D=`\x1B[${t}m`,n=`\x1B[${e}m`,i=new RegExp(`\\x1b\\[${e}m`,"g");return s=>Lt.enabled&&Lt.supportLevel>=u?D+(""+s).replace(i,D)+n:""+s}r(X,"kolorist");const ln=X(1,22),Ae=X(2,22),Mt=X(31,39),It=X(32,39),cn=X(33,39),He=X(35,39),Q=X(36,39),ce=r(t=>x.access(t).then(()=>!0,()=>!1),"fsExists");var hn=require;const Nt=r(async t=>{const e=await x.readFile(t,"utf8");return JSON.parse(e)},"readJsonFile"),pn="link.config.json",_t="link.config.js",Wt=r(async t=>{const e=k.join(t,pn);if(await ce(e))try{return Nt(e)}catch(D){throw new Error(`Failed to parse config JSON ${e}: ${D.message}`)}const u=k.join(t,_t);if(await ce(u))try{return hn(u)}catch(D){throw new Error(`Failed to load config file ${_t}: ${D.message}`)}},"loadConfig");var Gt=typeof globalThis<"u"?globalThis:typeof window<"u"?window:typeof global<"u"?global:typeof self<"u"?self:{};function Se(t){return t&&t.__esModule&&Object.prototype.hasOwnProperty.call(t,"default")?t.default:t}r(Se,"getDefaultExportFromCjs");var ke={};ke.replaceDollarWithPercentPair=zt,ke.convertToSetCommand=qt,ke.convertToSetCommands=Fn;function qt(t,e){var u="";return t=t||"",t=t.trim(),e=e||"",e=e.trim(),t&&e&&e.length>0&&(u="@SET "+t+"="+zt(e)+`\r
-`),u}r(qt,"convertToSetCommand");function fn(t){var e={};return t.map(function(u){var D=u.split("=");e[D[0]]=D[1]}),e}r(fn,"extractVariableValuePairs");function Fn(t){var e=fn(t.split(" ")),u="";return Object.keys(e).forEach(function(D){u+=qt(D,e[D])}),u}r(Fn,"convertToSetCommands");function zt(t){var e=/\$\{?([^$@#?\- \t{}:]+)\}?/g,u="",D=0;do{var n=e.exec(t);if(n){var i=t.substring(D,n.index)||"";u+=i+"%"+n[1]+"%",D=e.lastIndex}}while(e.lastIndex>0);return u+=t.slice(D),u}r(zt,"replaceDollarWithPercentPair");const{chmod:Ze,mkdir:dn,readFile:Cn,stat:Jt,unlink:gn,writeFile:Xe}=x,{dirname:Vt,relative:En}=k,mn=ke,wn=/^#!\s*(?:\/usr\/bin\/env\s+(?:-S\s+)?((?:[^ \t=]+=[^ \t=]+\s+)*))?([^ \t]+)(.*)$/,Bn=r((t,e)=>Jt(t).then(()=>Ke(t,e),()=>{}),"cmdShimIfExists"),Ye=r(t=>gn(t).catch(()=>{}),"rm"),Ke=r((t,e)=>Jt(t).then(()=>yn(t,e)),"cmdShim"),yn=r((t,e)=>Promise.all([Ye(e),Ye(e+".cmd"),Ye(e+".ps1")]).then(()=>bn(t,e)),"cmdShim_"),bn=r((t,e)=>dn(Vt(e),{recursive:!0}).then(()=>Cn(t,"utf8")).then(u=>{const n=u.trim().split(/\r*\n/)[0].match(wn);if(!n)return Qe(t,e);const i=n[1]||"",s=n[2],a=n[3]||"";return Qe(t,e,s,a,i)},()=>Qe(t,e)),"writeShim"),Qe=r((t,e,u,D,n)=>{let i=En(Vt(e),t),s=i.split("/").join("\\"),a,l=u&&u.split("\\").join("/"),h,F=l&&`"${l}$exe"`,m;i=i.split("\\").join("/"),D=D||"",n=n||"",u?(a=`"%dp0%\\${u}.exe"`,h=`"$basedir/${u}"`,m=`"$basedir/${u}$exe"`,s=`"%dp0%\\${s}"`,i=`"$basedir/${i}"`):(u=`"%dp0%\\${s}"`,l=`"$basedir/${i}"`,F=l,D="",s="",i="");const d=`@ECHO off\r
-GOTO start\r
-:find_dp0\r
-SET dp0=%~dp0\r
-EXIT /b\r
-:start\r
-SETLOCAL\r
-CALL :find_dp0\r
-`;let C;if(a){h=h.trim(),D=D.trim();const S=mn.convertToSetCommands(n);C=d+S+`\r
-IF EXIST ${a} (\r
-  SET "_prog=${a.replace(/(^")|("$)/g,"")}"\r
-) ELSE (\r
-  SET "_prog=${u.replace(/(^")|("$)/g,"")}"\r
-  SET PATHEXT=%PATHEXT:;.JS;=;%\r
-)\r
-\r
-endLocal & goto #_undefined_# 2>NUL || title %COMSPEC% & "%_prog%" ${D} ${s} %*\r
-`}else C=`${d}${u} ${D} ${s} %*\r
-`;let w=`#!/bin/sh
-`;w=w+`basedir=$(dirname "$(echo "$0" | sed -e 's,\\\\,/,g')")
+`).map(C=>dD(C,F,u)).join(`
+`)}var X=D=>Array.from({length:D}).fill("");function P(D,F){let u=[],C=0;for(let t of D){let E=0,e=t.map(n=>{var a;let o=(a=F[C])!=null?a:"";C+=1,n.preprocess&&(o=n.preprocess(o)),b$1(o)>n.width&&(o=T$1(o,n.width,{hard:!0}));let B=o.split(`
+`);if(n.postprocess){let{postprocess:s}=n;B=B.map((l,h)=>s.call(n,l,h));}return n.paddingTop&&B.unshift(...X(n.paddingTop)),n.paddingBottom&&B.push(...X(n.paddingBottom)),B.length>E&&(E=B.length),c(p({},n),{lines:B})}),r=[];for(let n=0;n<E;n+=1){let o=e.map(B=>{var h;let a=(h=B.lines[n])!=null?h:"",s=Number.isFinite(B.width)?" ".repeat(B.width-g(a)):"",l=B.paddingLeftString;return B.align==="right"&&(l+=s),l+=a,B.align==="left"&&(l+=s),l+B.paddingRightString}).join("");r.push(o);}u.push(r.join(`
+`));}return u.join(`
+`)}function mD(D,F){if(!D||D.length===0)return "";let u=k$1(D),C=u.length;if(C===0)return "";let{stdoutColumns:t,columns:E}=v(F);if(E.length>C)throw new Error(`${E.length} columns defined, but only ${C} columns found`);let e=Z$1(t,E,u);return D.map(r=>P(e,r)).join(`
+`)}i();var bD=["<",">","=",">=","<="];function xD(D){if(!bD.includes(D))throw new TypeError(`Invalid breakpoint operator: ${D}`)}function wD(D){let F=Object.keys(D).map(u=>{let[C,t]=u.split(" ");xD(C);let E=Number.parseInt(t,10);if(Number.isNaN(E))throw new TypeError(`Invalid breakpoint value: ${t}`);let e=D[u];return {operator:C,breakpoint:E,value:e}}).sort((u,C)=>C.breakpoint-u.breakpoint);return u=>{var C;return (C=F.find(({operator:t,breakpoint:E})=>t==="="&&u===E||t===">"&&u>E||t==="<"&&u<E||t===">="&&u>=E||t==="<="&&u<=E))==null?void 0:C.value}}
 
-case \`uname\` in
-    *CYGWIN*|*MINGW*|*MSYS*)
-        if command -v cygpath > /dev/null 2>&1; then
-            basedir=\`cygpath -w "$basedir"\`
-        fi
-    ;;
-esac
+const S=t=>t.replace(/[\W_]([a-z\d])?/gi,(e,r)=>r?r.toUpperCase():""),q=t=>t.replace(/\B([A-Z])/g,"-$1").toLowerCase(),I={"> 80":[{width:"content-width",paddingLeft:2,paddingRight:8},{width:"auto"}],"> 40":[{width:"auto",paddingLeft:2,paddingRight:8,preprocess:t=>t.trim()},{width:"100%",paddingLeft:2,paddingBottom:1}],"> 0":{stdoutColumns:1e3,columns:[{width:"content-width",paddingLeft:2,paddingRight:8},{width:"content-width"}]}};function D(t){let e=!1;return {type:"table",data:{tableData:Object.keys(t).sort((a,i)=>a.localeCompare(i)).map(a=>{const i=t[a],s="alias"in i;return s&&(e=!0),{name:a,flag:i,flagFormatted:`--${q(a)}`,aliasesEnabled:e,aliasFormatted:s?`-${i.alias}`:void 0}}).map(a=>(a.aliasesEnabled=e,[{type:"flagName",data:a},{type:"flagDescription",data:a}])),tableBreakpoints:I}}}const A=t=>!t||(t.version??(t.help?t.help.version:void 0)),C=t=>{const e="parent"in t&&t.parent?.name;return (e?`${e} `:"")+t.name};function R(t){const e=[];t.name&&e.push(C(t));const r=A(t)??("parent"in t&&A(t.parent));if(r&&e.push(`v${r}`),e.length!==0)return {id:"name",type:"text",data:`${e.join(" ")}
+`}}function L(t){const{help:e}=t;if(!(!e||!e.description))return {id:"description",type:"text",data:`${e.description}
+`}}function T(t){const e=t.help||{};if("usage"in e)return e.usage?{id:"usage",type:"section",data:{title:"Usage:",body:Array.isArray(e.usage)?e.usage.join(`
+`):e.usage}}:void 0;if(t.name){const r=[],n=[C(t)];if(t.flags&&Object.keys(t.flags).length>0&&n.push("[flags...]"),t.parameters&&t.parameters.length>0){const{parameters:a}=t,i=a.indexOf("--"),s=i>-1&&a.slice(i+1).some(o=>o.startsWith("<"));n.push(a.map(o=>o!=="--"?o:s?"--":"[--]").join(" "));}if(n.length>1&&r.push(n.join(" ")),"commands"in t&&t.commands?.length&&r.push(`${t.name} <command>`),r.length>0)return {id:"usage",type:"section",data:{title:"Usage:",body:r.join(`
+`)}}}}function _(t){return !("commands"in t)||!t.commands?.length?void 0:{id:"commands",type:"section",data:{title:"Commands:",body:{type:"table",data:{tableData:t.commands.map(n=>[n.options.name,n.options.help?n.options.help.description:""]),tableOptions:[{width:"content-width",paddingLeft:2,paddingRight:8}]}},indentBody:0}}}function k(t){if(!(!t.flags||Object.keys(t.flags).length===0))return {id:"flags",type:"section",data:{title:"Flags:",body:D(t.flags),indentBody:0}}}function F(t){const{help:e}=t;if(!e||!e.examples||e.examples.length===0)return;let{examples:r}=e;if(Array.isArray(r)&&(r=r.join(`
+`)),r)return {id:"examples",type:"section",data:{title:"Examples:",body:r}}}function H(t){if(!("alias"in t)||!t.alias)return;const{alias:e}=t;return {id:"aliases",type:"section",data:{title:"Aliases:",body:Array.isArray(e)?e.join(", "):e}}}const U=t=>[R,L,T,_,k,F,H].map(e=>e(t)).filter(Boolean),J=N$1.WriteStream.prototype.hasColors();class M{text(e){return e}bold(e){return J?`\x1B[1m${e}\x1B[22m`:e.toLocaleUpperCase()}indentText({text:e,spaces:r}){return e.replace(/^/gm," ".repeat(r))}heading(e){return this.bold(e)}section({title:e,body:r,indentBody:n=2}){return `${(e?`${this.heading(e)}
+`:"")+(r?this.indentText({text:this.render(r),spaces:n}):"")}
+`}table({tableData:e,tableOptions:r,tableBreakpoints:n}){return mD(e.map(a=>a.map(i=>this.render(i))),n?wD(n):r)}flagParameter(e){return e===Boolean?"":e===String?"<string>":e===Number?"<number>":Array.isArray(e)?this.flagParameter(e[0]):"<value>"}flagOperator(e){return " "}flagName(e){const{flag:r,flagFormatted:n,aliasesEnabled:a,aliasFormatted:i}=e;let s="";if(i?s+=`${i}, `:a&&(s+="    "),s+=n,"placeholder"in r&&typeof r.placeholder=="string")s+=`${this.flagOperator(e)}${r.placeholder}`;else {const o=this.flagParameter("type"in r?r.type:r);o&&(s+=`${this.flagOperator(e)}${o}`);}return s}flagDefault(e){return JSON.stringify(e)}flagDescription({flag:e}){let r="description"in e?e.description??"":"";if("default"in e){let{default:n}=e;typeof n=="function"&&(n=n()),n&&(r+=` (default: ${this.flagDefault(n)})`);}return r}render(e){if(typeof e=="string")return e;if(Array.isArray(e))return e.map(r=>this.render(r)).join(`
+`);if("type"in e&&this[e.type]){const r=this[e.type];if(typeof r=="function")return r.call(this,e.data)}throw new Error(`Invalid node type: ${JSON.stringify(e)}`)}}const y=/^[\w.-]+$/,{stringify:d}=JSON,V=/[|\\{}()[\]^$+*?.]/;function w(t){const e=[];let r,n;for(const a of t){if(n)throw new Error(`Invalid parameter: Spread parameter ${d(n)} must be last`);const i=a[0],s=a[a.length-1];let o;if(i==="<"&&s===">"&&(o=!0,r))throw new Error(`Invalid parameter: Required parameter ${d(a)} cannot come after optional parameter ${d(r)}`);if(i==="["&&s==="]"&&(o=!1,r=a),o===void 0)throw new Error(`Invalid parameter: ${d(a)}. Must be wrapped in <> (required parameter) or [] (optional parameter)`);let l=a.slice(1,-1);const f=l.slice(-3)==="...";f&&(n=a,l=l.slice(0,-3));const p=l.match(V);if(p)throw new Error(`Invalid parameter: ${d(a)}. Invalid character found ${d(p[0])}`);e.push({name:l,required:o,spread:f});}return e}function b(t,e,r,n){for(let a=0;a<e.length;a+=1){const{name:i,required:s,spread:o}=e[a],l=S(i);if(l in t)throw new Error(`Invalid parameter: ${d(i)} is used more than once.`);const f=o?r.slice(a):r[a];if(o&&(a=e.length),s&&(!f||o&&f.length===0))return console.error(`Error: Missing required parameter ${d(i)}
+`),n(),process.exit(1);t[l]=f;}}function W(t){return t===void 0||t!==!1}function x(t,e,r,n){const a={...e.flags},i=e.version;i&&(a.version={type:Boolean,description:"Show version"});const{help:s}=e,o=W(s);o&&!("help"in a)&&(a.help={type:Boolean,alias:"h",description:"Show help"});const l=U$2(a,n,{ignore:e.ignoreArgv}),f=()=>{console.log(e.version);};if(i&&l.flags.version===!0)return f(),process.exit(0);const p=new M,O=o&&s?.render?s.render:c=>p.render(c),u=c=>{const m=U({...e,...c?{help:c}:{},flags:a});console.log(O(m,p));};if(o&&l.flags.help===!0)return u(),process.exit(0);if(e.parameters){let{parameters:c}=e,m=l._;const g=c.indexOf("--"),v=c.slice(g+1),h=Object.create(null);if(g>-1&&v.length>0){c=c.slice(0,g);const E=l._["--"];m=m.slice(0,-E.length||void 0),b(h,w(c),m,u),b(h,w(v),E,u);}else b(h,w(c),m,u);Object.assign(l._,h);}const $={...l,showVersion:f,showHelp:u};return typeof r=="function"&&r($),{command:t,...$}}function z(t,e){const r=new Map;for(const n of e){const a=[n.options.name],{alias:i}=n.options;i&&(Array.isArray(i)?a.push(...i):a.push(i));for(const s of a){if(r.has(s))throw new Error(`Duplicate command name found: ${d(s)}`);r.set(s,n);}}return r.get(t)}function Z(t,e,r=process.argv.slice(2)){if(!t)throw new Error("Options is required");if("name"in t&&(!t.name||!y.test(t.name)))throw new Error(`Invalid script name: ${d(t.name)}`);const n=r[0];if(t.commands&&y.test(n)){const a=z(n,t.commands);if(a)return x(a.options.name,{...a.options,parent:t},a.callback,r.slice(1))}return x(void 0,t,e,r)}function G(t,e){if(!t)throw new Error("Command options are required");const{name:r}=t;if(t.name===void 0)throw new Error("Command name is required");if(!y.test(r))throw new Error(`Invalid command name ${JSON.stringify(r)}. Command names must be one word.`);return {options:t,callback:e}}
 
-`,h?w=w+`if [ -x ${h} ]; then
-  exec ${n}${h} ${D} ${i} "$@"
-else 
-  exec ${n}${l} ${D} ${i} "$@"
-fi
-`:w=w+`exec ${l} ${D} ${i} "$@"
-`;let y=`#!/usr/bin/env pwsh
-$basedir=Split-Path $MyInvocation.MyCommand.Definition -Parent
-
-$exe=""
-if ($PSVersionTable.PSVersion -lt "6.0" -or $IsWindows) {
-  # Fix case when both the Windows and Linux builds of Node
-  # are installed in the same directory
-  $exe=".exe"
+// In the absence of a WeakSet or WeakMap implementation, don't break, but don't cache either.
+function noop() {
 }
-`;return h?y=y+`$ret=0
-if (Test-Path ${m}) {
-  # Support pipeline input
-  if ($MyInvocation.ExpectingInput) {
-    $input | & ${m} ${D} ${i} $args
-  } else {
-    & ${m} ${D} ${i} $args
+function createWeakMap() {
+    if (typeof WeakMap !== "undefined") {
+        return new WeakMap();
+    }
+    else {
+        return fakeSetOrMap();
+    }
+}
+/**
+ * Creates and returns a no-op implementation of a WeakMap / WeakSet that never stores anything.
+ */
+function fakeSetOrMap() {
+    return {
+        add: noop,
+        delete: noop,
+        get: noop,
+        set: noop,
+        has: function (k) {
+            return false;
+        },
+    };
+}
+// Safe hasOwnProperty
+var hop = Object.prototype.hasOwnProperty;
+var has = function (obj, prop) {
+    return hop.call(obj, prop);
+};
+// Copy all own enumerable properties from source to target
+function extend(target, source) {
+    for (var prop in source) {
+        if (has(source, prop)) {
+            target[prop] = source[prop];
+        }
+    }
+    return target;
+}
+var reLeadingNewline = /^[ \t]*(?:\r\n|\r|\n)/;
+var reTrailingNewline = /(?:\r\n|\r|\n)[ \t]*$/;
+var reStartsWithNewlineOrIsEmpty = /^(?:[\r\n]|$)/;
+var reDetectIndentation = /(?:\r\n|\r|\n)([ \t]*)(?:[^ \t\r\n]|$)/;
+var reOnlyWhitespaceWithAtLeastOneNewline = /^[ \t]*[\r\n][ \t\r\n]*$/;
+function _outdentArray(strings, firstInterpolatedValueSetsIndentationLevel, options) {
+    // If first interpolated value is a reference to outdent,
+    // determine indentation level from the indentation of the interpolated value.
+    var indentationLevel = 0;
+    var match = strings[0].match(reDetectIndentation);
+    if (match) {
+        indentationLevel = match[1].length;
+    }
+    var reSource = "(\\r\\n|\\r|\\n).{0," + indentationLevel + "}";
+    var reMatchIndent = new RegExp(reSource, "g");
+    if (firstInterpolatedValueSetsIndentationLevel) {
+        strings = strings.slice(1);
+    }
+    var newline = options.newline, trimLeadingNewline = options.trimLeadingNewline, trimTrailingNewline = options.trimTrailingNewline;
+    var normalizeNewlines = typeof newline === "string";
+    var l = strings.length;
+    var outdentedStrings = strings.map(function (v, i) {
+        // Remove leading indentation from all lines
+        v = v.replace(reMatchIndent, "$1");
+        // Trim a leading newline from the first string
+        if (i === 0 && trimLeadingNewline) {
+            v = v.replace(reLeadingNewline, "");
+        }
+        // Trim a trailing newline from the last string
+        if (i === l - 1 && trimTrailingNewline) {
+            v = v.replace(reTrailingNewline, "");
+        }
+        // Normalize newlines
+        if (normalizeNewlines) {
+            v = v.replace(/\r\n|\n|\r/g, function (_) { return newline; });
+        }
+        return v;
+    });
+    return outdentedStrings;
+}
+function concatStringsAndValues(strings, values) {
+    var ret = "";
+    for (var i = 0, l = strings.length; i < l; i++) {
+        ret += strings[i];
+        if (i < l - 1) {
+            ret += values[i];
+        }
+    }
+    return ret;
+}
+function isTemplateStringsArray(v) {
+    return has(v, "raw") && has(v, "length");
+}
+/**
+ * It is assumed that opts will not change.  If this is a problem, clone your options object and pass the clone to
+ * makeInstance
+ * @param options
+ * @return {outdent}
+ */
+function createInstance(options) {
+    /** Cache of pre-processed template literal arrays */
+    var arrayAutoIndentCache = createWeakMap();
+    /**
+       * Cache of pre-processed template literal arrays, where first interpolated value is a reference to outdent,
+       * before interpolated values are injected.
+       */
+    var arrayFirstInterpSetsIndentCache = createWeakMap();
+    function outdent(stringsOrOptions) {
+        var values = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            values[_i - 1] = arguments[_i];
+        }
+        /* tslint:enable:no-shadowed-variable */
+        if (isTemplateStringsArray(stringsOrOptions)) {
+            var strings = stringsOrOptions;
+            // Is first interpolated value a reference to outdent, alone on its own line, without any preceding non-whitespace?
+            var firstInterpolatedValueSetsIndentationLevel = (values[0] === outdent || values[0] === defaultOutdent) &&
+                reOnlyWhitespaceWithAtLeastOneNewline.test(strings[0]) &&
+                reStartsWithNewlineOrIsEmpty.test(strings[1]);
+            // Perform outdentation
+            var cache = firstInterpolatedValueSetsIndentationLevel
+                ? arrayFirstInterpSetsIndentCache
+                : arrayAutoIndentCache;
+            var renderedArray = cache.get(strings);
+            if (!renderedArray) {
+                renderedArray = _outdentArray(strings, firstInterpolatedValueSetsIndentationLevel, options);
+                cache.set(strings, renderedArray);
+            }
+            /** If no interpolated values, skip concatenation step */
+            if (values.length === 0) {
+                return renderedArray[0];
+            }
+            /** Concatenate string literals with interpolated values */
+            var rendered = concatStringsAndValues(renderedArray, firstInterpolatedValueSetsIndentationLevel ? values.slice(1) : values);
+            return rendered;
+        }
+        else {
+            // Create and return a new instance of outdent with the given options
+            return createInstance(extend(extend({}, options), stringsOrOptions || {}));
+        }
+    }
+    var fullOutdent = extend(outdent, {
+        string: function (str) {
+            return _outdentArray([str], false, options)[0];
+        },
+    });
+    return fullOutdent;
+}
+var defaultOutdent = createInstance({
+    trimLeadingNewline: true,
+    trimTrailingNewline: true,
+});
+if (typeof module !== "undefined") {
+    // In webpack harmony-modules environments, module.exports is read-only,
+    // so we fail gracefully.
+    try {
+        module.exports = defaultOutdent;
+        Object.defineProperty(defaultOutdent, "__esModule", { value: true });
+        defaultOutdent.default = defaultOutdent;
+        defaultOutdent.outdent = defaultOutdent;
+    }
+    catch (e) { }
+}
+
+let enabled = true;
+// Support both browser and node environments
+const globalVar = typeof self !== 'undefined'
+    ? self
+    : typeof window !== 'undefined'
+        ? window
+        : typeof global !== 'undefined'
+            ? global
+            : {};
+/**
+ * Detect how much colors the current terminal supports
+ */
+let supportLevel = 0 /* none */;
+if (globalVar.process && globalVar.process.env && globalVar.process.stdout) {
+    const { FORCE_COLOR, NODE_DISABLE_COLORS, NO_COLOR, TERM, COLORTERM } = globalVar.process.env;
+    if (NODE_DISABLE_COLORS || NO_COLOR || FORCE_COLOR === '0') {
+        enabled = false;
+    }
+    else if (FORCE_COLOR === '1' ||
+        FORCE_COLOR === '2' ||
+        FORCE_COLOR === '3') {
+        enabled = true;
+    }
+    else if (TERM === 'dumb') {
+        enabled = false;
+    }
+    else if ('CI' in globalVar.process.env &&
+        [
+            'TRAVIS',
+            'CIRCLECI',
+            'APPVEYOR',
+            'GITLAB_CI',
+            'GITHUB_ACTIONS',
+            'BUILDKITE',
+            'DRONE',
+        ].some(vendor => vendor in globalVar.process.env)) {
+        enabled = true;
+    }
+    else {
+        enabled = process.stdout.isTTY;
+    }
+    if (enabled) {
+        // Windows supports 24bit True Colors since Windows 10 revision #14931,
+        // see https://devblogs.microsoft.com/commandline/24-bit-color-in-the-windows-console/
+        if (process.platform === 'win32') {
+            supportLevel = 3 /* trueColor */;
+        }
+        else {
+            if (COLORTERM && (COLORTERM === 'truecolor' || COLORTERM === '24bit')) {
+                supportLevel = 3 /* trueColor */;
+            }
+            else if (TERM && (TERM.endsWith('-256color') || TERM.endsWith('256'))) {
+                supportLevel = 2 /* ansi256 */;
+            }
+            else {
+                supportLevel = 1 /* ansi */;
+            }
+        }
+    }
+}
+let options = {
+    enabled,
+    supportLevel,
+};
+function kolorist(start, end, level = 1 /* ansi */) {
+    const open = `\x1b[${start}m`;
+    const close = `\x1b[${end}m`;
+    const regex = new RegExp(`\\x1b\\[${end}m`, 'g');
+    return (str) => {
+        return options.enabled && options.supportLevel >= level
+            ? open + ('' + str).replace(regex, open) + close
+            : '' + str;
+    };
+}
+const bold = kolorist(1, 22);
+const dim = kolorist(2, 22);
+const red = kolorist(31, 39);
+const green = kolorist(32, 39);
+const yellow = kolorist(33, 39);
+const magenta = kolorist(35, 39);
+const cyan = kolorist(36, 39);
+
+const fsExists = (path) => fs$1.access(path).then(
+  () => true,
+  () => false
+);
+
+var require$1 = (
+			false
+				? /* @__PURE__ */ module$1.createRequire((typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (_documentCurrentScript && _documentCurrentScript.src || new URL('cli.js', document.baseURI).href)))
+				: require
+		);
+
+const readJsonFile = async (filePath) => {
+  const jsonString = await fs$1.readFile(filePath, "utf8");
+  return JSON.parse(jsonString);
+};
+
+const configJsonFile = "link.config.json";
+const configJsFile = "link.config.js";
+const loadConfig = async (packageDirectory) => {
+  const configJsonPath = path$1.join(packageDirectory, configJsonFile);
+  if (await fsExists(configJsonPath)) {
+    try {
+      return readJsonFile(configJsonPath);
+    } catch (error) {
+      throw new Error(`Failed to parse config JSON ${configJsonPath}: ${error.message}`);
+    }
   }
-  $ret=$LASTEXITCODE
-} else {
-  # Support pipeline input
-  if ($MyInvocation.ExpectingInput) {
-    $input | & ${F} ${D} ${i} $args
-  } else {
-    & ${F} ${D} ${i} $args
+  const configJsPath = path$1.join(packageDirectory, configJsFile);
+  if (await fsExists(configJsPath)) {
+    try {
+      return require$1(configJsPath);
+    } catch (error) {
+      throw new Error(`Failed to load config file ${configJsFile}: ${error.message}`);
+    }
   }
-  $ret=$LASTEXITCODE
+};
+
+var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
+function getDefaultExportFromCjs (x) {
+	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 }
-exit $ret
-`:y=y+`# Support pipeline input
-if ($MyInvocation.ExpectingInput) {
-  $input | & ${F} ${D} ${i} $args
-} else {
-  & ${F} ${D} ${i} $args
+
+var toBatchSyntax$1 = {};
+
+toBatchSyntax$1.replaceDollarWithPercentPair = replaceDollarWithPercentPair;
+toBatchSyntax$1.convertToSetCommand = convertToSetCommand;
+toBatchSyntax$1.convertToSetCommands = convertToSetCommands;
+
+function convertToSetCommand (key, value) {
+  var line = '';
+  key = key || '';
+  key = key.trim();
+  value = value || '';
+  value = value.trim();
+  if (key && value && value.length > 0) {
+    line = '@SET ' + key + '=' + replaceDollarWithPercentPair(value) + '\r\n';
+  }
+  return line
 }
-exit $LASTEXITCODE
-`,Promise.all([Xe(e+".ps1",y,"utf8"),Xe(e+".cmd",C,"utf8"),Xe(e,w,"utf8")]).then(()=>$n(e))},"writeShim_"),$n=r(t=>Promise.all([Ze(t,493),Ze(t+".cmd",493),Ze(t+".ps1",493)]),"chmodShim");var vn=Ke;Ke.ifExists=Bn;var An=Se(vn);const Ut=r(async t=>{const e=k.join(t,"package.json");if(!await ce(e))throw new Error(`package.json not found in ${t}`);const D=await Nt(e);if(!D.name)throw new Error(`package.json must contain a name: ${e}`);return D},"readPackageJson"),Ht=r(async(t,e,u)=>{const D=await x.lstat(e).catch(()=>null);if(D){if(D.isSymbolicLink()){const n=await x.realpath(e).catch(()=>null);if(t===n)return}await x.rm(e,{recursive:!0})}await x.symlink(t,e,u)},"symlink"),Sn=r(async(t,e)=>{await Ht(t,e),await x.chmod(e,493)},"symlinkBinary"),kn=r(async(t,e)=>{if(await ce(e)){const[u,D]=await Promise.all([x.stat(e),x.stat(t)]);if(u.ino===D.ino)return;await x.rm(e,{recursive:!0})}await x.link(t,e)},"hardlink"),On=r(async(t,e,{name:u,bin:D},n)=>{if(!D)return[];u?.startsWith("@")&&([,u]=u.split("/"));const i=k.join(e,".bin");if(await x.mkdir(i,{recursive:!0}),typeof D=="string"){await n(k.resolve(t,D),k.join(i,u));return}await Promise.all(Object.entries(D).map(async([s,a])=>await n(k.resolve(t,a),k.join(i,s))))},"linkBinaries"),jn="node_modules",xn=r(async(t,e)=>{const u=k.resolve(t,e),D=await Ut(u),n=k.join(t,jn),i=k.join(n,D.name),s=k.dirname(i);await x.mkdir(s,{recursive:!0});const a=k.relative(s,u);return await Ht(a,i,"junction"),await On(u,n,D,process.platform==="win32"?An:Sn),{name:D.name,path:i,target:a}},"symlinkPackage"),Zt=r(async(t,e,u)=>{const D=k.resolve(t,e);if(!await ce(D)){console.warn(Mt("\u2716"),`Package path does not exist: ${e}`),process.exitCode=1;return}try{const i=await xn(t,e);console.log(It("\u2714"),`Symlinked ${He(i.name)}:`,Q(i.path),"\u2192",Q(i.target))}catch(i){console.warn(Mt("\u2716"),"Failed to symlink",Q(e),"with error:",i.message),process.exitCode=1;return}if(u.deep){const i=await Wt(D);i&&await Xt(D,i,u)}},"linkPackage"),Xt=r(async(t,e,u)=>{if(!e.packages)return;const D={deep:u.deep??e.deepLink??!1};await Promise.all(e.packages.map(async n=>await Zt(t,n,D)))},"linkFromConfig");function Tn(t,e){if(typeof t!="function")throw new TypeError(`Expected the first argument to be a \`function\`, got \`${typeof t}\`.`);let u,D=0;return r(function(...i){clearTimeout(u);const s=Date.now(),a=s-D,l=e-a;l<=0?(D=s,t.apply(this,i)):u=setTimeout(()=>{D=Date.now(),t.apply(this,i)},l)},"throttled")}r(Tn,"throttle");var Rn=Tn,Pn=Se(Rn),Ln=r(function(t,e){if(typeof t!="string")throw new TypeError("Expected a string");for(var u=String(t),D="",n=e?!!e.extended:!1,i=e?!!e.globstar:!1,s=!1,a=e&&typeof e.flags=="string"?e.flags:"",l,h=0,F=u.length;h<F;h++)switch(l=u[h],l){case"/":case"$":case"^":case"+":case".":case"(":case")":case"=":case"!":case"|":D+="\\"+l;break;case"?":if(n){D+=".";break}case"[":case"]":if(n){D+=l;break}case"{":if(n){s=!0,D+="(";break}case"}":if(n){s=!1,D+=")";break}case",":if(s){D+="|";break}D+="\\"+l;break;case"*":for(var m=u[h-1],d=1;u[h+1]==="*";)d++,h++;var C=u[h+1];if(!i)D+=".*";else{var w=d>1&&(m==="/"||m===void 0)&&(C==="/"||C===void 0);w?(D+="((?:[^/]*(?:/|$))*)",h++):D+="([^/]*)"}break;default:D+=l}return(!a||!~a.indexOf("g"))&&(D="^"+D+"$"),new RegExp(D,a)},"globToRegexp"),Mn=Se(Ln),Yt={},In=Kt;function Kt(t,e,u){t instanceof RegExp&&(t=Qt(t,u)),e instanceof RegExp&&(e=Qt(e,u));var D=eu(t,e,u);return D&&{start:D[0],end:D[1],pre:u.slice(0,D[0]),body:u.slice(D[0]+t.length,D[1]),post:u.slice(D[1]+e.length)}}r(Kt,"balanced$1");function Qt(t,e){var u=e.match(t);return u?u[0]:null}r(Qt,"maybeMatch"),Kt.range=eu;function eu(t,e,u){var D,n,i,s,a,l=u.indexOf(t),h=u.indexOf(e,l+1),F=l;if(l>=0&&h>0){if(t===e)return[l,h];for(D=[],i=u.length;F>=0&&!a;)F==l?(D.push(F),l=u.indexOf(t,F+1)):D.length==1?a=[D.pop(),h]:(n=D.pop(),n<i&&(i=n,s=h),h=u.indexOf(e,F+1)),F=l<h&&l>=0?l:h;D.length&&(a=[i,s])}return a}r(eu,"range");var tu=In,Nn=Gn,uu="\0SLASH"+Math.random()+"\0",Du="\0OPEN"+Math.random()+"\0",et="\0CLOSE"+Math.random()+"\0",nu="\0COMMA"+Math.random()+"\0",iu="\0PERIOD"+Math.random()+"\0";function tt(t){return parseInt(t,10)==t?parseInt(t,10):t.charCodeAt(0)}r(tt,"numeric");function _n(t){return t.split("\\\\").join(uu).split("\\{").join(Du).split("\\}").join(et).split("\\,").join(nu).split("\\.").join(iu)}r(_n,"escapeBraces");function Wn(t){return t.split(uu).join("\\").split(Du).join("{").split(et).join("}").split(nu).join(",").split(iu).join(".")}r(Wn,"unescapeBraces");function su(t){if(!t)return[""];var e=[],u=tu("{","}",t);if(!u)return t.split(",");var D=u.pre,n=u.body,i=u.post,s=D.split(",");s[s.length-1]+="{"+n+"}";var a=su(i);return i.length&&(s[s.length-1]+=a.shift(),s.push.apply(s,a)),e.push.apply(e,s),e}r(su,"parseCommaParts");function Gn(t){return t?(t.substr(0,2)==="{}"&&(t="\\{\\}"+t.substr(2)),he(_n(t),!0).map(Wn)):[]}r(Gn,"expandTop");function qn(t){return"{"+t+"}"}r(qn,"embrace");function zn(t){return/^-?0\d/.test(t)}r(zn,"isPadded");function Jn(t,e){return t<=e}r(Jn,"lte");function Vn(t,e){return t>=e}r(Vn,"gte");function he(t,e){var u=[],D=tu("{","}",t);if(!D)return[t];var n=D.pre,i=D.post.length?he(D.post,!1):[""];if(/\$$/.test(D.pre))for(var s=0;s<i.length;s++){var a=n+"{"+D.body+"}"+i[s];u.push(a)}else{var l=/^-?\d+\.\.-?\d+(?:\.\.-?\d+)?$/.test(D.body),h=/^[a-zA-Z]\.\.[a-zA-Z](?:\.\.-?\d+)?$/.test(D.body),F=l||h,m=D.body.indexOf(",")>=0;if(!F&&!m)return D.post.match(/,.*\}/)?(t=D.pre+"{"+D.body+et+D.post,he(t)):[t];var d;if(F)d=D.body.split(/\.\./);else if(d=su(D.body),d.length===1&&(d=he(d[0],!1).map(qn),d.length===1))return i.map(function(we){return D.pre+d[0]+we});var C;if(F){var w=tt(d[0]),y=tt(d[1]),S=Math.max(d[0].length,d[1].length),P=d.length==3?Math.abs(tt(d[2])):1,I=Jn,z=y<w;z&&(P*=-1,I=Vn);var Me=d.some(zn);C=[];for(var U=w;I(U,y);U+=P){var L;if(h)L=String.fromCharCode(U),L==="\\"&&(L="");else if(L=String(U),Me){var Ee=S-L.length;if(Ee>0){var me=new Array(Ee+1).join("0");U<0?L="-"+me+L.slice(1):L=me+L}}C.push(L)}}else{C=[];for(var W=0;W<d.length;W++)C.push.apply(C,he(d[W],!1))}for(var W=0;W<C.length;W++)for(var s=0;s<i.length;s++){var a=n+C[W]+i[s];(!e||F||a)&&u.push(a)}}return u}r(he,"expand");var Oe={};Object.defineProperty(Oe,"__esModule",{value:!0}),Oe.assertValidPattern=void 0;const Un=1024*64,Hn=r(t=>{if(typeof t!="string")throw new TypeError("invalid pattern");if(t.length>Un)throw new TypeError("pattern is too long")},"assertValidPattern");Oe.assertValidPattern=Hn;var pe={},je={};Object.defineProperty(je,"__esModule",{value:!0}),je.parseClass=void 0;const Zn={"[:alnum:]":["\\p{L}\\p{Nl}\\p{Nd}",!0],"[:alpha:]":["\\p{L}\\p{Nl}",!0],"[:ascii:]":["\\x00-\\x7f",!1],"[:blank:]":["\\p{Zs}\\t",!0],"[:cntrl:]":["\\p{Cc}",!0],"[:digit:]":["\\p{Nd}",!0],"[:graph:]":["\\p{Z}\\p{C}",!0,!0],"[:lower:]":["\\p{Ll}",!0],"[:print:]":["\\p{C}",!0],"[:punct:]":["\\p{P}",!0],"[:space:]":["\\p{Z}\\t\\r\\n\\v\\f",!0],"[:upper:]":["\\p{Lu}",!0],"[:word:]":["\\p{L}\\p{Nl}\\p{Nd}\\p{Pc}",!0],"[:xdigit:]":["A-Fa-f0-9",!1]},fe=r(t=>t.replace(/[[\]\\-]/g,"\\$&"),"braceEscape"),Xn=r(t=>t.replace(/[-[\]{}()*+?.,\\^$|#\s]/g,"\\$&"),"regexpEscape"),ru=r(t=>t.join(""),"rangesToString"),Yn=r((t,e)=>{const u=e;if(t.charAt(u)!=="[")throw new Error("not in a brace expression");const D=[],n=[];let i=u+1,s=!1,a=!1,l=!1,h=!1,F=u,m="";e:for(;i<t.length;){const y=t.charAt(i);if((y==="!"||y==="^")&&i===u+1){h=!0,i++;continue}if(y==="]"&&s&&!l){F=i+1;break}if(s=!0,y==="\\"&&!l){l=!0,i++;continue}if(y==="["&&!l){for(const[S,[P,I,z]]of Object.entries(Zn))if(t.startsWith(S,i)){if(m)return["$.",!1,t.length-u,!0];i+=S.length,z?n.push(P):D.push(P),a=a||I;continue e}}if(l=!1,m){y>m?D.push(fe(m)+"-"+fe(y)):y===m&&D.push(fe(y)),m="",i++;continue}if(t.startsWith("-]",i+1)){D.push(fe(y+"-")),i+=2;continue}if(t.startsWith("-",i+1)){m=y,i+=2;continue}D.push(fe(y)),i++}if(F<i)return["",!1,0,!1];if(!D.length&&!n.length)return["$.",!1,t.length-u,!0];if(n.length===0&&D.length===1&&/^\\?.$/.test(D[0])&&!h){const y=D[0].length===2?D[0].slice(-1):D[0];return[Xn(y),!1,F-u,!1]}const d="["+(h?"^":"")+ru(D)+"]",C="["+(h?"":"^")+ru(n)+"]";return[D.length&&n.length?"("+d+"|"+C+")":D.length?d:C,a,F-u,!0]},"parseClass");je.parseClass=Yn;var ee={};Object.defineProperty(ee,"__esModule",{value:!0}),ee.unescape=void 0;const Kn=r((t,{windowsPathsNoEscape:e=!1}={})=>e?t.replace(/\[([^\/\\])\]/g,"$1"):t.replace(/((?!\\).|^)\[([^\/\\])\]/g,"$1$2").replace(/\\([^\/])/g,"$1"),"unescape");ee.unescape=Kn,Object.defineProperty(pe,"__esModule",{value:!0}),pe.AST=void 0;const Qn=je,xe=ee,ei=new Set(["!","?","+","*","@"]),au=r(t=>ei.has(t),"isExtglobType"),ti="(?!(?:^|/)\\.\\.?(?:$|/))",Te="(?!\\.)",ui=new Set(["[","."]),Di=new Set(["..","."]),ni=new Set("().*{}+?[]^$\\!"),ii=r(t=>t.replace(/[-[\]{}()*+?.,\\^$|#\s]/g,"\\$&"),"regExpEscape"),ut="[^/]",ou=ut+"*?",lu=ut+"+?";class R{static{r(this,"AST")}type;#u;#D;#i=!1;#e=[];#t;#s;#a;#r=!1;#n;#o;#c=!1;constructor(e,u,D={}){this.type=e,e&&(this.#D=!0),this.#t=u,this.#u=this.#t?this.#t.#u:this,this.#n=this.#u===this?D:this.#u.#n,this.#a=this.#u===this?[]:this.#u.#a,e==="!"&&!this.#u.#r&&this.#a.push(this),this.#s=this.#t?this.#t.#e.length:0}get hasMagic(){if(this.#D!==void 0)return this.#D;for(const e of this.#e)if(typeof e!="string"&&(e.type||e.hasMagic))return this.#D=!0;return this.#D}toString(){return this.#o!==void 0?this.#o:this.type?this.#o=this.type+"("+this.#e.map(e=>String(e)).join("|")+")":this.#o=this.#e.map(e=>String(e)).join("")}#p(){if(this!==this.#u)throw new Error("should only call on root");if(this.#r)return this;this.toString(),this.#r=!0;let e;for(;e=this.#a.pop();){if(e.type!=="!")continue;let u=e,D=u.#t;for(;D;){for(let n=u.#s+1;!D.type&&n<D.#e.length;n++)for(const i of e.#e){if(typeof i=="string")throw new Error("string part in extglob AST??");i.copyIn(D.#e[n])}u=D,D=u.#t}}return this}push(...e){for(const u of e)if(u!==""){if(typeof u!="string"&&!(u instanceof R&&u.#t===this))throw new Error("invalid part: "+u);this.#e.push(u)}}toJSON(){const e=this.type===null?this.#e.slice().map(u=>typeof u=="string"?u:u.toJSON()):[this.type,...this.#e.map(u=>u.toJSON())];return this.isStart()&&!this.type&&e.unshift([]),this.isEnd()&&(this===this.#u||this.#u.#r&&this.#t?.type==="!")&&e.push({}),e}isStart(){if(this.#u===this)return!0;if(!this.#t?.isStart())return!1;if(this.#s===0)return!0;const e=this.#t;for(let u=0;u<this.#s;u++){const D=e.#e[u];if(!(D instanceof R&&D.type==="!"))return!1}return!0}isEnd(){if(this.#u===this||this.#t?.type==="!")return!0;if(!this.#t?.isEnd())return!1;if(!this.type)return this.#t?.isEnd();const e=this.#t?this.#t.#e.length:0;return this.#s===e-1}copyIn(e){typeof e=="string"?this.push(e):this.push(e.clone(this))}clone(e){const u=new R(this.type,e);for(const D of this.#e)u.copyIn(D);return u}static#l(e,u,D,n){let i=!1,s=!1,a=-1,l=!1;if(u.type===null){let C=D,w="";for(;C<e.length;){const y=e.charAt(C++);if(i||y==="\\"){i=!i,w+=y;continue}if(s){C===a+1?(y==="^"||y==="!")&&(l=!0):y==="]"&&!(C===a+2&&l)&&(s=!1),w+=y;continue}else if(y==="["){s=!0,a=C,l=!1,w+=y;continue}if(!n.noext&&au(y)&&e.charAt(C)==="("){u.push(w),w="";const S=new R(y,u);C=R.#l(e,S,C,n),u.push(S);continue}w+=y}return u.push(w),C}let h=D+1,F=new R(null,u);const m=[];let d="";for(;h<e.length;){const C=e.charAt(h++);if(i||C==="\\"){i=!i,d+=C;continue}if(s){h===a+1?(C==="^"||C==="!")&&(l=!0):C==="]"&&!(h===a+2&&l)&&(s=!1),d+=C;continue}else if(C==="["){s=!0,a=h,l=!1,d+=C;continue}if(au(C)&&e.charAt(h)==="("){F.push(d),d="";const w=new R(C,F);F.push(w),h=R.#l(e,w,h,n);continue}if(C==="|"){F.push(d),d="",m.push(F),F=new R(null,u);continue}if(C===")")return d===""&&u.#e.length===0&&(u.#c=!0),F.push(d),d="",u.push(...m,F),h;d+=C}return u.type=null,u.#D=void 0,u.#e=[e.substring(D-1)],h}static fromGlob(e,u={}){const D=new R(null,void 0,u);return R.#l(e,D,0,u),D}toMMPattern(){if(this!==this.#u)return this.#u.toMMPattern();const e=this.toString(),[u,D,n,i]=this.toRegExpSource();if(!(n||this.#D||this.#n.nocase&&!this.#n.nocaseMagicOnly&&e.toUpperCase()!==e.toLowerCase()))return D;const a=(this.#n.nocase?"i":"")+(i?"u":"");return Object.assign(new RegExp(`^${u}$`,a),{_src:u,_glob:e})}get options(){return this.#n}toRegExpSource(e){const u=e??!!this.#n.dot;if(this.#u===this&&this.#p(),!this.type){const l=this.isStart()&&this.isEnd(),h=this.#e.map(C=>{const[w,y,S,P]=typeof C=="string"?R.#f(C,this.#D,l):C.toRegExpSource(e);return this.#D=this.#D||S,this.#i=this.#i||P,w}).join("");let F="";if(this.isStart()&&typeof this.#e[0]=="string"&&!(this.#e.length===1&&Di.has(this.#e[0]))){const w=ui,y=u&&w.has(h.charAt(0))||h.startsWith("\\.")&&w.has(h.charAt(2))||h.startsWith("\\.\\.")&&w.has(h.charAt(4)),S=!u&&!e&&w.has(h.charAt(0));F=y?ti:S?Te:""}let m="";return this.isEnd()&&this.#u.#r&&this.#t?.type==="!"&&(m="(?:$|\\/)"),[F+h+m,(0,xe.unescape)(h),this.#D=!!this.#D,this.#i]}const D=this.type==="*"||this.type==="+",n=this.type==="!"?"(?:(?!(?:":"(?:";let i=this.#h(u);if(this.isStart()&&this.isEnd()&&!i&&this.type!=="!"){const l=this.toString();return this.#e=[l],this.type=null,this.#D=void 0,[l,(0,xe.unescape)(this.toString()),!1,!1]}let s=!D||e||u||!Te?"":this.#h(!0);s===i&&(s=""),s&&(i=`(?:${i})(?:${s})*?`);let a="";if(this.type==="!"&&this.#c)a=(this.isStart()&&!u?Te:"")+lu;else{const l=this.type==="!"?"))"+(this.isStart()&&!u&&!e?Te:"")+ou+")":this.type==="@"?")":this.type==="?"?")?":this.type==="+"&&s?")":this.type==="*"&&s?")?":`)${this.type}`;a=n+i+l}return[a,(0,xe.unescape)(i),this.#D=!!this.#D,this.#i]}#h(e){return this.#e.map(u=>{if(typeof u=="string")throw new Error("string type in extglob ast??");const[D,n,i,s]=u.toRegExpSource(e);return this.#i=this.#i||s,D}).filter(u=>!(this.isStart()&&this.isEnd())||!!u).join("|")}static#f(e,u,D=!1){let n=!1,i="",s=!1;for(let a=0;a<e.length;a++){const l=e.charAt(a);if(n){n=!1,i+=(ni.has(l)?"\\":"")+l;continue}if(l==="\\"){a===e.length-1?i+="\\\\":n=!0;continue}if(l==="["){const[h,F,m,d]=(0,Qn.parseClass)(e,a);if(m){i+=h,s=s||F,a+=m-1,u=u||d;continue}}if(l==="*"){D&&e==="*"?i+=lu:i+=ou,u=!0;continue}if(l==="?"){i+=ut,u=!0;continue}i+=ii(l)}return[i,(0,xe.unescape)(e),!!u,s]}}pe.AST=R;var Fe={};Object.defineProperty(Fe,"__esModule",{value:!0}),Fe.escape=void 0;const si=r((t,{windowsPathsNoEscape:e=!1}={})=>e?t.replace(/[?*()[\]]/g,"[$&]"):t.replace(/[?*()[\]\\]/g,"\\$&"),"escape");Fe.escape=si,function(t){var e=Gt&&Gt.__importDefault||function(g){return g&&g.__esModule?g:{default:g}};Object.defineProperty(t,"__esModule",{value:!0}),t.unescape=t.escape=t.AST=t.Minimatch=t.match=t.makeRe=t.braceExpand=t.defaults=t.filter=t.GLOBSTAR=t.sep=t.minimatch=void 0;const u=e(Nn),D=Oe,n=pe,i=Fe,s=ee,a=r((g,o,c={})=>((0,D.assertValidPattern)(o),!c.nocomment&&o.charAt(0)==="#"?!1:new ne(o,c).match(g)),"minimatch");t.minimatch=a;const l=/^\*+([^+@!?\*\[\(]*)$/,h=r(g=>o=>!o.startsWith(".")&&o.endsWith(g),"starDotExtTest"),F=r(g=>o=>o.endsWith(g),"starDotExtTestDot"),m=r(g=>(g=g.toLowerCase(),o=>!o.startsWith(".")&&o.toLowerCase().endsWith(g)),"starDotExtTestNocase"),d=r(g=>(g=g.toLowerCase(),o=>o.toLowerCase().endsWith(g)),"starDotExtTestNocaseDot"),C=/^\*+\.\*+$/,w=r(g=>!g.startsWith(".")&&g.includes("."),"starDotStarTest"),y=r(g=>g!=="."&&g!==".."&&g.includes("."),"starDotStarTestDot"),S=/^\.\*+$/,P=r(g=>g!=="."&&g!==".."&&g.startsWith("."),"dotStarTest"),I=/^\*+$/,z=r(g=>g.length!==0&&!g.startsWith("."),"starTest"),Me=r(g=>g.length!==0&&g!=="."&&g!=="..","starTestDot"),U=/^\?+([^+@!?\*\[\(]*)?$/,L=r(([g,o=""])=>{const c=we([g]);return o?(o=o.toLowerCase(),p=>c(p)&&p.toLowerCase().endsWith(o)):c},"qmarksTestNocase"),Ee=r(([g,o=""])=>{const c=st([g]);return o?(o=o.toLowerCase(),p=>c(p)&&p.toLowerCase().endsWith(o)):c},"qmarksTestNocaseDot"),me=r(([g,o=""])=>{const c=st([g]);return o?p=>c(p)&&p.endsWith(o):c},"qmarksTestDot"),W=r(([g,o=""])=>{const c=we([g]);return o?p=>c(p)&&p.endsWith(o):c},"qmarksTest"),we=r(([g])=>{const o=g.length;return c=>c.length===o&&!c.startsWith(".")},"qmarksTestNoExt"),st=r(([g])=>{const o=g.length;return c=>c.length===o&&c!=="."&&c!==".."},"qmarksTestNoExtDot"),rt=typeof process=="object"&&process?typeof process.env=="object"&&process.env&&process.env.__MINIMATCH_TESTING_PLATFORM__||process.platform:"posix",at={win32:{sep:"\\"},posix:{sep:"/"}};t.sep=rt==="win32"?at.win32.sep:at.posix.sep,t.minimatch.sep=t.sep,t.GLOBSTAR=Symbol("globstar **"),t.minimatch.GLOBSTAR=t.GLOBSTAR;const du="[^/]"+"*?",Cu="(?:(?!(?:\\/|^)(?:\\.{1,2})($|\\/)).)*?",gu="(?:(?!(?:\\/|^)\\.).)*?",Eu=r((g,o={})=>c=>(0,t.minimatch)(c,g,o),"filter");t.filter=Eu,t.minimatch.filter=t.filter;const M=r((g,o={})=>Object.assign({},g,o),"ext"),mu=r(g=>{if(!g||typeof g!="object"||!Object.keys(g).length)return t.minimatch;const o=t.minimatch;return Object.assign(r((p,f,E={})=>o(p,f,M(g,E)),"m"),{Minimatch:class extends o.Minimatch{static{r(this,"Minimatch")}constructor(f,E={}){super(f,M(g,E))}static defaults(f){return o.defaults(M(g,f)).Minimatch}},AST:class extends o.AST{static{r(this,"AST")}constructor(f,E,B={}){super(f,E,M(g,B))}static fromGlob(f,E={}){return o.AST.fromGlob(f,M(g,E))}},unescape:r((p,f={})=>o.unescape(p,M(g,f)),"unescape"),escape:r((p,f={})=>o.escape(p,M(g,f)),"escape"),filter:r((p,f={})=>o.filter(p,M(g,f)),"filter"),defaults:r(p=>o.defaults(M(g,p)),"defaults"),makeRe:r((p,f={})=>o.makeRe(p,M(g,f)),"makeRe"),braceExpand:r((p,f={})=>o.braceExpand(p,M(g,f)),"braceExpand"),match:r((p,f,E={})=>o.match(p,f,M(g,E)),"match"),sep:o.sep,GLOBSTAR:t.GLOBSTAR})},"defaults");t.defaults=mu,t.minimatch.defaults=t.defaults;const wu=r((g,o={})=>((0,D.assertValidPattern)(g),o.nobrace||!/\{(?:(?!\{).)*\}/.test(g)?[g]:(0,u.default)(g)),"braceExpand");t.braceExpand=wu,t.minimatch.braceExpand=t.braceExpand;const Bu=r((g,o={})=>new ne(g,o).makeRe(),"makeRe");t.makeRe=Bu,t.minimatch.makeRe=t.makeRe;const yu=r((g,o,c={})=>{const p=new ne(o,c);return g=g.filter(f=>p.match(f)),p.options.nonull&&!g.length&&g.push(o),g},"match");t.match=yu,t.minimatch.match=t.match;const ot=/[?*]|[+@!]\(.*?\)|\[|\]/,bu=r(g=>g.replace(/[-[\]{}()*+?.,\\^$|#\s]/g,"\\$&"),"regExpEscape");class ne{static{r(this,"Minimatch")}options;set;pattern;windowsPathsNoEscape;nonegate;negate;comment;empty;preserveMultipleSlashes;partial;globSet;globParts;nocase;isWindows;platform;windowsNoMagicRoot;regexp;constructor(o,c={}){(0,D.assertValidPattern)(o),c=c||{},this.options=c,this.pattern=o,this.platform=c.platform||rt,this.isWindows=this.platform==="win32",this.windowsPathsNoEscape=!!c.windowsPathsNoEscape||c.allowWindowsEscape===!1,this.windowsPathsNoEscape&&(this.pattern=this.pattern.replace(/\\/g,"/")),this.preserveMultipleSlashes=!!c.preserveMultipleSlashes,this.regexp=null,this.negate=!1,this.nonegate=!!c.nonegate,this.comment=!1,this.empty=!1,this.partial=!!c.partial,this.nocase=!!this.options.nocase,this.windowsNoMagicRoot=c.windowsNoMagicRoot!==void 0?c.windowsNoMagicRoot:!!(this.isWindows&&this.nocase),this.globSet=[],this.globParts=[],this.set=[],this.make()}hasMagic(){if(this.options.magicalBraces&&this.set.length>1)return!0;for(const o of this.set)for(const c of o)if(typeof c!="string")return!0;return!1}debug(...o){}make(){const o=this.pattern,c=this.options;if(!c.nocomment&&o.charAt(0)==="#"){this.comment=!0;return}if(!o){this.empty=!0;return}this.parseNegate(),this.globSet=[...new Set(this.braceExpand())],c.debug&&(this.debug=(...E)=>console.error(...E)),this.debug(this.pattern,this.globSet);const p=this.globSet.map(E=>this.slashSplit(E));this.globParts=this.preprocess(p),this.debug(this.pattern,this.globParts);let f=this.globParts.map((E,B,b)=>{if(this.isWindows&&this.windowsNoMagicRoot){const v=E[0]===""&&E[1]===""&&(E[2]==="?"||!ot.test(E[2]))&&!ot.test(E[3]),A=/^[a-z]:/i.test(E[0]);if(v)return[...E.slice(0,4),...E.slice(4).map($=>this.parse($))];if(A)return[E[0],...E.slice(1).map($=>this.parse($))]}return E.map(v=>this.parse(v))});if(this.debug(this.pattern,f),this.set=f.filter(E=>E.indexOf(!1)===-1),this.isWindows)for(let E=0;E<this.set.length;E++){const B=this.set[E];B[0]===""&&B[1]===""&&this.globParts[E][2]==="?"&&typeof B[3]=="string"&&/^[a-z]:$/i.test(B[3])&&(B[2]="?")}this.debug(this.pattern,this.set)}preprocess(o){if(this.options.noglobstar)for(let p=0;p<o.length;p++)for(let f=0;f<o[p].length;f++)o[p][f]==="**"&&(o[p][f]="*");const{optimizationLevel:c=1}=this.options;return c>=2?(o=this.firstPhasePreProcess(o),o=this.secondPhasePreProcess(o)):c>=1?o=this.levelOneOptimize(o):o=this.adjascentGlobstarOptimize(o),o}adjascentGlobstarOptimize(o){return o.map(c=>{let p=-1;for(;(p=c.indexOf("**",p+1))!==-1;){let f=p;for(;c[f+1]==="**";)f++;f!==p&&c.splice(p,f-p)}return c})}levelOneOptimize(o){return o.map(c=>(c=c.reduce((p,f)=>{const E=p[p.length-1];return f==="**"&&E==="**"?p:f===".."&&E&&E!==".."&&E!=="."&&E!=="**"?(p.pop(),p):(p.push(f),p)},[]),c.length===0?[""]:c))}levelTwoFileOptimize(o){Array.isArray(o)||(o=this.slashSplit(o));let c=!1;do{if(c=!1,!this.preserveMultipleSlashes){for(let f=1;f<o.length-1;f++){const E=o[f];f===1&&E===""&&o[0]===""||(E==="."||E==="")&&(c=!0,o.splice(f,1),f--)}o[0]==="."&&o.length===2&&(o[1]==="."||o[1]==="")&&(c=!0,o.pop())}let p=0;for(;(p=o.indexOf("..",p+1))!==-1;){const f=o[p-1];f&&f!=="."&&f!==".."&&f!=="**"&&(c=!0,o.splice(p-1,2),p-=2)}}while(c);return o.length===0?[""]:o}firstPhasePreProcess(o){let c=!1;do{c=!1;for(let p of o){let f=-1;for(;(f=p.indexOf("**",f+1))!==-1;){let B=f;for(;p[B+1]==="**";)B++;B>f&&p.splice(f+1,B-f);let b=p[f+1];const v=p[f+2],A=p[f+3];if(b!==".."||!v||v==="."||v===".."||!A||A==="."||A==="..")continue;c=!0,p.splice(f,1);const $=p.slice(0);$[f]="**",o.push($),f--}if(!this.preserveMultipleSlashes){for(let B=1;B<p.length-1;B++){const b=p[B];B===1&&b===""&&p[0]===""||(b==="."||b==="")&&(c=!0,p.splice(B,1),B--)}p[0]==="."&&p.length===2&&(p[1]==="."||p[1]==="")&&(c=!0,p.pop())}let E=0;for(;(E=p.indexOf("..",E+1))!==-1;){const B=p[E-1];if(B&&B!=="."&&B!==".."&&B!=="**"){c=!0;const v=E===1&&p[E+1]==="**"?["."]:[];p.splice(E-1,2,...v),p.length===0&&p.push(""),E-=2}}}}while(c);return o}secondPhasePreProcess(o){for(let c=0;c<o.length-1;c++)for(let p=c+1;p<o.length;p++){const f=this.partsMatch(o[c],o[p],!this.preserveMultipleSlashes);if(f){o[c]=[],o[p]=f;break}}return o.filter(c=>c.length)}partsMatch(o,c,p=!1){let f=0,E=0,B=[],b="";for(;f<o.length&&E<c.length;)if(o[f]===c[E])B.push(b==="b"?c[E]:o[f]),f++,E++;else if(p&&o[f]==="**"&&c[E]===o[f+1])B.push(o[f]),f++;else if(p&&c[E]==="**"&&o[f]===c[E+1])B.push(c[E]),E++;else if(o[f]==="*"&&c[E]&&(this.options.dot||!c[E].startsWith("."))&&c[E]!=="**"){if(b==="b")return!1;b="a",B.push(o[f]),f++,E++}else if(c[E]==="*"&&o[f]&&(this.options.dot||!o[f].startsWith("."))&&o[f]!=="**"){if(b==="a")return!1;b="b",B.push(c[E]),f++,E++}else return!1;return o.length===c.length&&B}parseNegate(){if(this.nonegate)return;const o=this.pattern;let c=!1,p=0;for(let f=0;f<o.length&&o.charAt(f)==="!";f++)c=!c,p++;p&&(this.pattern=o.slice(p)),this.negate=c}matchOne(o,c,p=!1){const f=this.options;if(this.isWindows){const J=typeof o[0]=="string"&&/^[a-z]:$/i.test(o[0]),Su=!J&&o[0]===""&&o[1]===""&&o[2]==="?"&&/^[a-z]:$/i.test(o[3]),lt=typeof c[0]=="string"&&/^[a-z]:$/i.test(c[0]),ku=!lt&&c[0]===""&&c[1]===""&&c[2]==="?"&&typeof c[3]=="string"&&/^[a-z]:$/i.test(c[3]),se=Su?3:J?0:void 0,Y=ku?3:lt?0:void 0;if(typeof se=="number"&&typeof Y=="number"){const[ct,Ou]=[o[se],c[Y]];ct.toLowerCase()===Ou.toLowerCase()&&(c[Y]=ct,Y>se?c=c.slice(Y):se>Y&&(o=o.slice(se)))}}const{optimizationLevel:E=1}=this.options;E>=2&&(o=this.levelTwoFileOptimize(o)),this.debug("matchOne",this,{file:o,pattern:c}),this.debug("matchOne",o.length,c.length);for(var B=0,b=0,v=o.length,A=c.length;B<v&&b<A;B++,b++){this.debug("matchOne loop");var $=c[b],O=o[B];if(this.debug(c,$,O),$===!1)return!1;if($===t.GLOBSTAR){this.debug("GLOBSTAR",[c,$,O]);var j=B,N=b+1;if(N===A){for(this.debug("** at the end");B<v;B++)if(o[B]==="."||o[B]===".."||!f.dot&&o[B].charAt(0)===".")return!1;return!0}for(;j<v;){var ie=o[j];if(this.debug(`
-globstar while`,o,j,c,N,ie),this.matchOne(o.slice(j),c.slice(N),p))return this.debug("globstar found match!",j,v,ie),!0;if(ie==="."||ie===".."||!f.dot&&ie.charAt(0)==="."){this.debug("dot detected!",o,j,c,N);break}this.debug("globstar swallow a segment, and continue"),j++}return!!(p&&(this.debug(`
->>> no match, partial?`,o,j,c,N),j===v))}let J;if(typeof $=="string"?(J=O===$,this.debug("string match",$,O,J)):(J=$.test(O),this.debug("pattern match",$,O,J)),!J)return!1}if(B===v&&b===A)return!0;if(B===v)return p;if(b===A)return B===v-1&&o[B]==="";throw new Error("wtf?")}braceExpand(){return(0,t.braceExpand)(this.pattern,this.options)}parse(o){(0,D.assertValidPattern)(o);const c=this.options;if(o==="**")return t.GLOBSTAR;if(o==="")return"";let p,f=null;(p=o.match(I))?f=c.dot?Me:z:(p=o.match(l))?f=(c.nocase?c.dot?d:m:c.dot?F:h)(p[1]):(p=o.match(U))?f=(c.nocase?c.dot?Ee:L:c.dot?me:W)(p):(p=o.match(C))?f=c.dot?y:w:(p=o.match(S))&&(f=P);const E=n.AST.fromGlob(o,this.options).toMMPattern();return f&&typeof E=="object"&&Reflect.defineProperty(E,"test",{value:f}),E}makeRe(){if(this.regexp||this.regexp===!1)return this.regexp;const o=this.set;if(!o.length)return this.regexp=!1,this.regexp;const c=this.options,p=c.noglobstar?du:c.dot?Cu:gu,f=new Set(c.nocase?["i"]:[]);let E=o.map(v=>{const A=v.map($=>{if($ instanceof RegExp)for(const O of $.flags.split(""))f.add(O);return typeof $=="string"?bu($):$===t.GLOBSTAR?t.GLOBSTAR:$._src});return A.forEach(($,O)=>{const j=A[O+1],N=A[O-1];$!==t.GLOBSTAR||N===t.GLOBSTAR||(N===void 0?j!==void 0&&j!==t.GLOBSTAR?A[O+1]="(?:\\/|"+p+"\\/)?"+j:A[O]=p:j===void 0?A[O-1]=N+"(?:\\/|"+p+")?":j!==t.GLOBSTAR&&(A[O-1]=N+"(?:\\/|\\/"+p+"\\/)"+j,A[O+1]=t.GLOBSTAR))}),A.filter($=>$!==t.GLOBSTAR).join("/")}).join("|");const[B,b]=o.length>1?["(?:",")"]:["",""];E="^"+B+E+b+"$",this.negate&&(E="^(?!"+E+").+$");try{this.regexp=new RegExp(E,[...f].join(""))}catch{this.regexp=!1}return this.regexp}slashSplit(o){return this.preserveMultipleSlashes?o.split("/"):this.isWindows&&/^\/\/[^\/]+/.test(o)?["",...o.split(/\/+/)]:o.split(/\/+/)}match(o,c=this.partial){if(this.debug("match",o,this.pattern),this.comment)return!1;if(this.empty)return o==="";if(o==="/"&&c)return!0;const p=this.options;this.isWindows&&(o=o.split("\\").join("/"));const f=this.slashSplit(o);this.debug(this.pattern,"split",f);const E=this.set;this.debug(this.pattern,"set",E);let B=f[f.length-1];if(!B)for(let b=f.length-2;!B&&b>=0;b--)B=f[b];for(let b=0;b<E.length;b++){const v=E[b];let A=f;if(p.matchBase&&v.length===1&&(A=[B]),this.matchOne(A,v,c))return p.flipNegate?!0:!this.negate}return p.flipNegate?!1:this.negate}static defaults(o){return t.minimatch.defaults(o).Minimatch}}t.Minimatch=ne;var $u=pe;Object.defineProperty(t,"AST",{enumerable:!0,get:r(function(){return $u.AST},"get")});var vu=Fe;Object.defineProperty(t,"escape",{enumerable:!0,get:r(function(){return vu.escape},"get")});var Au=ee;Object.defineProperty(t,"unescape",{enumerable:!0,get:r(function(){return Au.unescape},"get")}),t.minimatch.AST=n.AST,t.minimatch.Minimatch=ne,t.minimatch.escape=i.escape,t.minimatch.unescape=s.unescape}(Yt);const V=ht,Dt=k,ri=Tu.EventEmitter,ai=Yt.Minimatch;class Ce extends ri{static{r(this,"Walker")}constructor(e){e=e||{},super(e),this.isSymbolicLink=e.isSymbolicLink,this.path=e.path||process.cwd(),this.basename=Dt.basename(this.path),this.ignoreFiles=e.ignoreFiles||[".ignore"],this.ignoreRules={},this.parent=e.parent||null,this.includeEmpty=!!e.includeEmpty,this.root=this.parent?this.parent.root:this.path,this.follow=!!e.follow,this.result=this.parent?this.parent.result:new Set,this.entries=null,this.sawError=!1,this.exact=e.exact}sort(e,u){return e.localeCompare(u,"en")}emit(e,u){let D=!1;return this.sawError&&e==="error"||(e==="error"?this.sawError=!0:e==="done"&&!this.parent&&(u=Array.from(u).map(n=>/^@/.test(n)?`./${n}`:n).sort(this.sort),this.result=u),e==="error"&&this.parent?D=this.parent.emit("error",u):D=super.emit(e,u)),D}start(){return V.readdir(this.path,(e,u)=>e?this.emit("error",e):this.onReaddir(u)),this}isIgnoreFile(e){return e!=="."&&e!==".."&&this.ignoreFiles.indexOf(e)!==-1}onReaddir(e){this.entries=e,e.length===0?(this.includeEmpty&&this.result.add(this.path.slice(this.root.length+1)),this.emit("done",this.result)):this.entries.some(D=>this.isIgnoreFile(D))?this.addIgnoreFiles():this.filterEntries()}addIgnoreFiles(){const e=this.entries.filter(n=>this.isIgnoreFile(n));let u=e.length;const D=r(()=>{--u===0&&this.filterEntries()},"then");e.forEach(n=>this.addIgnoreFile(n,D))}addIgnoreFile(e,u){const D=Dt.resolve(this.path,e);V.readFile(D,"utf8",(n,i)=>n?this.emit("error",n):this.onReadIgnoreFile(e,i,u))}onReadIgnoreFile(e,u,D){const n={matchBase:!0,dot:!0,flipNegate:!0,nocase:!0},i=u.split(/\r?\n/).filter(s=>!/^#|^$/.test(s.trim())).map(s=>new ai(s.trim(),n));this.ignoreRules[e]=i,D()}filterEntries(){const e=this.entries.map(D=>{const n=this.filterEntry(D),i=this.filterEntry(D,!0);return n||i?[D,n,i]:!1}).filter(D=>D);let u=e.length;if(u===0)this.emit("done",this.result);else{const D=r(()=>{--u===0&&this.emit("done",this.result)},"then");e.forEach(n=>{const i=n[0],s=n[1],a=n[2];this.stat({entry:i,file:s,dir:a},D)})}}onstat({st:e,entry:u,file:D,dir:n,isSymbolicLink:i},s){const a=this.path+"/"+u;e.isDirectory()?n?this.walker(u,{isSymbolicLink:i,exact:D||this.filterEntry(u+"/")},s):s():(D&&this.result.add(a.slice(this.root.length+1)),s())}stat({entry:e,file:u,dir:D},n){const i=this.path+"/"+e;V.lstat(i,(s,a)=>{if(s)this.emit("error",s);else{const l=a.isSymbolicLink();this.follow&&l?V.stat(i,(h,F)=>{h?this.emit("error",h):this.onstat({st:F,entry:e,file:u,dir:D,isSymbolicLink:l},n)}):this.onstat({st:a,entry:e,file:u,dir:D,isSymbolicLink:l},n)}})}walkerOpt(e,u){return{path:this.path+"/"+e,parent:this,ignoreFiles:this.ignoreFiles,follow:this.follow,includeEmpty:this.includeEmpty,...u}}walker(e,u,D){new Ce(this.walkerOpt(e,u)).on("done",D).start()}filterEntry(e,u,D){let n=!0;if(this.parent&&this.parent.filterEntry){const i=this.basename+"/"+e,s=D||e;if(n=this.parent.filterEntry(i,u,s),!n&&!this.exact)return!1}return this.ignoreFiles.forEach(i=>{this.ignoreRules[i]&&this.ignoreRules[i].forEach(s=>{if(s.negate!==n){const a=D&&s.globParts.some(h=>h.length<=(h.slice(-1)[0]?1:2));(s.match("/"+e)||s.match(e)||!!u&&(s.match("/"+e+"/")||s.match(e+"/")||s.negate&&(s.match("/"+e,!0)||s.match(e,!0))||a&&(s.match("/"+D+"/")||s.match(D+"/")||s.negate&&(s.match("/"+D,!0)||s.match(D,!0)))))&&(n=s.negate)}})}),n}}class Le extends Ce{static{r(this,"WalkerSync")}start(){return this.onReaddir(V.readdirSync(this.path)),this}addIgnoreFile(e,u){const D=Dt.resolve(this.path,e);this.onReadIgnoreFile(e,V.readFileSync(D,"utf8"),u)}stat({entry:e,file:u,dir:D},n){const i=this.path+"/"+e;let s=V.lstatSync(i);const a=s.isSymbolicLink();this.follow&&a&&(s=V.statSync(i)),this.onstat({st:s,entry:e,file:u,dir:D,isSymbolicLink:a},n)}walker(e,u,D){new Le(this.walkerOpt(e,u)).start(),D()}}const Re=r((t,e)=>{const u=new Promise((D,n)=>{new Ce(t).on("done",D).on("error",n).start()});return e?u.then(D=>e(null,D),e):u},"walk$1"),oi=r(t=>new Le(t).start().result,"walkSync");var li=Re;Re.sync=oi,Re.Walker=Ce,Re.WalkerSync=Le;const{Walker:ci}=li,{lstatSync:hi,readFileSync:pi}=ht,{basename:cu,dirname:fi,extname:hu,join:te,relative:ue,resolve:Fi,sep:di}=k,de=Symbol("npm-packlist.rules.default"),De=Symbol("npm-packlist.rules.strict"),Ci=r(t=>/\*/.test(t),"nameIsBadForWindows"),gi=[".npmignore",".gitignore","**/.git","**/.svn","**/.hg","**/CVS","**/.git/**","**/.svn/**","**/.hg/**","**/CVS/**","/.lock-wscript","/.wafpickle-*","/build/config.gypi","npm-debug.log","**/.npmrc",".*.swp",".DS_Store","**/.DS_Store/**","._*","**/._*/**","*.orig","/archived-packages/**"],pu=["/.git"],Pe=r(t=>t.split("\\").join("/"),"normalizePath"),fu=r((t,e,u=[])=>{for(const s of[".npmignore",".gitignore"])try{const a=pi(te(t,s),{encoding:"utf8"});u.push(a);break}catch(a){if(a.code!=="ENOENT")throw a}if(!e)return u;const D=e.split(di,1)[0],n=te(t,D),i=ue(n,te(t,e));return fu(n,i,u)},"readOutOfTreeIgnoreFiles");class ge extends ci{static{r(this,"PackWalker")}constructor(e,u){const D={...u,includeEmpty:!1,follow:!1,path:Fi(u?.path||e.path).replace(/\\/g,"/"),ignoreFiles:u?.ignoreFiles||[de,"package.json",".npmignore",".gitignore",De]};super(D),this.isPackage=D.isPackage,this.seen=D.seen||new Set,this.tree=e,this.requiredFiles=D.requiredFiles||[];const n=[];if(D.prefix&&D.workspaces){const i=Pe(D.path),s=Pe(D.prefix),a=D.workspaces.map(l=>Pe(l));if(i!==s&&a.includes(i)){const l=ue(D.prefix,fi(D.path));n.push(...fu(D.prefix,l))}else i===s&&n.push(...a.map(l=>Pe(ue(D.path,l))))}this.injectRules(de,[...gi,...n]),this.isPackage||this.injectRules(De,[...pu,...this.requiredFiles.map(i=>`!${i}`)])}addIgnoreFile(e,u){return e!=="package.json"||!this.isPackage?super.addIgnoreFile(e,u):this.processPackage(u)}emit(e,u){return e!=="done"||!this.isPackage?super.emit(e,u):(this.gatherBundles().then(()=>{super.emit("done",this.result)}),!0)}filterEntries(){return this.ignoreRules["package.json"]?(this.ignoreRules[".npmignore"]=null,this.ignoreRules[".gitignore"]=null):this.ignoreRules[".npmignore"]&&(this.ignoreRules[".gitignore"]=null),super.filterEntries()}onstat(e,u){return!e.st.isFile()&&!e.st.isDirectory()?u():super.onstat(e,u)}stat(e,u){return Ci(e.entry)?u():super.stat(e,u)}walkerOpt(e,u){let D=null;if(this.tree.workspaces){const n=[...this.tree.workspaces.values()].map(s=>s.replace(/\\/g,"/")),i=te(this.path,e).replace(/\\/g,"/");n.includes(i)&&(D=[de,"package.json",".npmignore",".gitignore",De])}else D=[de,".npmignore",".gitignore",De];return{...super.walkerOpt(e,u),ignoreFiles:D,requiredFiles:this.requiredFiles.map(n=>ue(n,e)===".."?ue(e,n).replace(/\\/g,"/"):!1).filter(Boolean)}}walker(e,u,D){new ge(this.tree,this.walkerOpt(e,u)).on("done",D).start()}sort(e,u){const D=hu(e).toLowerCase(),n=hu(u).toLowerCase(),i=cu(e).toLowerCase(),s=cu(u).toLowerCase();return D.localeCompare(n,"en")||i.localeCompare(s,"en")||e.localeCompare(u,"en")}injectRules(e,u,D=()=>{}){this.onReadIgnoreFile(e,`${u.join(`
-`)}
-`,D)}processPackage(e){const{bin:u,browser:D,files:n,main:i}=this.tree.package,s=[],a=[...pu,"!/package.json","!/readme{,.*[^~$]}","!/copying{,.*[^~$]}","!/license{,.*[^~$]}","!/licence{,.*[^~$]}","/.git","/node_modules",".npmrc","/package-lock.json","/yarn.lock","/pnpm-lock.yaml"];if(n){for(let l of n){l.startsWith("./")&&(l=l.slice(1)),l.endsWith("/*")&&(l+="*");const h=`!${l}`;try{const F=hi(te(this.path,l.replace(/^!+/,"")).replace(/\\/g,"/"));F.isFile()?(a.unshift(h),this.requiredFiles.push(l.startsWith("/")?l.slice(1):l)):F.isDirectory()&&(s.push(h),s.push(`${h}/**`))}catch{s.push(h)}}this.injectRules("package.json",["*",...s])}if(D&&a.push(`!/${D}`),i&&a.push(`!/${i}`),u)for(const l in u)a.push(`!/${u[l]}`);this.injectRules(De,a,e)}async gatherBundles(){if(this.seen.has(this.tree))return;this.seen.add(this.tree);let e;if(this.tree.isProjectRoot){const{bundleDependencies:u}=this.tree.package;e=u||[]}else{const{dependencies:u,optionalDependencies:D}=this.tree.package;e=Object.keys(u||{}).concat(Object.keys(D||{}))}for(const u of e){const D=this.tree.edgesOut.get(u);if(!D||D.peer||D.dev)continue;const n=this.tree.edgesOut.get(u).to;if(!n)continue;const i=n.path,s=n.target,a={path:i,isPackage:!0,ignoreFiles:[],seen:this.seen};n.isLink&&a.ignoreFiles.push(de),a.ignoreFiles.push("package.json"),n.isLink&&(a.ignoreFiles.push(".npmignore"),a.ignoreFiles.push(".gitignore")),a.ignoreFiles.push(De);const l=new ge(s,a),h=await new Promise((m,d)=>{l.on("error",d),l.on("done",m),l.start()}),F=ue(this.root,l.path);for(const m of h)this.result.add(te(F,m).replace(/\\/g,"/"))}}}const Fu=r((t,e,u)=>{typeof e=="function"&&(u=e,e={});const D=new Promise((n,i)=>{new ge(t,{...e,isPackage:!0}).on("done",n).on("error",i).start()});return u?D.then(n=>u(null,n),u):D},"walk");var Ei=Fu;Fu.Walker=ge;var mi=Se(Ei);const wi=new Map,nt=r((t,e)=>mi({path:t,package:e,edgesOut:wi}),"getNpmPacklist"),Bi=process.cwd(),it=r(t=>G.relative(Bi,t),"cwdPath"),yi=r(()=>new Date().toLocaleTimeString(void 0,{hour:"numeric",minute:"numeric",second:"numeric",hour12:!0}),"getPrettyTime"),bi=r(async(t,e,u,D=nt(e,u))=>{const[n,i]=await Promise.all([nt(t,u),D]);console.log(`Linking ${He(u.name)} in publish mode:`),await Promise.all(i.map(async s=>{const a=G.join(e,s),l=G.join(t,s);await re.mkdir(G.dirname(l),{recursive:!0}),await kn(a,l);const h=n.indexOf(s);h>-1&&n.splice(h,1),console.log(`  ${It("\u2714")}`,Q(it(l)),"\u2192",Q(it(a)))})),await Promise.all(n.map(async s=>{const a=G.join(t,s);await re.rm(a)}))},"hardlinkPackage"),$i=r(async(t,e)=>(await re.stat(t).catch(()=>null))?.isDirectory()?(await re.realpath(t)).startsWith(e):!1,"isValidSetup"),vi=r(async(t,e,u)=>{const D=G.resolve(t,e),n=await Ut(D),i=G.join(t,"node_modules/"),s=G.join(i,n.name);if(!await $i(s,i)){console.error(q`
-			Error: Package ${He(n.name)} is not set up
+
+function extractVariableValuePairs (declarations) {
+  var pairs = {};
+  declarations.map(function (declaration) {
+    var split = declaration.split('=');
+    pairs[split[0]] = split[1];
+  });
+  return pairs
+}
+
+function convertToSetCommands (variableString) {
+  var variableValuePairs = extractVariableValuePairs(variableString.split(' '));
+  var variableDeclarationsAsBatch = '';
+  Object.keys(variableValuePairs).forEach(function (key) {
+    variableDeclarationsAsBatch += convertToSetCommand(key, variableValuePairs[key]);
+  });
+  return variableDeclarationsAsBatch
+}
+
+function replaceDollarWithPercentPair (value) {
+  var dollarExpressions = /\$\{?([^$@#?\- \t{}:]+)\}?/g;
+  var result = '';
+  var startIndex = 0;
+  do {
+    var match = dollarExpressions.exec(value);
+    if (match) {
+      var betweenMatches = value.substring(startIndex, match.index) || '';
+      result += betweenMatches + '%' + match[1] + '%';
+      startIndex = dollarExpressions.lastIndex;
+    }
+  } while (dollarExpressions.lastIndex > 0)
+  result += value.slice(startIndex);
+  return result
+}
+
+// On windows, create a .cmd file.
+// Read the #! in the file to see what it uses.  The vast majority
+// of the time, this will be either:
+// "#!/usr/bin/env <prog> <args...>"
+// or:
+// "#!<prog> <args...>"
+//
+// Write a binroot/pkg.bin + ".cmd" file that has this line in it:
+// @<prog> <args...> %dp0%<target> %*
+
+const {
+  chmod,
+  mkdir,
+  readFile: readFile$1,
+  stat,
+  unlink,
+  writeFile,
+} = fs$1;
+
+const { dirname: dirname$1, relative: relative$1 } = path$1;
+const toBatchSyntax = toBatchSyntax$1;
+// linting disabled because this regex is really long
+// eslint-disable-next-line max-len
+const shebangExpr = /^#!\s*(?:\/usr\/bin\/env\s+(?:-S\s+)?((?:[^ \t=]+=[^ \t=]+\s+)*))?([^ \t]+)(.*)$/;
+
+const cmdShimIfExists = (from, to) =>
+  stat(from).then(() => cmdShim(from, to), () => {});
+
+// Try to unlink, but ignore errors.
+// Any problems will surface later.
+const rm = path => unlink(path).catch(() => {});
+
+const cmdShim = (from, to) =>
+  stat(from).then(() => cmdShim_(from, to));
+
+const cmdShim_ = (from, to) => Promise.all([
+  rm(to),
+  rm(to + '.cmd'),
+  rm(to + '.ps1'),
+]).then(() => writeShim(from, to));
+
+const writeShim = (from, to) =>
+  // make a cmd file and a sh script
+  // First, check if the bin is a #! of some sort.
+  // If not, then assume it's something that'll be compiled, or some other
+  // sort of script, and just call it directly.
+  mkdir(dirname$1(to), { recursive: true })
+    .then(() => readFile$1(from, 'utf8'))
+    .then(data => {
+      const firstLine = data.trim().split(/\r*\n/)[0];
+      const shebang = firstLine.match(shebangExpr);
+      if (!shebang) {
+        return writeShim_(from, to)
+      }
+      const vars = shebang[1] || '';
+      const prog = shebang[2];
+      const args = shebang[3] || '';
+      return writeShim_(from, to, prog, args, vars)
+    }, () => writeShim_(from, to));
+
+const writeShim_ = (from, to, prog, args, variables) => {
+  let shTarget = relative$1(dirname$1(to), from);
+  let target = shTarget.split('/').join('\\');
+  let longProg;
+  let shProg = prog && prog.split('\\').join('/');
+  let shLongProg;
+  let pwshProg = shProg && `"${shProg}$exe"`;
+  let pwshLongProg;
+  shTarget = shTarget.split('\\').join('/');
+  args = args || '';
+  variables = variables || '';
+  if (!prog) {
+    prog = `"%dp0%\\${target}"`;
+    shProg = `"$basedir/${shTarget}"`;
+    pwshProg = shProg;
+    args = '';
+    target = '';
+    shTarget = '';
+  } else {
+    longProg = `"%dp0%\\${prog}.exe"`;
+    shLongProg = `"$basedir/${prog}"`;
+    pwshLongProg = `"$basedir/${prog}$exe"`;
+    target = `"%dp0%\\${target}"`;
+    shTarget = `"$basedir/${shTarget}"`;
+  }
+
+  // Subroutine trick to fix https://github.com/npm/cmd-shim/issues/10
+  // and https://github.com/npm/cli/issues/969
+  const head = '@ECHO off\r\n' +
+    'GOTO start\r\n' +
+    ':find_dp0\r\n' +
+    'SET dp0=%~dp0\r\n' +
+    'EXIT /b\r\n' +
+    ':start\r\n' +
+    'SETLOCAL\r\n' +
+    'CALL :find_dp0\r\n';
+
+  let cmd;
+  if (longProg) {
+    shLongProg = shLongProg.trim();
+    args = args.trim();
+    const variablesBatch = toBatchSyntax.convertToSetCommands(variables);
+    cmd = head
+        + variablesBatch
+        + '\r\n'
+        + `IF EXIST ${longProg} (\r\n`
+        + `  SET "_prog=${longProg.replace(/(^")|("$)/g, '')}"\r\n`
+        + ') ELSE (\r\n'
+        + `  SET "_prog=${prog.replace(/(^")|("$)/g, '')}"\r\n`
+        + '  SET PATHEXT=%PATHEXT:;.JS;=;%\r\n'
+        + ')\r\n'
+        + '\r\n'
+        // prevent "Terminate Batch Job? (Y/n)" message
+        // https://github.com/npm/cli/issues/969#issuecomment-737496588
+        + 'endLocal & goto #_undefined_# 2>NUL || title %COMSPEC% & '
+        + `"%_prog%" ${args} ${target} %*\r\n`;
+  } else {
+    cmd = `${head}${prog} ${args} ${target} %*\r\n`;
+  }
+
+  // #!/bin/sh
+  // basedir=`dirname "$0"`
+  //
+  // case `uname` in
+  //     *CYGWIN*|*MINGW*|*MSYS*)
+  //       if command -v cygpath > /dev/null 2>&1; then
+  //           basedir=`cygpath -w "$basedir"`
+  //       fi
+  //     ;;
+  // esac
+  //
+  // if [ -x "$basedir/node.exe" ]; then
+  //   exec "$basedir/node.exe" "$basedir/node_modules/npm/bin/npm-cli.js" "$@"
+  // else
+  //   exec node "$basedir/node_modules/npm/bin/npm-cli.js" "$@"
+  // fi
+
+  let sh = '#!/bin/sh\n';
+
+  sh = sh
+      + `basedir=$(dirname "$(echo "$0" | sed -e 's,\\\\,/,g')")\n`
+      + '\n'
+      + 'case `uname` in\n'
+      + '    *CYGWIN*|*MINGW*|*MSYS*)\n'
+      + '        if command -v cygpath > /dev/null 2>&1; then\n'
+      + '            basedir=`cygpath -w "$basedir"`\n'
+      + '        fi\n'
+      + '    ;;\n'
+      + 'esac\n'
+      + '\n';
+
+  if (shLongProg) {
+    sh = sh
+       + `if [ -x ${shLongProg} ]; then\n`
+       + `  exec ${variables}${shLongProg} ${args} ${shTarget} "$@"\n`
+       + 'else \n'
+       + `  exec ${variables}${shProg} ${args} ${shTarget} "$@"\n`
+       + 'fi\n';
+  } else {
+    sh = sh
+       + `exec ${shProg} ${args} ${shTarget} "$@"\n`;
+  }
+
+  // #!/usr/bin/env pwsh
+  // $basedir=Split-Path $MyInvocation.MyCommand.Definition -Parent
+  //
+  // $ret=0
+  // $exe = ""
+  // if ($PSVersionTable.PSVersion -lt "6.0" -or $IsWindows) {
+  //   # Fix case when both the Windows and Linux builds of Node
+  //   # are installed in the same directory
+  //   $exe = ".exe"
+  // }
+  // if (Test-Path "$basedir/node") {
+  //   # Suport pipeline input
+  //   if ($MyInvocation.ExpectingInput) {
+  //     input | & "$basedir/node$exe" "$basedir/node_modules/npm/bin/npm-cli.js" $args
+  //   } else {
+  //     & "$basedir/node$exe" "$basedir/node_modules/npm/bin/npm-cli.js" $args
+  //   }
+  //   $ret=$LASTEXITCODE
+  // } else {
+  //   # Support pipeline input
+  //   if ($MyInvocation.ExpectingInput) {
+  //     $input | & "node$exe" "$basedir/node_modules/npm/bin/npm-cli.js" $args
+  //   } else {
+  //     & "node$exe" "$basedir/node_modules/npm/bin/npm-cli.js" $args
+  //   }
+  //   $ret=$LASTEXITCODE
+  // }
+  // exit $ret
+  let pwsh = '#!/usr/bin/env pwsh\n'
+           + '$basedir=Split-Path $MyInvocation.MyCommand.Definition -Parent\n'
+           + '\n'
+           + '$exe=""\n'
+           + 'if ($PSVersionTable.PSVersion -lt "6.0" -or $IsWindows) {\n'
+           + '  # Fix case when both the Windows and Linux builds of Node\n'
+           + '  # are installed in the same directory\n'
+           + '  $exe=".exe"\n'
+           + '}\n';
+  if (shLongProg) {
+    pwsh = pwsh
+         + '$ret=0\n'
+         + `if (Test-Path ${pwshLongProg}) {\n`
+         + '  # Support pipeline input\n'
+         + '  if ($MyInvocation.ExpectingInput) {\n'
+         + `    $input | & ${pwshLongProg} ${args} ${shTarget} $args\n`
+         + '  } else {\n'
+         + `    & ${pwshLongProg} ${args} ${shTarget} $args\n`
+         + '  }\n'
+         + '  $ret=$LASTEXITCODE\n'
+         + '} else {\n'
+         + '  # Support pipeline input\n'
+         + '  if ($MyInvocation.ExpectingInput) {\n'
+         + `    $input | & ${pwshProg} ${args} ${shTarget} $args\n`
+         + '  } else {\n'
+         + `    & ${pwshProg} ${args} ${shTarget} $args\n`
+         + '  }\n'
+         + '  $ret=$LASTEXITCODE\n'
+         + '}\n'
+         + 'exit $ret\n';
+  } else {
+    pwsh = pwsh
+         + '# Support pipeline input\n'
+         + 'if ($MyInvocation.ExpectingInput) {\n'
+         + `  $input | & ${pwshProg} ${args} ${shTarget} $args\n`
+         + '} else {\n'
+         + `  & ${pwshProg} ${args} ${shTarget} $args\n`
+         + '}\n'
+         + 'exit $LASTEXITCODE\n';
+  }
+
+  return Promise.all([
+    writeFile(to + '.ps1', pwsh, 'utf8'),
+    writeFile(to + '.cmd', cmd, 'utf8'),
+    writeFile(to, sh, 'utf8'),
+  ]).then(() => chmodShim(to))
+};
+
+const chmodShim = to => Promise.all([
+  chmod(to, 0o755),
+  chmod(to + '.cmd', 0o755),
+  chmod(to + '.ps1', 0o755),
+]);
+
+var lib$2 = cmdShim;
+cmdShim.ifExists = cmdShimIfExists;
+
+var cmdShim$1 = /*@__PURE__*/getDefaultExportFromCjs(lib$2);
+
+const readPackageJson = async (packagePath) => {
+  const packageJsonPath = path$1.join(packagePath, "package.json");
+  const packageJsonExists = await fsExists(packageJsonPath);
+  if (!packageJsonExists) {
+    throw new Error(`package.json not found in ${packagePath}`);
+  }
+  const packageJson = await readJsonFile(packageJsonPath);
+  if (!packageJson.name) {
+    throw new Error(`package.json must contain a name: ${packageJsonPath}`);
+  }
+  return packageJson;
+};
+
+const symlink = async (targetPath, symlinkPath, type) => {
+  const stats = await fs$1.lstat(symlinkPath).catch(() => null);
+  if (stats) {
+    if (stats.isSymbolicLink()) {
+      const symlinkRealpath = await fs$1.realpath(symlinkPath).catch(() => null);
+      if (targetPath === symlinkRealpath) {
+        return;
+      }
+    }
+    await fs$1.rm(symlinkPath, {
+      recursive: true
+    });
+  }
+  await fs$1.symlink(
+    targetPath,
+    symlinkPath,
+    type
+  );
+};
+const symlinkBinary = async (binaryPath, linkPath) => {
+  await symlink(binaryPath, linkPath);
+  await fs$1.chmod(linkPath, 493);
+};
+const hardlink = async (sourcePath, hardlinkPath) => {
+  if (await fsExists(hardlinkPath)) {
+    const [
+      existingStat,
+      sourceStat
+    ] = await Promise.all([
+      fs$1.stat(hardlinkPath),
+      fs$1.stat(sourcePath)
+    ]);
+    if (existingStat.ino === sourceStat.ino) {
+      return;
+    }
+    await fs$1.rm(hardlinkPath, {
+      recursive: true
+    });
+  }
+  await fs$1.link(sourcePath, hardlinkPath);
+};
+
+const linkBinaries = async (linkPackagePath, nodeModulesPath, {
+  name,
+  bin
+}, linkFunction) => {
+  if (!bin) {
+    return [];
+  }
+  if (name?.startsWith("@")) {
+    [, name] = name.split("/");
+  }
+  const binDirectoryPath = path$1.join(nodeModulesPath, ".bin");
+  await fs$1.mkdir(binDirectoryPath, {
+    recursive: true
+  });
+  if (typeof bin === "string") {
+    await linkFunction(
+      path$1.resolve(linkPackagePath, bin),
+      path$1.join(binDirectoryPath, name)
+    );
+    return;
+  }
+  await Promise.all(
+    Object.entries(bin).map(
+      async ([binaryName, binaryPath]) => await linkFunction(
+        path$1.resolve(linkPackagePath, binaryPath),
+        path$1.join(binDirectoryPath, binaryName)
+      )
+    )
+  );
+};
+
+const nodeModulesDirectory = "node_modules";
+const symlinkPackage = async (basePackagePath, linkPackagePath) => {
+  const absoluteLinkPackagePath = path$1.resolve(basePackagePath, linkPackagePath);
+  const packageJson = await readPackageJson(absoluteLinkPackagePath);
+  const nodeModulesPath = path$1.join(basePackagePath, nodeModulesDirectory);
+  const symlinkPath = path$1.join(nodeModulesPath, packageJson.name);
+  const symlinkDirectory = path$1.dirname(symlinkPath);
+  await fs$1.mkdir(symlinkDirectory, {
+    recursive: true
+  });
+  const targetPath = path$1.relative(symlinkDirectory, absoluteLinkPackagePath);
+  await symlink(
+    targetPath,
+    symlinkPath,
+    /**
+     * On Windows, 'dir' requires admin privileges so use 'junction' instead
+     *
+     * npm also uses junction:
+     * https://github.com/npm/cli/blob/v9.9.3/workspaces/arborist/lib/arborist/reify.js#L738
+     */
+    "junction"
+  );
+  await linkBinaries(
+    absoluteLinkPackagePath,
+    nodeModulesPath,
+    packageJson,
+    process.platform === "win32" ? cmdShim$1 : symlinkBinary
+  );
+  return {
+    name: packageJson.name,
+    path: symlinkPath,
+    target: targetPath
+  };
+};
+
+const linkPackage = async (basePackagePath, linkPackagePath, options) => {
+  const absoluteLinkPackagePath = path$1.resolve(basePackagePath, linkPackagePath);
+  const pathExists = await fsExists(absoluteLinkPackagePath);
+  if (!pathExists) {
+    console.warn(red("\u2716"), `Package path does not exist: ${linkPackagePath}`);
+    process.exitCode = 1;
+    return;
+  }
+  try {
+    const link = await symlinkPackage(
+      basePackagePath,
+      linkPackagePath
+    );
+    console.log(green("\u2714"), `Symlinked ${magenta(link.name)}:`, cyan(link.path), "\u2192", cyan(link.target));
+  } catch (error) {
+    console.warn(red("\u2716"), "Failed to symlink", cyan(linkPackagePath), "with error:", error.message);
+    process.exitCode = 1;
+    return;
+  }
+  if (options.deep) {
+    const config = await loadConfig(absoluteLinkPackagePath);
+    if (config) {
+      await linkFromConfig(
+        absoluteLinkPackagePath,
+        config,
+        options
+      );
+    }
+  }
+};
+const linkFromConfig = async (basePackagePath, config, options) => {
+  if (!config.packages) {
+    return;
+  }
+  const newOptions = {
+    deep: options.deep ?? config.deepLink ?? false
+  };
+  await Promise.all(
+    config.packages.map(
+      async (linkPackagePath) => await linkPackage(
+        basePackagePath,
+        linkPackagePath,
+        newOptions
+      )
+    )
+  );
+};
+
+function throttle(function_, wait) {
+	if (typeof function_ !== 'function') {
+		throw new TypeError(`Expected the first argument to be a \`function\`, got \`${typeof function_}\`.`);
+	}
+
+	// TODO: Add `wait` validation too in the next major version.
+
+	let timeoutId;
+	let lastCallTime = 0;
+
+	return function throttled(...arguments_) { // eslint-disable-line func-names
+		clearTimeout(timeoutId);
+
+		const now = Date.now();
+		const timeSinceLastCall = now - lastCallTime;
+		const delayForNextCall = wait - timeSinceLastCall;
+
+		if (delayForNextCall <= 0) {
+			lastCallTime = now;
+			function_.apply(this, arguments_);
+		} else {
+			timeoutId = setTimeout(() => {
+				lastCallTime = Date.now();
+				function_.apply(this, arguments_);
+			}, delayForNextCall);
+		}
+	};
+}
+
+var throttleit = throttle;
+
+var throttle$1 = /*@__PURE__*/getDefaultExportFromCjs(throttleit);
+
+var globToRegexp = function (glob, opts) {
+  if (typeof glob !== 'string') {
+    throw new TypeError('Expected a string');
+  }
+
+  var str = String(glob);
+
+  // The regexp we are building, as a string.
+  var reStr = "";
+
+  // Whether we are matching so called "extended" globs (like bash) and should
+  // support single character matching, matching ranges of characters, group
+  // matching, etc.
+  var extended = opts ? !!opts.extended : false;
+
+  // When globstar is _false_ (default), '/foo/*' is translated a regexp like
+  // '^\/foo\/.*$' which will match any string beginning with '/foo/'
+  // When globstar is _true_, '/foo/*' is translated to regexp like
+  // '^\/foo\/[^/]*$' which will match any string beginning with '/foo/' BUT
+  // which does not have a '/' to the right of it.
+  // E.g. with '/foo/*' these will match: '/foo/bar', '/foo/bar.txt' but
+  // these will not '/foo/bar/baz', '/foo/bar/baz.txt'
+  // Lastely, when globstar is _true_, '/foo/**' is equivelant to '/foo/*' when
+  // globstar is _false_
+  var globstar = opts ? !!opts.globstar : false;
+
+  // If we are doing extended matching, this boolean is true when we are inside
+  // a group (eg {*.html,*.js}), and false otherwise.
+  var inGroup = false;
+
+  // RegExp flags (eg "i" ) to pass in to RegExp constructor.
+  var flags = opts && typeof( opts.flags ) === "string" ? opts.flags : "";
+
+  var c;
+  for (var i = 0, len = str.length; i < len; i++) {
+    c = str[i];
+
+    switch (c) {
+    case "/":
+    case "$":
+    case "^":
+    case "+":
+    case ".":
+    case "(":
+    case ")":
+    case "=":
+    case "!":
+    case "|":
+      reStr += "\\" + c;
+      break;
+
+    case "?":
+      if (extended) {
+        reStr += ".";
+	    break;
+      }
+
+    case "[":
+    case "]":
+      if (extended) {
+        reStr += c;
+	    break;
+      }
+
+    case "{":
+      if (extended) {
+        inGroup = true;
+	    reStr += "(";
+	    break;
+      }
+
+    case "}":
+      if (extended) {
+        inGroup = false;
+	    reStr += ")";
+	    break;
+      }
+
+    case ",":
+      if (inGroup) {
+        reStr += "|";
+	    break;
+      }
+      reStr += "\\" + c;
+      break;
+
+    case "*":
+      // Move over all consecutive "*"'s.
+      // Also store the previous and next characters
+      var prevChar = str[i - 1];
+      var starCount = 1;
+      while(str[i + 1] === "*") {
+        starCount++;
+        i++;
+      }
+      var nextChar = str[i + 1];
+
+      if (!globstar) {
+        // globstar is disabled, so treat any number of "*" as one
+        reStr += ".*";
+      } else {
+        // globstar is enabled, so determine if this is a globstar segment
+        var isGlobstar = starCount > 1                      // multiple "*"'s
+          && (prevChar === "/" || prevChar === undefined)   // from the start of the segment
+          && (nextChar === "/" || nextChar === undefined);   // to the end of the segment
+
+        if (isGlobstar) {
+          // it's a globstar, so match zero or more path segments
+          reStr += "((?:[^/]*(?:\/|$))*)";
+          i++; // move over the "/"
+        } else {
+          // it's not a globstar, so only match one path segment
+          reStr += "([^/]*)";
+        }
+      }
+      break;
+
+    default:
+      reStr += c;
+    }
+  }
+
+  // When regexp 'g' flag is specified don't
+  // constrain the regular expression with ^ & $
+  if (!flags || !~flags.indexOf('g')) {
+    reStr = "^" + reStr + "$";
+  }
+
+  return new RegExp(reStr, flags);
+};
+
+var globToRegexp$1 = /*@__PURE__*/getDefaultExportFromCjs(globToRegexp);
+
+var commonjs = {};
+
+var balancedMatch = balanced$1;
+function balanced$1(a, b, str) {
+  if (a instanceof RegExp) a = maybeMatch(a, str);
+  if (b instanceof RegExp) b = maybeMatch(b, str);
+
+  var r = range(a, b, str);
+
+  return r && {
+    start: r[0],
+    end: r[1],
+    pre: str.slice(0, r[0]),
+    body: str.slice(r[0] + a.length, r[1]),
+    post: str.slice(r[1] + b.length)
+  };
+}
+
+function maybeMatch(reg, str) {
+  var m = str.match(reg);
+  return m ? m[0] : null;
+}
+
+balanced$1.range = range;
+function range(a, b, str) {
+  var begs, beg, left, right, result;
+  var ai = str.indexOf(a);
+  var bi = str.indexOf(b, ai + 1);
+  var i = ai;
+
+  if (ai >= 0 && bi > 0) {
+    if(a===b) {
+      return [ai, bi];
+    }
+    begs = [];
+    left = str.length;
+
+    while (i >= 0 && !result) {
+      if (i == ai) {
+        begs.push(i);
+        ai = str.indexOf(a, i + 1);
+      } else if (begs.length == 1) {
+        result = [ begs.pop(), bi ];
+      } else {
+        beg = begs.pop();
+        if (beg < left) {
+          left = beg;
+          right = bi;
+        }
+
+        bi = str.indexOf(b, i + 1);
+      }
+
+      i = ai < bi && ai >= 0 ? ai : bi;
+    }
+
+    if (begs.length) {
+      result = [ left, right ];
+    }
+  }
+
+  return result;
+}
+
+var balanced = balancedMatch;
+
+var braceExpansion = expandTop;
+
+var escSlash = '\0SLASH'+Math.random()+'\0';
+var escOpen = '\0OPEN'+Math.random()+'\0';
+var escClose = '\0CLOSE'+Math.random()+'\0';
+var escComma = '\0COMMA'+Math.random()+'\0';
+var escPeriod = '\0PERIOD'+Math.random()+'\0';
+
+function numeric(str) {
+  return parseInt(str, 10) == str
+    ? parseInt(str, 10)
+    : str.charCodeAt(0);
+}
+
+function escapeBraces(str) {
+  return str.split('\\\\').join(escSlash)
+            .split('\\{').join(escOpen)
+            .split('\\}').join(escClose)
+            .split('\\,').join(escComma)
+            .split('\\.').join(escPeriod);
+}
+
+function unescapeBraces(str) {
+  return str.split(escSlash).join('\\')
+            .split(escOpen).join('{')
+            .split(escClose).join('}')
+            .split(escComma).join(',')
+            .split(escPeriod).join('.');
+}
+
+
+// Basically just str.split(","), but handling cases
+// where we have nested braced sections, which should be
+// treated as individual members, like {a,{b,c},d}
+function parseCommaParts(str) {
+  if (!str)
+    return [''];
+
+  var parts = [];
+  var m = balanced('{', '}', str);
+
+  if (!m)
+    return str.split(',');
+
+  var pre = m.pre;
+  var body = m.body;
+  var post = m.post;
+  var p = pre.split(',');
+
+  p[p.length-1] += '{' + body + '}';
+  var postParts = parseCommaParts(post);
+  if (post.length) {
+    p[p.length-1] += postParts.shift();
+    p.push.apply(p, postParts);
+  }
+
+  parts.push.apply(parts, p);
+
+  return parts;
+}
+
+function expandTop(str) {
+  if (!str)
+    return [];
+
+  // I don't know why Bash 4.3 does this, but it does.
+  // Anything starting with {} will have the first two bytes preserved
+  // but *only* at the top level, so {},a}b will not expand to anything,
+  // but a{},b}c will be expanded to [a}c,abc].
+  // One could argue that this is a bug in Bash, but since the goal of
+  // this module is to match Bash's rules, we escape a leading {}
+  if (str.substr(0, 2) === '{}') {
+    str = '\\{\\}' + str.substr(2);
+  }
+
+  return expand(escapeBraces(str), true).map(unescapeBraces);
+}
+
+function embrace(str) {
+  return '{' + str + '}';
+}
+function isPadded(el) {
+  return /^-?0\d/.test(el);
+}
+
+function lte(i, y) {
+  return i <= y;
+}
+function gte(i, y) {
+  return i >= y;
+}
+
+function expand(str, isTop) {
+  var expansions = [];
+
+  var m = balanced('{', '}', str);
+  if (!m) return [str];
+
+  // no need to expand pre, since it is guaranteed to be free of brace-sets
+  var pre = m.pre;
+  var post = m.post.length
+    ? expand(m.post, false)
+    : [''];
+
+  if (/\$$/.test(m.pre)) {    
+    for (var k = 0; k < post.length; k++) {
+      var expansion = pre+ '{' + m.body + '}' + post[k];
+      expansions.push(expansion);
+    }
+  } else {
+    var isNumericSequence = /^-?\d+\.\.-?\d+(?:\.\.-?\d+)?$/.test(m.body);
+    var isAlphaSequence = /^[a-zA-Z]\.\.[a-zA-Z](?:\.\.-?\d+)?$/.test(m.body);
+    var isSequence = isNumericSequence || isAlphaSequence;
+    var isOptions = m.body.indexOf(',') >= 0;
+    if (!isSequence && !isOptions) {
+      // {a},b}
+      if (m.post.match(/,.*\}/)) {
+        str = m.pre + '{' + m.body + escClose + m.post;
+        return expand(str);
+      }
+      return [str];
+    }
+
+    var n;
+    if (isSequence) {
+      n = m.body.split(/\.\./);
+    } else {
+      n = parseCommaParts(m.body);
+      if (n.length === 1) {
+        // x{{a,b}}y ==> x{a}y x{b}y
+        n = expand(n[0], false).map(embrace);
+        if (n.length === 1) {
+          return post.map(function(p) {
+            return m.pre + n[0] + p;
+          });
+        }
+      }
+    }
+
+    // at this point, n is the parts, and we know it's not a comma set
+    // with a single entry.
+    var N;
+
+    if (isSequence) {
+      var x = numeric(n[0]);
+      var y = numeric(n[1]);
+      var width = Math.max(n[0].length, n[1].length);
+      var incr = n.length == 3
+        ? Math.abs(numeric(n[2]))
+        : 1;
+      var test = lte;
+      var reverse = y < x;
+      if (reverse) {
+        incr *= -1;
+        test = gte;
+      }
+      var pad = n.some(isPadded);
+
+      N = [];
+
+      for (var i = x; test(i, y); i += incr) {
+        var c;
+        if (isAlphaSequence) {
+          c = String.fromCharCode(i);
+          if (c === '\\')
+            c = '';
+        } else {
+          c = String(i);
+          if (pad) {
+            var need = width - c.length;
+            if (need > 0) {
+              var z = new Array(need + 1).join('0');
+              if (i < 0)
+                c = '-' + z + c.slice(1);
+              else
+                c = z + c;
+            }
+          }
+        }
+        N.push(c);
+      }
+    } else {
+      N = [];
+
+      for (var j = 0; j < n.length; j++) {
+        N.push.apply(N, expand(n[j], false));
+      }
+    }
+
+    for (var j = 0; j < N.length; j++) {
+      for (var k = 0; k < post.length; k++) {
+        var expansion = pre + N[j] + post[k];
+        if (!isTop || isSequence || expansion)
+          expansions.push(expansion);
+      }
+    }
+  }
+
+  return expansions;
+}
+
+var assertValidPattern$1 = {};
+
+Object.defineProperty(assertValidPattern$1, "__esModule", { value: true });
+assertValidPattern$1.assertValidPattern = void 0;
+const MAX_PATTERN_LENGTH = 1024 * 64;
+const assertValidPattern = (pattern) => {
+    if (typeof pattern !== 'string') {
+        throw new TypeError('invalid pattern');
+    }
+    if (pattern.length > MAX_PATTERN_LENGTH) {
+        throw new TypeError('pattern is too long');
+    }
+};
+assertValidPattern$1.assertValidPattern = assertValidPattern;
+
+var ast = {};
+
+var braceExpressions = {};
+
+// translate the various posix character classes into unicode properties
+// this works across all unicode locales
+Object.defineProperty(braceExpressions, "__esModule", { value: true });
+braceExpressions.parseClass = void 0;
+// { <posix class>: [<translation>, /u flag required, negated]
+const posixClasses = {
+    '[:alnum:]': ['\\p{L}\\p{Nl}\\p{Nd}', true],
+    '[:alpha:]': ['\\p{L}\\p{Nl}', true],
+    '[:ascii:]': ['\\x' + '00-\\x' + '7f', false],
+    '[:blank:]': ['\\p{Zs}\\t', true],
+    '[:cntrl:]': ['\\p{Cc}', true],
+    '[:digit:]': ['\\p{Nd}', true],
+    '[:graph:]': ['\\p{Z}\\p{C}', true, true],
+    '[:lower:]': ['\\p{Ll}', true],
+    '[:print:]': ['\\p{C}', true],
+    '[:punct:]': ['\\p{P}', true],
+    '[:space:]': ['\\p{Z}\\t\\r\\n\\v\\f', true],
+    '[:upper:]': ['\\p{Lu}', true],
+    '[:word:]': ['\\p{L}\\p{Nl}\\p{Nd}\\p{Pc}', true],
+    '[:xdigit:]': ['A-Fa-f0-9', false],
+};
+// only need to escape a few things inside of brace expressions
+// escapes: [ \ ] -
+const braceEscape = (s) => s.replace(/[[\]\\-]/g, '\\$&');
+// escape all regexp magic characters
+const regexpEscape = (s) => s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+// everything has already been escaped, we just have to join
+const rangesToString = (ranges) => ranges.join('');
+// takes a glob string at a posix brace expression, and returns
+// an equivalent regular expression source, and boolean indicating
+// whether the /u flag needs to be applied, and the number of chars
+// consumed to parse the character class.
+// This also removes out of order ranges, and returns ($.) if the
+// entire class just no good.
+const parseClass = (glob, position) => {
+    const pos = position;
+    /* c8 ignore start */
+    if (glob.charAt(pos) !== '[') {
+        throw new Error('not in a brace expression');
+    }
+    /* c8 ignore stop */
+    const ranges = [];
+    const negs = [];
+    let i = pos + 1;
+    let sawStart = false;
+    let uflag = false;
+    let escaping = false;
+    let negate = false;
+    let endPos = pos;
+    let rangeStart = '';
+    WHILE: while (i < glob.length) {
+        const c = glob.charAt(i);
+        if ((c === '!' || c === '^') && i === pos + 1) {
+            negate = true;
+            i++;
+            continue;
+        }
+        if (c === ']' && sawStart && !escaping) {
+            endPos = i + 1;
+            break;
+        }
+        sawStart = true;
+        if (c === '\\') {
+            if (!escaping) {
+                escaping = true;
+                i++;
+                continue;
+            }
+            // escaped \ char, fall through and treat like normal char
+        }
+        if (c === '[' && !escaping) {
+            // either a posix class, a collation equivalent, or just a [
+            for (const [cls, [unip, u, neg]] of Object.entries(posixClasses)) {
+                if (glob.startsWith(cls, i)) {
+                    // invalid, [a-[] is fine, but not [a-[:alpha]]
+                    if (rangeStart) {
+                        return ['$.', false, glob.length - pos, true];
+                    }
+                    i += cls.length;
+                    if (neg)
+                        negs.push(unip);
+                    else
+                        ranges.push(unip);
+                    uflag = uflag || u;
+                    continue WHILE;
+                }
+            }
+        }
+        // now it's just a normal character, effectively
+        escaping = false;
+        if (rangeStart) {
+            // throw this range away if it's not valid, but others
+            // can still match.
+            if (c > rangeStart) {
+                ranges.push(braceEscape(rangeStart) + '-' + braceEscape(c));
+            }
+            else if (c === rangeStart) {
+                ranges.push(braceEscape(c));
+            }
+            rangeStart = '';
+            i++;
+            continue;
+        }
+        // now might be the start of a range.
+        // can be either c-d or c-] or c<more...>] or c] at this point
+        if (glob.startsWith('-]', i + 1)) {
+            ranges.push(braceEscape(c + '-'));
+            i += 2;
+            continue;
+        }
+        if (glob.startsWith('-', i + 1)) {
+            rangeStart = c;
+            i += 2;
+            continue;
+        }
+        // not the start of a range, just a single character
+        ranges.push(braceEscape(c));
+        i++;
+    }
+    if (endPos < i) {
+        // didn't see the end of the class, not a valid class,
+        // but might still be valid as a literal match.
+        return ['', false, 0, false];
+    }
+    // if we got no ranges and no negates, then we have a range that
+    // cannot possibly match anything, and that poisons the whole glob
+    if (!ranges.length && !negs.length) {
+        return ['$.', false, glob.length - pos, true];
+    }
+    // if we got one positive range, and it's a single character, then that's
+    // not actually a magic pattern, it's just that one literal character.
+    // we should not treat that as "magic", we should just return the literal
+    // character. [_] is a perfectly valid way to escape glob magic chars.
+    if (negs.length === 0 &&
+        ranges.length === 1 &&
+        /^\\?.$/.test(ranges[0]) &&
+        !negate) {
+        const r = ranges[0].length === 2 ? ranges[0].slice(-1) : ranges[0];
+        return [regexpEscape(r), false, endPos - pos, false];
+    }
+    const sranges = '[' + (negate ? '^' : '') + rangesToString(ranges) + ']';
+    const snegs = '[' + (negate ? '' : '^') + rangesToString(negs) + ']';
+    const comb = ranges.length && negs.length
+        ? '(' + sranges + '|' + snegs + ')'
+        : ranges.length
+            ? sranges
+            : snegs;
+    return [comb, uflag, endPos - pos, true];
+};
+braceExpressions.parseClass = parseClass;
+
+var _unescape = {};
+
+Object.defineProperty(_unescape, "__esModule", { value: true });
+_unescape.unescape = void 0;
+/**
+ * Un-escape a string that has been escaped with {@link escape}.
+ *
+ * If the {@link windowsPathsNoEscape} option is used, then square-brace
+ * escapes are removed, but not backslash escapes.  For example, it will turn
+ * the string `'[*]'` into `*`, but it will not turn `'\\*'` into `'*'`,
+ * becuase `\` is a path separator in `windowsPathsNoEscape` mode.
+ *
+ * When `windowsPathsNoEscape` is not set, then both brace escapes and
+ * backslash escapes are removed.
+ *
+ * Slashes (and backslashes in `windowsPathsNoEscape` mode) cannot be escaped
+ * or unescaped.
+ */
+const unescape = (s, { windowsPathsNoEscape = false, } = {}) => {
+    return windowsPathsNoEscape
+        ? s.replace(/\[([^\/\\])\]/g, '$1')
+        : s.replace(/((?!\\).|^)\[([^\/\\])\]/g, '$1$2').replace(/\\([^\/])/g, '$1');
+};
+_unescape.unescape = unescape;
+
+// parse a single path portion
+Object.defineProperty(ast, "__esModule", { value: true });
+ast.AST = void 0;
+const brace_expressions_js_1 = braceExpressions;
+const unescape_js_1 = _unescape;
+const types = new Set(['!', '?', '+', '*', '@']);
+const isExtglobType = (c) => types.has(c);
+// Patterns that get prepended to bind to the start of either the
+// entire string, or just a single path portion, to prevent dots
+// and/or traversal patterns, when needed.
+// Exts don't need the ^ or / bit, because the root binds that already.
+const startNoTraversal = '(?!(?:^|/)\\.\\.?(?:$|/))';
+const startNoDot = '(?!\\.)';
+// characters that indicate a start of pattern needs the "no dots" bit,
+// because a dot *might* be matched. ( is not in the list, because in
+// the case of a child extglob, it will handle the prevention itself.
+const addPatternStart = new Set(['[', '.']);
+// cases where traversal is A-OK, no dot prevention needed
+const justDots = new Set(['..', '.']);
+const reSpecials = new Set('().*{}+?[]^$\\!');
+const regExpEscape = (s) => s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+// any single thing other than /
+const qmark = '[^/]';
+// * => any number of characters
+const star = qmark + '*?';
+// use + when we need to ensure that *something* matches, because the * is
+// the only thing in the path portion.
+const starNoEmpty = qmark + '+?';
+// remove the \ chars that we added if we end up doing a nonmagic compare
+// const deslash = (s: string) => s.replace(/\\(.)/g, '$1')
+class AST {
+    type;
+    #root;
+    #hasMagic;
+    #uflag = false;
+    #parts = [];
+    #parent;
+    #parentIndex;
+    #negs;
+    #filledNegs = false;
+    #options;
+    #toString;
+    // set to true if it's an extglob with no children
+    // (which really means one child of '')
+    #emptyExt = false;
+    constructor(type, parent, options = {}) {
+        this.type = type;
+        // extglobs are inherently magical
+        if (type)
+            this.#hasMagic = true;
+        this.#parent = parent;
+        this.#root = this.#parent ? this.#parent.#root : this;
+        this.#options = this.#root === this ? options : this.#root.#options;
+        this.#negs = this.#root === this ? [] : this.#root.#negs;
+        if (type === '!' && !this.#root.#filledNegs)
+            this.#negs.push(this);
+        this.#parentIndex = this.#parent ? this.#parent.#parts.length : 0;
+    }
+    get hasMagic() {
+        /* c8 ignore start */
+        if (this.#hasMagic !== undefined)
+            return this.#hasMagic;
+        /* c8 ignore stop */
+        for (const p of this.#parts) {
+            if (typeof p === 'string')
+                continue;
+            if (p.type || p.hasMagic)
+                return (this.#hasMagic = true);
+        }
+        // note: will be undefined until we generate the regexp src and find out
+        return this.#hasMagic;
+    }
+    // reconstructs the pattern
+    toString() {
+        if (this.#toString !== undefined)
+            return this.#toString;
+        if (!this.type) {
+            return (this.#toString = this.#parts.map(p => String(p)).join(''));
+        }
+        else {
+            return (this.#toString =
+                this.type + '(' + this.#parts.map(p => String(p)).join('|') + ')');
+        }
+    }
+    #fillNegs() {
+        /* c8 ignore start */
+        if (this !== this.#root)
+            throw new Error('should only call on root');
+        if (this.#filledNegs)
+            return this;
+        /* c8 ignore stop */
+        // call toString() once to fill this out
+        this.toString();
+        this.#filledNegs = true;
+        let n;
+        while ((n = this.#negs.pop())) {
+            if (n.type !== '!')
+                continue;
+            // walk up the tree, appending everthing that comes AFTER parentIndex
+            let p = n;
+            let pp = p.#parent;
+            while (pp) {
+                for (let i = p.#parentIndex + 1; !pp.type && i < pp.#parts.length; i++) {
+                    for (const part of n.#parts) {
+                        /* c8 ignore start */
+                        if (typeof part === 'string') {
+                            throw new Error('string part in extglob AST??');
+                        }
+                        /* c8 ignore stop */
+                        part.copyIn(pp.#parts[i]);
+                    }
+                }
+                p = pp;
+                pp = p.#parent;
+            }
+        }
+        return this;
+    }
+    push(...parts) {
+        for (const p of parts) {
+            if (p === '')
+                continue;
+            /* c8 ignore start */
+            if (typeof p !== 'string' && !(p instanceof AST && p.#parent === this)) {
+                throw new Error('invalid part: ' + p);
+            }
+            /* c8 ignore stop */
+            this.#parts.push(p);
+        }
+    }
+    toJSON() {
+        const ret = this.type === null
+            ? this.#parts.slice().map(p => (typeof p === 'string' ? p : p.toJSON()))
+            : [this.type, ...this.#parts.map(p => p.toJSON())];
+        if (this.isStart() && !this.type)
+            ret.unshift([]);
+        if (this.isEnd() &&
+            (this === this.#root ||
+                (this.#root.#filledNegs && this.#parent?.type === '!'))) {
+            ret.push({});
+        }
+        return ret;
+    }
+    isStart() {
+        if (this.#root === this)
+            return true;
+        // if (this.type) return !!this.#parent?.isStart()
+        if (!this.#parent?.isStart())
+            return false;
+        if (this.#parentIndex === 0)
+            return true;
+        // if everything AHEAD of this is a negation, then it's still the "start"
+        const p = this.#parent;
+        for (let i = 0; i < this.#parentIndex; i++) {
+            const pp = p.#parts[i];
+            if (!(pp instanceof AST && pp.type === '!')) {
+                return false;
+            }
+        }
+        return true;
+    }
+    isEnd() {
+        if (this.#root === this)
+            return true;
+        if (this.#parent?.type === '!')
+            return true;
+        if (!this.#parent?.isEnd())
+            return false;
+        if (!this.type)
+            return this.#parent?.isEnd();
+        // if not root, it'll always have a parent
+        /* c8 ignore start */
+        const pl = this.#parent ? this.#parent.#parts.length : 0;
+        /* c8 ignore stop */
+        return this.#parentIndex === pl - 1;
+    }
+    copyIn(part) {
+        if (typeof part === 'string')
+            this.push(part);
+        else
+            this.push(part.clone(this));
+    }
+    clone(parent) {
+        const c = new AST(this.type, parent);
+        for (const p of this.#parts) {
+            c.copyIn(p);
+        }
+        return c;
+    }
+    static #parseAST(str, ast, pos, opt) {
+        let escaping = false;
+        let inBrace = false;
+        let braceStart = -1;
+        let braceNeg = false;
+        if (ast.type === null) {
+            // outside of a extglob, append until we find a start
+            let i = pos;
+            let acc = '';
+            while (i < str.length) {
+                const c = str.charAt(i++);
+                // still accumulate escapes at this point, but we do ignore
+                // starts that are escaped
+                if (escaping || c === '\\') {
+                    escaping = !escaping;
+                    acc += c;
+                    continue;
+                }
+                if (inBrace) {
+                    if (i === braceStart + 1) {
+                        if (c === '^' || c === '!') {
+                            braceNeg = true;
+                        }
+                    }
+                    else if (c === ']' && !(i === braceStart + 2 && braceNeg)) {
+                        inBrace = false;
+                    }
+                    acc += c;
+                    continue;
+                }
+                else if (c === '[') {
+                    inBrace = true;
+                    braceStart = i;
+                    braceNeg = false;
+                    acc += c;
+                    continue;
+                }
+                if (!opt.noext && isExtglobType(c) && str.charAt(i) === '(') {
+                    ast.push(acc);
+                    acc = '';
+                    const ext = new AST(c, ast);
+                    i = AST.#parseAST(str, ext, i, opt);
+                    ast.push(ext);
+                    continue;
+                }
+                acc += c;
+            }
+            ast.push(acc);
+            return i;
+        }
+        // some kind of extglob, pos is at the (
+        // find the next | or )
+        let i = pos + 1;
+        let part = new AST(null, ast);
+        const parts = [];
+        let acc = '';
+        while (i < str.length) {
+            const c = str.charAt(i++);
+            // still accumulate escapes at this point, but we do ignore
+            // starts that are escaped
+            if (escaping || c === '\\') {
+                escaping = !escaping;
+                acc += c;
+                continue;
+            }
+            if (inBrace) {
+                if (i === braceStart + 1) {
+                    if (c === '^' || c === '!') {
+                        braceNeg = true;
+                    }
+                }
+                else if (c === ']' && !(i === braceStart + 2 && braceNeg)) {
+                    inBrace = false;
+                }
+                acc += c;
+                continue;
+            }
+            else if (c === '[') {
+                inBrace = true;
+                braceStart = i;
+                braceNeg = false;
+                acc += c;
+                continue;
+            }
+            if (isExtglobType(c) && str.charAt(i) === '(') {
+                part.push(acc);
+                acc = '';
+                const ext = new AST(c, part);
+                part.push(ext);
+                i = AST.#parseAST(str, ext, i, opt);
+                continue;
+            }
+            if (c === '|') {
+                part.push(acc);
+                acc = '';
+                parts.push(part);
+                part = new AST(null, ast);
+                continue;
+            }
+            if (c === ')') {
+                if (acc === '' && ast.#parts.length === 0) {
+                    ast.#emptyExt = true;
+                }
+                part.push(acc);
+                acc = '';
+                ast.push(...parts, part);
+                return i;
+            }
+            acc += c;
+        }
+        // unfinished extglob
+        // if we got here, it was a malformed extglob! not an extglob, but
+        // maybe something else in there.
+        ast.type = null;
+        ast.#hasMagic = undefined;
+        ast.#parts = [str.substring(pos - 1)];
+        return i;
+    }
+    static fromGlob(pattern, options = {}) {
+        const ast = new AST(null, undefined, options);
+        AST.#parseAST(pattern, ast, 0, options);
+        return ast;
+    }
+    // returns the regular expression if there's magic, or the unescaped
+    // string if not.
+    toMMPattern() {
+        // should only be called on root
+        /* c8 ignore start */
+        if (this !== this.#root)
+            return this.#root.toMMPattern();
+        /* c8 ignore stop */
+        const glob = this.toString();
+        const [re, body, hasMagic, uflag] = this.toRegExpSource();
+        // if we're in nocase mode, and not nocaseMagicOnly, then we do
+        // still need a regular expression if we have to case-insensitively
+        // match capital/lowercase characters.
+        const anyMagic = hasMagic ||
+            this.#hasMagic ||
+            (this.#options.nocase &&
+                !this.#options.nocaseMagicOnly &&
+                glob.toUpperCase() !== glob.toLowerCase());
+        if (!anyMagic) {
+            return body;
+        }
+        const flags = (this.#options.nocase ? 'i' : '') + (uflag ? 'u' : '');
+        return Object.assign(new RegExp(`^${re}$`, flags), {
+            _src: re,
+            _glob: glob,
+        });
+    }
+    get options() {
+        return this.#options;
+    }
+    // returns the string match, the regexp source, whether there's magic
+    // in the regexp (so a regular expression is required) and whether or
+    // not the uflag is needed for the regular expression (for posix classes)
+    // TODO: instead of injecting the start/end at this point, just return
+    // the BODY of the regexp, along with the start/end portions suitable
+    // for binding the start/end in either a joined full-path makeRe context
+    // (where we bind to (^|/), or a standalone matchPart context (where
+    // we bind to ^, and not /).  Otherwise slashes get duped!
+    //
+    // In part-matching mode, the start is:
+    // - if not isStart: nothing
+    // - if traversal possible, but not allowed: ^(?!\.\.?$)
+    // - if dots allowed or not possible: ^
+    // - if dots possible and not allowed: ^(?!\.)
+    // end is:
+    // - if not isEnd(): nothing
+    // - else: $
+    //
+    // In full-path matching mode, we put the slash at the START of the
+    // pattern, so start is:
+    // - if first pattern: same as part-matching mode
+    // - if not isStart(): nothing
+    // - if traversal possible, but not allowed: /(?!\.\.?(?:$|/))
+    // - if dots allowed or not possible: /
+    // - if dots possible and not allowed: /(?!\.)
+    // end is:
+    // - if last pattern, same as part-matching mode
+    // - else nothing
+    //
+    // Always put the (?:$|/) on negated tails, though, because that has to be
+    // there to bind the end of the negated pattern portion, and it's easier to
+    // just stick it in now rather than try to inject it later in the middle of
+    // the pattern.
+    //
+    // We can just always return the same end, and leave it up to the caller
+    // to know whether it's going to be used joined or in parts.
+    // And, if the start is adjusted slightly, can do the same there:
+    // - if not isStart: nothing
+    // - if traversal possible, but not allowed: (?:/|^)(?!\.\.?$)
+    // - if dots allowed or not possible: (?:/|^)
+    // - if dots possible and not allowed: (?:/|^)(?!\.)
+    //
+    // But it's better to have a simpler binding without a conditional, for
+    // performance, so probably better to return both start options.
+    //
+    // Then the caller just ignores the end if it's not the first pattern,
+    // and the start always gets applied.
+    //
+    // But that's always going to be $ if it's the ending pattern, or nothing,
+    // so the caller can just attach $ at the end of the pattern when building.
+    //
+    // So the todo is:
+    // - better detect what kind of start is needed
+    // - return both flavors of starting pattern
+    // - attach $ at the end of the pattern when creating the actual RegExp
+    //
+    // Ah, but wait, no, that all only applies to the root when the first pattern
+    // is not an extglob. If the first pattern IS an extglob, then we need all
+    // that dot prevention biz to live in the extglob portions, because eg
+    // +(*|.x*) can match .xy but not .yx.
+    //
+    // So, return the two flavors if it's #root and the first child is not an
+    // AST, otherwise leave it to the child AST to handle it, and there,
+    // use the (?:^|/) style of start binding.
+    //
+    // Even simplified further:
+    // - Since the start for a join is eg /(?!\.) and the start for a part
+    // is ^(?!\.), we can just prepend (?!\.) to the pattern (either root
+    // or start or whatever) and prepend ^ or / at the Regexp construction.
+    toRegExpSource(allowDot) {
+        const dot = allowDot ?? !!this.#options.dot;
+        if (this.#root === this)
+            this.#fillNegs();
+        if (!this.type) {
+            const noEmpty = this.isStart() && this.isEnd();
+            const src = this.#parts
+                .map(p => {
+                const [re, _, hasMagic, uflag] = typeof p === 'string'
+                    ? AST.#parseGlob(p, this.#hasMagic, noEmpty)
+                    : p.toRegExpSource(allowDot);
+                this.#hasMagic = this.#hasMagic || hasMagic;
+                this.#uflag = this.#uflag || uflag;
+                return re;
+            })
+                .join('');
+            let start = '';
+            if (this.isStart()) {
+                if (typeof this.#parts[0] === 'string') {
+                    // this is the string that will match the start of the pattern,
+                    // so we need to protect against dots and such.
+                    // '.' and '..' cannot match unless the pattern is that exactly,
+                    // even if it starts with . or dot:true is set.
+                    const dotTravAllowed = this.#parts.length === 1 && justDots.has(this.#parts[0]);
+                    if (!dotTravAllowed) {
+                        const aps = addPatternStart;
+                        // check if we have a possibility of matching . or ..,
+                        // and prevent that.
+                        const needNoTrav = 
+                        // dots are allowed, and the pattern starts with [ or .
+                        (dot && aps.has(src.charAt(0))) ||
+                            // the pattern starts with \., and then [ or .
+                            (src.startsWith('\\.') && aps.has(src.charAt(2))) ||
+                            // the pattern starts with \.\., and then [ or .
+                            (src.startsWith('\\.\\.') && aps.has(src.charAt(4)));
+                        // no need to prevent dots if it can't match a dot, or if a
+                        // sub-pattern will be preventing it anyway.
+                        const needNoDot = !dot && !allowDot && aps.has(src.charAt(0));
+                        start = needNoTrav ? startNoTraversal : needNoDot ? startNoDot : '';
+                    }
+                }
+            }
+            // append the "end of path portion" pattern to negation tails
+            let end = '';
+            if (this.isEnd() &&
+                this.#root.#filledNegs &&
+                this.#parent?.type === '!') {
+                end = '(?:$|\\/)';
+            }
+            const final = start + src + end;
+            return [
+                final,
+                (0, unescape_js_1.unescape)(src),
+                (this.#hasMagic = !!this.#hasMagic),
+                this.#uflag,
+            ];
+        }
+        // We need to calculate the body *twice* if it's a repeat pattern
+        // at the start, once in nodot mode, then again in dot mode, so a
+        // pattern like *(?) can match 'x.y'
+        const repeated = this.type === '*' || this.type === '+';
+        // some kind of extglob
+        const start = this.type === '!' ? '(?:(?!(?:' : '(?:';
+        let body = this.#partsToRegExp(dot);
+        if (this.isStart() && this.isEnd() && !body && this.type !== '!') {
+            // invalid extglob, has to at least be *something* present, if it's
+            // the entire path portion.
+            const s = this.toString();
+            this.#parts = [s];
+            this.type = null;
+            this.#hasMagic = undefined;
+            return [s, (0, unescape_js_1.unescape)(this.toString()), false, false];
+        }
+        // XXX abstract out this map method
+        let bodyDotAllowed = !repeated || allowDot || dot || !startNoDot
+            ? ''
+            : this.#partsToRegExp(true);
+        if (bodyDotAllowed === body) {
+            bodyDotAllowed = '';
+        }
+        if (bodyDotAllowed) {
+            body = `(?:${body})(?:${bodyDotAllowed})*?`;
+        }
+        // an empty !() is exactly equivalent to a starNoEmpty
+        let final = '';
+        if (this.type === '!' && this.#emptyExt) {
+            final = (this.isStart() && !dot ? startNoDot : '') + starNoEmpty;
+        }
+        else {
+            const close = this.type === '!'
+                ? // !() must match something,but !(x) can match ''
+                    '))' +
+                        (this.isStart() && !dot && !allowDot ? startNoDot : '') +
+                        star +
+                        ')'
+                : this.type === '@'
+                    ? ')'
+                    : this.type === '?'
+                        ? ')?'
+                        : this.type === '+' && bodyDotAllowed
+                            ? ')'
+                            : this.type === '*' && bodyDotAllowed
+                                ? `)?`
+                                : `)${this.type}`;
+            final = start + body + close;
+        }
+        return [
+            final,
+            (0, unescape_js_1.unescape)(body),
+            (this.#hasMagic = !!this.#hasMagic),
+            this.#uflag,
+        ];
+    }
+    #partsToRegExp(dot) {
+        return this.#parts
+            .map(p => {
+            // extglob ASTs should only contain parent ASTs
+            /* c8 ignore start */
+            if (typeof p === 'string') {
+                throw new Error('string type in extglob ast??');
+            }
+            /* c8 ignore stop */
+            // can ignore hasMagic, because extglobs are already always magic
+            const [re, _, _hasMagic, uflag] = p.toRegExpSource(dot);
+            this.#uflag = this.#uflag || uflag;
+            return re;
+        })
+            .filter(p => !(this.isStart() && this.isEnd()) || !!p)
+            .join('|');
+    }
+    static #parseGlob(glob, hasMagic, noEmpty = false) {
+        let escaping = false;
+        let re = '';
+        let uflag = false;
+        for (let i = 0; i < glob.length; i++) {
+            const c = glob.charAt(i);
+            if (escaping) {
+                escaping = false;
+                re += (reSpecials.has(c) ? '\\' : '') + c;
+                continue;
+            }
+            if (c === '\\') {
+                if (i === glob.length - 1) {
+                    re += '\\\\';
+                }
+                else {
+                    escaping = true;
+                }
+                continue;
+            }
+            if (c === '[') {
+                const [src, needUflag, consumed, magic] = (0, brace_expressions_js_1.parseClass)(glob, i);
+                if (consumed) {
+                    re += src;
+                    uflag = uflag || needUflag;
+                    i += consumed - 1;
+                    hasMagic = hasMagic || magic;
+                    continue;
+                }
+            }
+            if (c === '*') {
+                if (noEmpty && glob === '*')
+                    re += starNoEmpty;
+                else
+                    re += star;
+                hasMagic = true;
+                continue;
+            }
+            if (c === '?') {
+                re += qmark;
+                hasMagic = true;
+                continue;
+            }
+            re += regExpEscape(c);
+        }
+        return [re, (0, unescape_js_1.unescape)(glob), !!hasMagic, uflag];
+    }
+}
+ast.AST = AST;
+
+var _escape = {};
+
+Object.defineProperty(_escape, "__esModule", { value: true });
+_escape.escape = void 0;
+/**
+ * Escape all magic characters in a glob pattern.
+ *
+ * If the {@link windowsPathsNoEscape | GlobOptions.windowsPathsNoEscape}
+ * option is used, then characters are escaped by wrapping in `[]`, because
+ * a magic character wrapped in a character class can only be satisfied by
+ * that exact character.  In this mode, `\` is _not_ escaped, because it is
+ * not interpreted as a magic character, but instead as a path separator.
+ */
+const escape = (s, { windowsPathsNoEscape = false, } = {}) => {
+    // don't need to escape +@! because we escape the parens
+    // that make those magic, and escaping ! as [!] isn't valid,
+    // because [!]] is a valid glob class meaning not ']'.
+    return windowsPathsNoEscape
+        ? s.replace(/[?*()[\]]/g, '[$&]')
+        : s.replace(/[?*()[\]\\]/g, '\\$&');
+};
+_escape.escape = escape;
+
+(function (exports) {
+	var __importDefault = (commonjsGlobal && commonjsGlobal.__importDefault) || function (mod) {
+	    return (mod && mod.__esModule) ? mod : { "default": mod };
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.unescape = exports.escape = exports.AST = exports.Minimatch = exports.match = exports.makeRe = exports.braceExpand = exports.defaults = exports.filter = exports.GLOBSTAR = exports.sep = exports.minimatch = void 0;
+	const brace_expansion_1 = __importDefault(braceExpansion);
+	const assert_valid_pattern_js_1 = assertValidPattern$1;
+	const ast_js_1 = ast;
+	const escape_js_1 = _escape;
+	const unescape_js_1 = _unescape;
+	const minimatch = (p, pattern, options = {}) => {
+	    (0, assert_valid_pattern_js_1.assertValidPattern)(pattern);
+	    // shortcut: comments match nothing.
+	    if (!options.nocomment && pattern.charAt(0) === '#') {
+	        return false;
+	    }
+	    return new Minimatch(pattern, options).match(p);
+	};
+	exports.minimatch = minimatch;
+	// Optimized checking for the most common glob patterns.
+	const starDotExtRE = /^\*+([^+@!?\*\[\(]*)$/;
+	const starDotExtTest = (ext) => (f) => !f.startsWith('.') && f.endsWith(ext);
+	const starDotExtTestDot = (ext) => (f) => f.endsWith(ext);
+	const starDotExtTestNocase = (ext) => {
+	    ext = ext.toLowerCase();
+	    return (f) => !f.startsWith('.') && f.toLowerCase().endsWith(ext);
+	};
+	const starDotExtTestNocaseDot = (ext) => {
+	    ext = ext.toLowerCase();
+	    return (f) => f.toLowerCase().endsWith(ext);
+	};
+	const starDotStarRE = /^\*+\.\*+$/;
+	const starDotStarTest = (f) => !f.startsWith('.') && f.includes('.');
+	const starDotStarTestDot = (f) => f !== '.' && f !== '..' && f.includes('.');
+	const dotStarRE = /^\.\*+$/;
+	const dotStarTest = (f) => f !== '.' && f !== '..' && f.startsWith('.');
+	const starRE = /^\*+$/;
+	const starTest = (f) => f.length !== 0 && !f.startsWith('.');
+	const starTestDot = (f) => f.length !== 0 && f !== '.' && f !== '..';
+	const qmarksRE = /^\?+([^+@!?\*\[\(]*)?$/;
+	const qmarksTestNocase = ([$0, ext = '']) => {
+	    const noext = qmarksTestNoExt([$0]);
+	    if (!ext)
+	        return noext;
+	    ext = ext.toLowerCase();
+	    return (f) => noext(f) && f.toLowerCase().endsWith(ext);
+	};
+	const qmarksTestNocaseDot = ([$0, ext = '']) => {
+	    const noext = qmarksTestNoExtDot([$0]);
+	    if (!ext)
+	        return noext;
+	    ext = ext.toLowerCase();
+	    return (f) => noext(f) && f.toLowerCase().endsWith(ext);
+	};
+	const qmarksTestDot = ([$0, ext = '']) => {
+	    const noext = qmarksTestNoExtDot([$0]);
+	    return !ext ? noext : (f) => noext(f) && f.endsWith(ext);
+	};
+	const qmarksTest = ([$0, ext = '']) => {
+	    const noext = qmarksTestNoExt([$0]);
+	    return !ext ? noext : (f) => noext(f) && f.endsWith(ext);
+	};
+	const qmarksTestNoExt = ([$0]) => {
+	    const len = $0.length;
+	    return (f) => f.length === len && !f.startsWith('.');
+	};
+	const qmarksTestNoExtDot = ([$0]) => {
+	    const len = $0.length;
+	    return (f) => f.length === len && f !== '.' && f !== '..';
+	};
+	/* c8 ignore start */
+	const defaultPlatform = (typeof process === 'object' && process
+	    ? (typeof process.env === 'object' &&
+	        process.env &&
+	        process.env.__MINIMATCH_TESTING_PLATFORM__) ||
+	        process.platform
+	    : 'posix');
+	const path = {
+	    win32: { sep: '\\' },
+	    posix: { sep: '/' },
+	};
+	/* c8 ignore stop */
+	exports.sep = defaultPlatform === 'win32' ? path.win32.sep : path.posix.sep;
+	exports.minimatch.sep = exports.sep;
+	exports.GLOBSTAR = Symbol('globstar **');
+	exports.minimatch.GLOBSTAR = exports.GLOBSTAR;
+	// any single thing other than /
+	// don't need to escape / when using new RegExp()
+	const qmark = '[^/]';
+	// * => any number of characters
+	const star = qmark + '*?';
+	// ** when dots are allowed.  Anything goes, except .. and .
+	// not (^ or / followed by one or two dots followed by $ or /),
+	// followed by anything, any number of times.
+	const twoStarDot = '(?:(?!(?:\\/|^)(?:\\.{1,2})($|\\/)).)*?';
+	// not a ^ or / followed by a dot,
+	// followed by anything, any number of times.
+	const twoStarNoDot = '(?:(?!(?:\\/|^)\\.).)*?';
+	const filter = (pattern, options = {}) => (p) => (0, exports.minimatch)(p, pattern, options);
+	exports.filter = filter;
+	exports.minimatch.filter = exports.filter;
+	const ext = (a, b = {}) => Object.assign({}, a, b);
+	const defaults = (def) => {
+	    if (!def || typeof def !== 'object' || !Object.keys(def).length) {
+	        return exports.minimatch;
+	    }
+	    const orig = exports.minimatch;
+	    const m = (p, pattern, options = {}) => orig(p, pattern, ext(def, options));
+	    return Object.assign(m, {
+	        Minimatch: class Minimatch extends orig.Minimatch {
+	            constructor(pattern, options = {}) {
+	                super(pattern, ext(def, options));
+	            }
+	            static defaults(options) {
+	                return orig.defaults(ext(def, options)).Minimatch;
+	            }
+	        },
+	        AST: class AST extends orig.AST {
+	            /* c8 ignore start */
+	            constructor(type, parent, options = {}) {
+	                super(type, parent, ext(def, options));
+	            }
+	            /* c8 ignore stop */
+	            static fromGlob(pattern, options = {}) {
+	                return orig.AST.fromGlob(pattern, ext(def, options));
+	            }
+	        },
+	        unescape: (s, options = {}) => orig.unescape(s, ext(def, options)),
+	        escape: (s, options = {}) => orig.escape(s, ext(def, options)),
+	        filter: (pattern, options = {}) => orig.filter(pattern, ext(def, options)),
+	        defaults: (options) => orig.defaults(ext(def, options)),
+	        makeRe: (pattern, options = {}) => orig.makeRe(pattern, ext(def, options)),
+	        braceExpand: (pattern, options = {}) => orig.braceExpand(pattern, ext(def, options)),
+	        match: (list, pattern, options = {}) => orig.match(list, pattern, ext(def, options)),
+	        sep: orig.sep,
+	        GLOBSTAR: exports.GLOBSTAR,
+	    });
+	};
+	exports.defaults = defaults;
+	exports.minimatch.defaults = exports.defaults;
+	// Brace expansion:
+	// a{b,c}d -> abd acd
+	// a{b,}c -> abc ac
+	// a{0..3}d -> a0d a1d a2d a3d
+	// a{b,c{d,e}f}g -> abg acdfg acefg
+	// a{b,c}d{e,f}g -> abdeg acdeg abdeg abdfg
+	//
+	// Invalid sets are not expanded.
+	// a{2..}b -> a{2..}b
+	// a{b}c -> a{b}c
+	const braceExpand = (pattern, options = {}) => {
+	    (0, assert_valid_pattern_js_1.assertValidPattern)(pattern);
+	    // Thanks to Yeting Li <https://github.com/yetingli> for
+	    // improving this regexp to avoid a ReDOS vulnerability.
+	    if (options.nobrace || !/\{(?:(?!\{).)*\}/.test(pattern)) {
+	        // shortcut. no need to expand.
+	        return [pattern];
+	    }
+	    return (0, brace_expansion_1.default)(pattern);
+	};
+	exports.braceExpand = braceExpand;
+	exports.minimatch.braceExpand = exports.braceExpand;
+	// parse a component of the expanded set.
+	// At this point, no pattern may contain "/" in it
+	// so we're going to return a 2d array, where each entry is the full
+	// pattern, split on '/', and then turned into a regular expression.
+	// A regexp is made at the end which joins each array with an
+	// escaped /, and another full one which joins each regexp with |.
+	//
+	// Following the lead of Bash 4.1, note that "**" only has special meaning
+	// when it is the *only* thing in a path portion.  Otherwise, any series
+	// of * is equivalent to a single *.  Globstar behavior is enabled by
+	// default, and can be disabled by setting options.noglobstar.
+	const makeRe = (pattern, options = {}) => new Minimatch(pattern, options).makeRe();
+	exports.makeRe = makeRe;
+	exports.minimatch.makeRe = exports.makeRe;
+	const match = (list, pattern, options = {}) => {
+	    const mm = new Minimatch(pattern, options);
+	    list = list.filter(f => mm.match(f));
+	    if (mm.options.nonull && !list.length) {
+	        list.push(pattern);
+	    }
+	    return list;
+	};
+	exports.match = match;
+	exports.minimatch.match = exports.match;
+	// replace stuff like \* with *
+	const globMagic = /[?*]|[+@!]\(.*?\)|\[|\]/;
+	const regExpEscape = (s) => s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+	class Minimatch {
+	    options;
+	    set;
+	    pattern;
+	    windowsPathsNoEscape;
+	    nonegate;
+	    negate;
+	    comment;
+	    empty;
+	    preserveMultipleSlashes;
+	    partial;
+	    globSet;
+	    globParts;
+	    nocase;
+	    isWindows;
+	    platform;
+	    windowsNoMagicRoot;
+	    regexp;
+	    constructor(pattern, options = {}) {
+	        (0, assert_valid_pattern_js_1.assertValidPattern)(pattern);
+	        options = options || {};
+	        this.options = options;
+	        this.pattern = pattern;
+	        this.platform = options.platform || defaultPlatform;
+	        this.isWindows = this.platform === 'win32';
+	        this.windowsPathsNoEscape =
+	            !!options.windowsPathsNoEscape || options.allowWindowsEscape === false;
+	        if (this.windowsPathsNoEscape) {
+	            this.pattern = this.pattern.replace(/\\/g, '/');
+	        }
+	        this.preserveMultipleSlashes = !!options.preserveMultipleSlashes;
+	        this.regexp = null;
+	        this.negate = false;
+	        this.nonegate = !!options.nonegate;
+	        this.comment = false;
+	        this.empty = false;
+	        this.partial = !!options.partial;
+	        this.nocase = !!this.options.nocase;
+	        this.windowsNoMagicRoot =
+	            options.windowsNoMagicRoot !== undefined
+	                ? options.windowsNoMagicRoot
+	                : !!(this.isWindows && this.nocase);
+	        this.globSet = [];
+	        this.globParts = [];
+	        this.set = [];
+	        // make the set of regexps etc.
+	        this.make();
+	    }
+	    hasMagic() {
+	        if (this.options.magicalBraces && this.set.length > 1) {
+	            return true;
+	        }
+	        for (const pattern of this.set) {
+	            for (const part of pattern) {
+	                if (typeof part !== 'string')
+	                    return true;
+	            }
+	        }
+	        return false;
+	    }
+	    debug(..._) { }
+	    make() {
+	        const pattern = this.pattern;
+	        const options = this.options;
+	        // empty patterns and comments match nothing.
+	        if (!options.nocomment && pattern.charAt(0) === '#') {
+	            this.comment = true;
+	            return;
+	        }
+	        if (!pattern) {
+	            this.empty = true;
+	            return;
+	        }
+	        // step 1: figure out negation, etc.
+	        this.parseNegate();
+	        // step 2: expand braces
+	        this.globSet = [...new Set(this.braceExpand())];
+	        if (options.debug) {
+	            this.debug = (...args) => console.error(...args);
+	        }
+	        this.debug(this.pattern, this.globSet);
+	        // step 3: now we have a set, so turn each one into a series of
+	        // path-portion matching patterns.
+	        // These will be regexps, except in the case of "**", which is
+	        // set to the GLOBSTAR object for globstar behavior,
+	        // and will not contain any / characters
+	        //
+	        // First, we preprocess to make the glob pattern sets a bit simpler
+	        // and deduped.  There are some perf-killing patterns that can cause
+	        // problems with a glob walk, but we can simplify them down a bit.
+	        const rawGlobParts = this.globSet.map(s => this.slashSplit(s));
+	        this.globParts = this.preprocess(rawGlobParts);
+	        this.debug(this.pattern, this.globParts);
+	        // glob --> regexps
+	        let set = this.globParts.map((s, _, __) => {
+	            if (this.isWindows && this.windowsNoMagicRoot) {
+	                // check if it's a drive or unc path.
+	                const isUNC = s[0] === '' &&
+	                    s[1] === '' &&
+	                    (s[2] === '?' || !globMagic.test(s[2])) &&
+	                    !globMagic.test(s[3]);
+	                const isDrive = /^[a-z]:/i.test(s[0]);
+	                if (isUNC) {
+	                    return [...s.slice(0, 4), ...s.slice(4).map(ss => this.parse(ss))];
+	                }
+	                else if (isDrive) {
+	                    return [s[0], ...s.slice(1).map(ss => this.parse(ss))];
+	                }
+	            }
+	            return s.map(ss => this.parse(ss));
+	        });
+	        this.debug(this.pattern, set);
+	        // filter out everything that didn't compile properly.
+	        this.set = set.filter(s => s.indexOf(false) === -1);
+	        // do not treat the ? in UNC paths as magic
+	        if (this.isWindows) {
+	            for (let i = 0; i < this.set.length; i++) {
+	                const p = this.set[i];
+	                if (p[0] === '' &&
+	                    p[1] === '' &&
+	                    this.globParts[i][2] === '?' &&
+	                    typeof p[3] === 'string' &&
+	                    /^[a-z]:$/i.test(p[3])) {
+	                    p[2] = '?';
+	                }
+	            }
+	        }
+	        this.debug(this.pattern, this.set);
+	    }
+	    // various transforms to equivalent pattern sets that are
+	    // faster to process in a filesystem walk.  The goal is to
+	    // eliminate what we can, and push all ** patterns as far
+	    // to the right as possible, even if it increases the number
+	    // of patterns that we have to process.
+	    preprocess(globParts) {
+	        // if we're not in globstar mode, then turn all ** into *
+	        if (this.options.noglobstar) {
+	            for (let i = 0; i < globParts.length; i++) {
+	                for (let j = 0; j < globParts[i].length; j++) {
+	                    if (globParts[i][j] === '**') {
+	                        globParts[i][j] = '*';
+	                    }
+	                }
+	            }
+	        }
+	        const { optimizationLevel = 1 } = this.options;
+	        if (optimizationLevel >= 2) {
+	            // aggressive optimization for the purpose of fs walking
+	            globParts = this.firstPhasePreProcess(globParts);
+	            globParts = this.secondPhasePreProcess(globParts);
+	        }
+	        else if (optimizationLevel >= 1) {
+	            // just basic optimizations to remove some .. parts
+	            globParts = this.levelOneOptimize(globParts);
+	        }
+	        else {
+	            // just collapse multiple ** portions into one
+	            globParts = this.adjascentGlobstarOptimize(globParts);
+	        }
+	        return globParts;
+	    }
+	    // just get rid of adjascent ** portions
+	    adjascentGlobstarOptimize(globParts) {
+	        return globParts.map(parts => {
+	            let gs = -1;
+	            while (-1 !== (gs = parts.indexOf('**', gs + 1))) {
+	                let i = gs;
+	                while (parts[i + 1] === '**') {
+	                    i++;
+	                }
+	                if (i !== gs) {
+	                    parts.splice(gs, i - gs);
+	                }
+	            }
+	            return parts;
+	        });
+	    }
+	    // get rid of adjascent ** and resolve .. portions
+	    levelOneOptimize(globParts) {
+	        return globParts.map(parts => {
+	            parts = parts.reduce((set, part) => {
+	                const prev = set[set.length - 1];
+	                if (part === '**' && prev === '**') {
+	                    return set;
+	                }
+	                if (part === '..') {
+	                    if (prev && prev !== '..' && prev !== '.' && prev !== '**') {
+	                        set.pop();
+	                        return set;
+	                    }
+	                }
+	                set.push(part);
+	                return set;
+	            }, []);
+	            return parts.length === 0 ? [''] : parts;
+	        });
+	    }
+	    levelTwoFileOptimize(parts) {
+	        if (!Array.isArray(parts)) {
+	            parts = this.slashSplit(parts);
+	        }
+	        let didSomething = false;
+	        do {
+	            didSomething = false;
+	            // <pre>/<e>/<rest> -> <pre>/<rest>
+	            if (!this.preserveMultipleSlashes) {
+	                for (let i = 1; i < parts.length - 1; i++) {
+	                    const p = parts[i];
+	                    // don't squeeze out UNC patterns
+	                    if (i === 1 && p === '' && parts[0] === '')
+	                        continue;
+	                    if (p === '.' || p === '') {
+	                        didSomething = true;
+	                        parts.splice(i, 1);
+	                        i--;
+	                    }
+	                }
+	                if (parts[0] === '.' &&
+	                    parts.length === 2 &&
+	                    (parts[1] === '.' || parts[1] === '')) {
+	                    didSomething = true;
+	                    parts.pop();
+	                }
+	            }
+	            // <pre>/<p>/../<rest> -> <pre>/<rest>
+	            let dd = 0;
+	            while (-1 !== (dd = parts.indexOf('..', dd + 1))) {
+	                const p = parts[dd - 1];
+	                if (p && p !== '.' && p !== '..' && p !== '**') {
+	                    didSomething = true;
+	                    parts.splice(dd - 1, 2);
+	                    dd -= 2;
+	                }
+	            }
+	        } while (didSomething);
+	        return parts.length === 0 ? [''] : parts;
+	    }
+	    // First phase: single-pattern processing
+	    // <pre> is 1 or more portions
+	    // <rest> is 1 or more portions
+	    // <p> is any portion other than ., .., '', or **
+	    // <e> is . or ''
+	    //
+	    // **/.. is *brutal* for filesystem walking performance, because
+	    // it effectively resets the recursive walk each time it occurs,
+	    // and ** cannot be reduced out by a .. pattern part like a regexp
+	    // or most strings (other than .., ., and '') can be.
+	    //
+	    // <pre>/**/../<p>/<p>/<rest> -> {<pre>/../<p>/<p>/<rest>,<pre>/**/<p>/<p>/<rest>}
+	    // <pre>/<e>/<rest> -> <pre>/<rest>
+	    // <pre>/<p>/../<rest> -> <pre>/<rest>
+	    // **/**/<rest> -> **/<rest>
+	    //
+	    // **/*/<rest> -> */**/<rest> <== not valid because ** doesn't follow
+	    // this WOULD be allowed if ** did follow symlinks, or * didn't
+	    firstPhasePreProcess(globParts) {
+	        let didSomething = false;
+	        do {
+	            didSomething = false;
+	            // <pre>/**/../<p>/<p>/<rest> -> {<pre>/../<p>/<p>/<rest>,<pre>/**/<p>/<p>/<rest>}
+	            for (let parts of globParts) {
+	                let gs = -1;
+	                while (-1 !== (gs = parts.indexOf('**', gs + 1))) {
+	                    let gss = gs;
+	                    while (parts[gss + 1] === '**') {
+	                        // <pre>/**/**/<rest> -> <pre>/**/<rest>
+	                        gss++;
+	                    }
+	                    // eg, if gs is 2 and gss is 4, that means we have 3 **
+	                    // parts, and can remove 2 of them.
+	                    if (gss > gs) {
+	                        parts.splice(gs + 1, gss - gs);
+	                    }
+	                    let next = parts[gs + 1];
+	                    const p = parts[gs + 2];
+	                    const p2 = parts[gs + 3];
+	                    if (next !== '..')
+	                        continue;
+	                    if (!p ||
+	                        p === '.' ||
+	                        p === '..' ||
+	                        !p2 ||
+	                        p2 === '.' ||
+	                        p2 === '..') {
+	                        continue;
+	                    }
+	                    didSomething = true;
+	                    // edit parts in place, and push the new one
+	                    parts.splice(gs, 1);
+	                    const other = parts.slice(0);
+	                    other[gs] = '**';
+	                    globParts.push(other);
+	                    gs--;
+	                }
+	                // <pre>/<e>/<rest> -> <pre>/<rest>
+	                if (!this.preserveMultipleSlashes) {
+	                    for (let i = 1; i < parts.length - 1; i++) {
+	                        const p = parts[i];
+	                        // don't squeeze out UNC patterns
+	                        if (i === 1 && p === '' && parts[0] === '')
+	                            continue;
+	                        if (p === '.' || p === '') {
+	                            didSomething = true;
+	                            parts.splice(i, 1);
+	                            i--;
+	                        }
+	                    }
+	                    if (parts[0] === '.' &&
+	                        parts.length === 2 &&
+	                        (parts[1] === '.' || parts[1] === '')) {
+	                        didSomething = true;
+	                        parts.pop();
+	                    }
+	                }
+	                // <pre>/<p>/../<rest> -> <pre>/<rest>
+	                let dd = 0;
+	                while (-1 !== (dd = parts.indexOf('..', dd + 1))) {
+	                    const p = parts[dd - 1];
+	                    if (p && p !== '.' && p !== '..' && p !== '**') {
+	                        didSomething = true;
+	                        const needDot = dd === 1 && parts[dd + 1] === '**';
+	                        const splin = needDot ? ['.'] : [];
+	                        parts.splice(dd - 1, 2, ...splin);
+	                        if (parts.length === 0)
+	                            parts.push('');
+	                        dd -= 2;
+	                    }
+	                }
+	            }
+	        } while (didSomething);
+	        return globParts;
+	    }
+	    // second phase: multi-pattern dedupes
+	    // {<pre>/*/<rest>,<pre>/<p>/<rest>} -> <pre>/*/<rest>
+	    // {<pre>/<rest>,<pre>/<rest>} -> <pre>/<rest>
+	    // {<pre>/**/<rest>,<pre>/<rest>} -> <pre>/**/<rest>
+	    //
+	    // {<pre>/**/<rest>,<pre>/**/<p>/<rest>} -> <pre>/**/<rest>
+	    // ^-- not valid because ** doens't follow symlinks
+	    secondPhasePreProcess(globParts) {
+	        for (let i = 0; i < globParts.length - 1; i++) {
+	            for (let j = i + 1; j < globParts.length; j++) {
+	                const matched = this.partsMatch(globParts[i], globParts[j], !this.preserveMultipleSlashes);
+	                if (matched) {
+	                    globParts[i] = [];
+	                    globParts[j] = matched;
+	                    break;
+	                }
+	            }
+	        }
+	        return globParts.filter(gs => gs.length);
+	    }
+	    partsMatch(a, b, emptyGSMatch = false) {
+	        let ai = 0;
+	        let bi = 0;
+	        let result = [];
+	        let which = '';
+	        while (ai < a.length && bi < b.length) {
+	            if (a[ai] === b[bi]) {
+	                result.push(which === 'b' ? b[bi] : a[ai]);
+	                ai++;
+	                bi++;
+	            }
+	            else if (emptyGSMatch && a[ai] === '**' && b[bi] === a[ai + 1]) {
+	                result.push(a[ai]);
+	                ai++;
+	            }
+	            else if (emptyGSMatch && b[bi] === '**' && a[ai] === b[bi + 1]) {
+	                result.push(b[bi]);
+	                bi++;
+	            }
+	            else if (a[ai] === '*' &&
+	                b[bi] &&
+	                (this.options.dot || !b[bi].startsWith('.')) &&
+	                b[bi] !== '**') {
+	                if (which === 'b')
+	                    return false;
+	                which = 'a';
+	                result.push(a[ai]);
+	                ai++;
+	                bi++;
+	            }
+	            else if (b[bi] === '*' &&
+	                a[ai] &&
+	                (this.options.dot || !a[ai].startsWith('.')) &&
+	                a[ai] !== '**') {
+	                if (which === 'a')
+	                    return false;
+	                which = 'b';
+	                result.push(b[bi]);
+	                ai++;
+	                bi++;
+	            }
+	            else {
+	                return false;
+	            }
+	        }
+	        // if we fall out of the loop, it means they two are identical
+	        // as long as their lengths match
+	        return a.length === b.length && result;
+	    }
+	    parseNegate() {
+	        if (this.nonegate)
+	            return;
+	        const pattern = this.pattern;
+	        let negate = false;
+	        let negateOffset = 0;
+	        for (let i = 0; i < pattern.length && pattern.charAt(i) === '!'; i++) {
+	            negate = !negate;
+	            negateOffset++;
+	        }
+	        if (negateOffset)
+	            this.pattern = pattern.slice(negateOffset);
+	        this.negate = negate;
+	    }
+	    // set partial to true to test if, for example,
+	    // "/a/b" matches the start of "/*/b/*/d"
+	    // Partial means, if you run out of file before you run
+	    // out of pattern, then that's fine, as long as all
+	    // the parts match.
+	    matchOne(file, pattern, partial = false) {
+	        const options = this.options;
+	        // UNC paths like //?/X:/... can match X:/... and vice versa
+	        // Drive letters in absolute drive or unc paths are always compared
+	        // case-insensitively.
+	        if (this.isWindows) {
+	            const fileDrive = typeof file[0] === 'string' && /^[a-z]:$/i.test(file[0]);
+	            const fileUNC = !fileDrive &&
+	                file[0] === '' &&
+	                file[1] === '' &&
+	                file[2] === '?' &&
+	                /^[a-z]:$/i.test(file[3]);
+	            const patternDrive = typeof pattern[0] === 'string' && /^[a-z]:$/i.test(pattern[0]);
+	            const patternUNC = !patternDrive &&
+	                pattern[0] === '' &&
+	                pattern[1] === '' &&
+	                pattern[2] === '?' &&
+	                typeof pattern[3] === 'string' &&
+	                /^[a-z]:$/i.test(pattern[3]);
+	            const fdi = fileUNC ? 3 : fileDrive ? 0 : undefined;
+	            const pdi = patternUNC ? 3 : patternDrive ? 0 : undefined;
+	            if (typeof fdi === 'number' && typeof pdi === 'number') {
+	                const [fd, pd] = [file[fdi], pattern[pdi]];
+	                if (fd.toLowerCase() === pd.toLowerCase()) {
+	                    pattern[pdi] = fd;
+	                    if (pdi > fdi) {
+	                        pattern = pattern.slice(pdi);
+	                    }
+	                    else if (fdi > pdi) {
+	                        file = file.slice(fdi);
+	                    }
+	                }
+	            }
+	        }
+	        // resolve and reduce . and .. portions in the file as well.
+	        // dont' need to do the second phase, because it's only one string[]
+	        const { optimizationLevel = 1 } = this.options;
+	        if (optimizationLevel >= 2) {
+	            file = this.levelTwoFileOptimize(file);
+	        }
+	        this.debug('matchOne', this, { file, pattern });
+	        this.debug('matchOne', file.length, pattern.length);
+	        for (var fi = 0, pi = 0, fl = file.length, pl = pattern.length; fi < fl && pi < pl; fi++, pi++) {
+	            this.debug('matchOne loop');
+	            var p = pattern[pi];
+	            var f = file[fi];
+	            this.debug(pattern, p, f);
+	            // should be impossible.
+	            // some invalid regexp stuff in the set.
+	            /* c8 ignore start */
+	            if (p === false) {
+	                return false;
+	            }
+	            /* c8 ignore stop */
+	            if (p === exports.GLOBSTAR) {
+	                this.debug('GLOBSTAR', [pattern, p, f]);
+	                // "**"
+	                // a/**/b/**/c would match the following:
+	                // a/b/x/y/z/c
+	                // a/x/y/z/b/c
+	                // a/b/x/b/x/c
+	                // a/b/c
+	                // To do this, take the rest of the pattern after
+	                // the **, and see if it would match the file remainder.
+	                // If so, return success.
+	                // If not, the ** "swallows" a segment, and try again.
+	                // This is recursively awful.
+	                //
+	                // a/**/b/**/c matching a/b/x/y/z/c
+	                // - a matches a
+	                // - doublestar
+	                //   - matchOne(b/x/y/z/c, b/**/c)
+	                //     - b matches b
+	                //     - doublestar
+	                //       - matchOne(x/y/z/c, c) -> no
+	                //       - matchOne(y/z/c, c) -> no
+	                //       - matchOne(z/c, c) -> no
+	                //       - matchOne(c, c) yes, hit
+	                var fr = fi;
+	                var pr = pi + 1;
+	                if (pr === pl) {
+	                    this.debug('** at the end');
+	                    // a ** at the end will just swallow the rest.
+	                    // We have found a match.
+	                    // however, it will not swallow /.x, unless
+	                    // options.dot is set.
+	                    // . and .. are *never* matched by **, for explosively
+	                    // exponential reasons.
+	                    for (; fi < fl; fi++) {
+	                        if (file[fi] === '.' ||
+	                            file[fi] === '..' ||
+	                            (!options.dot && file[fi].charAt(0) === '.'))
+	                            return false;
+	                    }
+	                    return true;
+	                }
+	                // ok, let's see if we can swallow whatever we can.
+	                while (fr < fl) {
+	                    var swallowee = file[fr];
+	                    this.debug('\nglobstar while', file, fr, pattern, pr, swallowee);
+	                    // XXX remove this slice.  Just pass the start index.
+	                    if (this.matchOne(file.slice(fr), pattern.slice(pr), partial)) {
+	                        this.debug('globstar found match!', fr, fl, swallowee);
+	                        // found a match.
+	                        return true;
+	                    }
+	                    else {
+	                        // can't swallow "." or ".." ever.
+	                        // can only swallow ".foo" when explicitly asked.
+	                        if (swallowee === '.' ||
+	                            swallowee === '..' ||
+	                            (!options.dot && swallowee.charAt(0) === '.')) {
+	                            this.debug('dot detected!', file, fr, pattern, pr);
+	                            break;
+	                        }
+	                        // ** swallows a segment, and continue.
+	                        this.debug('globstar swallow a segment, and continue');
+	                        fr++;
+	                    }
+	                }
+	                // no match was found.
+	                // However, in partial mode, we can't say this is necessarily over.
+	                /* c8 ignore start */
+	                if (partial) {
+	                    // ran out of file
+	                    this.debug('\n>>> no match, partial?', file, fr, pattern, pr);
+	                    if (fr === fl) {
+	                        return true;
+	                    }
+	                }
+	                /* c8 ignore stop */
+	                return false;
+	            }
+	            // something other than **
+	            // non-magic patterns just have to match exactly
+	            // patterns with magic have been turned into regexps.
+	            let hit;
+	            if (typeof p === 'string') {
+	                hit = f === p;
+	                this.debug('string match', p, f, hit);
+	            }
+	            else {
+	                hit = p.test(f);
+	                this.debug('pattern match', p, f, hit);
+	            }
+	            if (!hit)
+	                return false;
+	        }
+	        // Note: ending in / means that we'll get a final ""
+	        // at the end of the pattern.  This can only match a
+	        // corresponding "" at the end of the file.
+	        // If the file ends in /, then it can only match a
+	        // a pattern that ends in /, unless the pattern just
+	        // doesn't have any more for it. But, a/b/ should *not*
+	        // match "a/b/*", even though "" matches against the
+	        // [^/]*? pattern, except in partial mode, where it might
+	        // simply not be reached yet.
+	        // However, a/b/ should still satisfy a/*
+	        // now either we fell off the end of the pattern, or we're done.
+	        if (fi === fl && pi === pl) {
+	            // ran out of pattern and filename at the same time.
+	            // an exact hit!
+	            return true;
+	        }
+	        else if (fi === fl) {
+	            // ran out of file, but still had pattern left.
+	            // this is ok if we're doing the match as part of
+	            // a glob fs traversal.
+	            return partial;
+	        }
+	        else if (pi === pl) {
+	            // ran out of pattern, still have file left.
+	            // this is only acceptable if we're on the very last
+	            // empty segment of a file with a trailing slash.
+	            // a/* should match a/b/
+	            return fi === fl - 1 && file[fi] === '';
+	            /* c8 ignore start */
+	        }
+	        else {
+	            // should be unreachable.
+	            throw new Error('wtf?');
+	        }
+	        /* c8 ignore stop */
+	    }
+	    braceExpand() {
+	        return (0, exports.braceExpand)(this.pattern, this.options);
+	    }
+	    parse(pattern) {
+	        (0, assert_valid_pattern_js_1.assertValidPattern)(pattern);
+	        const options = this.options;
+	        // shortcuts
+	        if (pattern === '**')
+	            return exports.GLOBSTAR;
+	        if (pattern === '')
+	            return '';
+	        // far and away, the most common glob pattern parts are
+	        // *, *.*, and *.<ext>  Add a fast check method for those.
+	        let m;
+	        let fastTest = null;
+	        if ((m = pattern.match(starRE))) {
+	            fastTest = options.dot ? starTestDot : starTest;
+	        }
+	        else if ((m = pattern.match(starDotExtRE))) {
+	            fastTest = (options.nocase
+	                ? options.dot
+	                    ? starDotExtTestNocaseDot
+	                    : starDotExtTestNocase
+	                : options.dot
+	                    ? starDotExtTestDot
+	                    : starDotExtTest)(m[1]);
+	        }
+	        else if ((m = pattern.match(qmarksRE))) {
+	            fastTest = (options.nocase
+	                ? options.dot
+	                    ? qmarksTestNocaseDot
+	                    : qmarksTestNocase
+	                : options.dot
+	                    ? qmarksTestDot
+	                    : qmarksTest)(m);
+	        }
+	        else if ((m = pattern.match(starDotStarRE))) {
+	            fastTest = options.dot ? starDotStarTestDot : starDotStarTest;
+	        }
+	        else if ((m = pattern.match(dotStarRE))) {
+	            fastTest = dotStarTest;
+	        }
+	        const re = ast_js_1.AST.fromGlob(pattern, this.options).toMMPattern();
+	        if (fastTest && typeof re === 'object') {
+	            // Avoids overriding in frozen environments
+	            Reflect.defineProperty(re, 'test', { value: fastTest });
+	        }
+	        return re;
+	    }
+	    makeRe() {
+	        if (this.regexp || this.regexp === false)
+	            return this.regexp;
+	        // at this point, this.set is a 2d array of partial
+	        // pattern strings, or "**".
+	        //
+	        // It's better to use .match().  This function shouldn't
+	        // be used, really, but it's pretty convenient sometimes,
+	        // when you just want to work with a regex.
+	        const set = this.set;
+	        if (!set.length) {
+	            this.regexp = false;
+	            return this.regexp;
+	        }
+	        const options = this.options;
+	        const twoStar = options.noglobstar
+	            ? star
+	            : options.dot
+	                ? twoStarDot
+	                : twoStarNoDot;
+	        const flags = new Set(options.nocase ? ['i'] : []);
+	        // regexpify non-globstar patterns
+	        // if ** is only item, then we just do one twoStar
+	        // if ** is first, and there are more, prepend (\/|twoStar\/)? to next
+	        // if ** is last, append (\/twoStar|) to previous
+	        // if ** is in the middle, append (\/|\/twoStar\/) to previous
+	        // then filter out GLOBSTAR symbols
+	        let re = set
+	            .map(pattern => {
+	            const pp = pattern.map(p => {
+	                if (p instanceof RegExp) {
+	                    for (const f of p.flags.split(''))
+	                        flags.add(f);
+	                }
+	                return typeof p === 'string'
+	                    ? regExpEscape(p)
+	                    : p === exports.GLOBSTAR
+	                        ? exports.GLOBSTAR
+	                        : p._src;
+	            });
+	            pp.forEach((p, i) => {
+	                const next = pp[i + 1];
+	                const prev = pp[i - 1];
+	                if (p !== exports.GLOBSTAR || prev === exports.GLOBSTAR) {
+	                    return;
+	                }
+	                if (prev === undefined) {
+	                    if (next !== undefined && next !== exports.GLOBSTAR) {
+	                        pp[i + 1] = '(?:\\/|' + twoStar + '\\/)?' + next;
+	                    }
+	                    else {
+	                        pp[i] = twoStar;
+	                    }
+	                }
+	                else if (next === undefined) {
+	                    pp[i - 1] = prev + '(?:\\/|' + twoStar + ')?';
+	                }
+	                else if (next !== exports.GLOBSTAR) {
+	                    pp[i - 1] = prev + '(?:\\/|\\/' + twoStar + '\\/)' + next;
+	                    pp[i + 1] = exports.GLOBSTAR;
+	                }
+	            });
+	            return pp.filter(p => p !== exports.GLOBSTAR).join('/');
+	        })
+	            .join('|');
+	        // need to wrap in parens if we had more than one thing with |,
+	        // otherwise only the first will be anchored to ^ and the last to $
+	        const [open, close] = set.length > 1 ? ['(?:', ')'] : ['', ''];
+	        // must match entire pattern
+	        // ending in a * or ** will make it less strict.
+	        re = '^' + open + re + close + '$';
+	        // can match anything, as long as it's not this.
+	        if (this.negate)
+	            re = '^(?!' + re + ').+$';
+	        try {
+	            this.regexp = new RegExp(re, [...flags].join(''));
+	            /* c8 ignore start */
+	        }
+	        catch (ex) {
+	            // should be impossible
+	            this.regexp = false;
+	        }
+	        /* c8 ignore stop */
+	        return this.regexp;
+	    }
+	    slashSplit(p) {
+	        // if p starts with // on windows, we preserve that
+	        // so that UNC paths aren't broken.  Otherwise, any number of
+	        // / characters are coalesced into one, unless
+	        // preserveMultipleSlashes is set to true.
+	        if (this.preserveMultipleSlashes) {
+	            return p.split('/');
+	        }
+	        else if (this.isWindows && /^\/\/[^\/]+/.test(p)) {
+	            // add an extra '' for the one we lose
+	            return ['', ...p.split(/\/+/)];
+	        }
+	        else {
+	            return p.split(/\/+/);
+	        }
+	    }
+	    match(f, partial = this.partial) {
+	        this.debug('match', f, this.pattern);
+	        // short-circuit in the case of busted things.
+	        // comments, etc.
+	        if (this.comment) {
+	            return false;
+	        }
+	        if (this.empty) {
+	            return f === '';
+	        }
+	        if (f === '/' && partial) {
+	            return true;
+	        }
+	        const options = this.options;
+	        // windows: need to use /, not \
+	        if (this.isWindows) {
+	            f = f.split('\\').join('/');
+	        }
+	        // treat the test path as a set of pathparts.
+	        const ff = this.slashSplit(f);
+	        this.debug(this.pattern, 'split', ff);
+	        // just ONE of the pattern sets in this.set needs to match
+	        // in order for it to be valid.  If negating, then just one
+	        // match means that we have failed.
+	        // Either way, return on the first hit.
+	        const set = this.set;
+	        this.debug(this.pattern, 'set', set);
+	        // Find the basename of the path by looking for the last non-empty segment
+	        let filename = ff[ff.length - 1];
+	        if (!filename) {
+	            for (let i = ff.length - 2; !filename && i >= 0; i--) {
+	                filename = ff[i];
+	            }
+	        }
+	        for (let i = 0; i < set.length; i++) {
+	            const pattern = set[i];
+	            let file = ff;
+	            if (options.matchBase && pattern.length === 1) {
+	                file = [filename];
+	            }
+	            const hit = this.matchOne(file, pattern, partial);
+	            if (hit) {
+	                if (options.flipNegate) {
+	                    return true;
+	                }
+	                return !this.negate;
+	            }
+	        }
+	        // didn't get any hits.  this is success if it's a negative
+	        // pattern, failure otherwise.
+	        if (options.flipNegate) {
+	            return false;
+	        }
+	        return this.negate;
+	    }
+	    static defaults(def) {
+	        return exports.minimatch.defaults(def).Minimatch;
+	    }
+	}
+	exports.Minimatch = Minimatch;
+	/* c8 ignore start */
+	var ast_js_2 = ast;
+	Object.defineProperty(exports, "AST", { enumerable: true, get: function () { return ast_js_2.AST; } });
+	var escape_js_2 = _escape;
+	Object.defineProperty(exports, "escape", { enumerable: true, get: function () { return escape_js_2.escape; } });
+	var unescape_js_2 = _unescape;
+	Object.defineProperty(exports, "unescape", { enumerable: true, get: function () { return unescape_js_2.unescape; } });
+	/* c8 ignore stop */
+	exports.minimatch.AST = ast_js_1.AST;
+	exports.minimatch.Minimatch = Minimatch;
+	exports.minimatch.escape = escape_js_1.escape;
+	exports.minimatch.unescape = unescape_js_1.unescape;
 	
-			${ln("Setup instructions")}
+} (commonjs));
+
+const fs = require$$0;
+const path = path$1;
+const EE = require$$2.EventEmitter;
+const Minimatch = commonjs.Minimatch;
+
+class Walker extends EE {
+  constructor (opts) {
+    opts = opts || {};
+    super(opts);
+    // set to true if this.path is a symlink, whether follow is true or not
+    this.isSymbolicLink = opts.isSymbolicLink;
+    this.path = opts.path || process.cwd();
+    this.basename = path.basename(this.path);
+    this.ignoreFiles = opts.ignoreFiles || ['.ignore'];
+    this.ignoreRules = {};
+    this.parent = opts.parent || null;
+    this.includeEmpty = !!opts.includeEmpty;
+    this.root = this.parent ? this.parent.root : this.path;
+    this.follow = !!opts.follow;
+    this.result = this.parent ? this.parent.result : new Set();
+    this.entries = null;
+    this.sawError = false;
+    this.exact = opts.exact;
+  }
+
+  sort (a, b) {
+    return a.localeCompare(b, 'en')
+  }
+
+  emit (ev, data) {
+    let ret = false;
+    if (!(this.sawError && ev === 'error')) {
+      if (ev === 'error') {
+        this.sawError = true;
+      } else if (ev === 'done' && !this.parent) {
+        data = Array.from(data)
+          .map(e => /^@/.test(e) ? `./${e}` : e).sort(this.sort);
+        this.result = data;
+      }
+
+      if (ev === 'error' && this.parent) {
+        ret = this.parent.emit('error', data);
+      } else {
+        ret = super.emit(ev, data);
+      }
+    }
+    return ret
+  }
+
+  start () {
+    fs.readdir(this.path, (er, entries) =>
+      er ? this.emit('error', er) : this.onReaddir(entries));
+    return this
+  }
+
+  isIgnoreFile (e) {
+    return e !== '.' &&
+      e !== '..' &&
+      this.ignoreFiles.indexOf(e) !== -1
+  }
+
+  onReaddir (entries) {
+    this.entries = entries;
+    if (entries.length === 0) {
+      if (this.includeEmpty) {
+        this.result.add(this.path.slice(this.root.length + 1));
+      }
+      this.emit('done', this.result);
+    } else {
+      const hasIg = this.entries.some(e =>
+        this.isIgnoreFile(e));
+
+      if (hasIg) {
+        this.addIgnoreFiles();
+      } else {
+        this.filterEntries();
+      }
+    }
+  }
+
+  addIgnoreFiles () {
+    const newIg = this.entries
+      .filter(e => this.isIgnoreFile(e));
+
+    let igCount = newIg.length;
+    const then = () => {
+      if (--igCount === 0) {
+        this.filterEntries();
+      }
+    };
+
+    newIg.forEach(e => this.addIgnoreFile(e, then));
+  }
+
+  addIgnoreFile (file, then) {
+    const ig = path.resolve(this.path, file);
+    fs.readFile(ig, 'utf8', (er, data) =>
+      er ? this.emit('error', er) : this.onReadIgnoreFile(file, data, then));
+  }
+
+  onReadIgnoreFile (file, data, then) {
+    const mmopt = {
+      matchBase: true,
+      dot: true,
+      flipNegate: true,
+      nocase: true,
+    };
+    const rules = data.split(/\r?\n/)
+      .filter(line => !/^#|^$/.test(line.trim()))
+      .map(rule => {
+        return new Minimatch(rule.trim(), mmopt)
+      });
+
+    this.ignoreRules[file] = rules;
+
+    then();
+  }
+
+  filterEntries () {
+    // at this point we either have ignore rules, or just inheriting
+    // this exclusion is at the point where we know the list of
+    // entries in the dir, but don't know what they are.  since
+    // some of them *might* be directories, we have to run the
+    // match in dir-mode as well, so that we'll pick up partials
+    // of files that will be included later.  Anything included
+    // at this point will be checked again later once we know
+    // what it is.
+    const filtered = this.entries.map(entry => {
+      // at this point, we don't know if it's a dir or not.
+      const passFile = this.filterEntry(entry);
+      const passDir = this.filterEntry(entry, true);
+      return (passFile || passDir) ? [entry, passFile, passDir] : false
+    }).filter(e => e);
+
+    // now we stat them all
+    // if it's a dir, and passes as a dir, then recurse
+    // if it's not a dir, but passes as a file, add to set
+    let entryCount = filtered.length;
+    if (entryCount === 0) {
+      this.emit('done', this.result);
+    } else {
+      const then = () => {
+        if (--entryCount === 0) {
+          this.emit('done', this.result);
+        }
+      };
+      filtered.forEach(filt => {
+        const entry = filt[0];
+        const file = filt[1];
+        const dir = filt[2];
+        this.stat({ entry, file, dir }, then);
+      });
+    }
+  }
+
+  onstat ({ st, entry, file, dir, isSymbolicLink }, then) {
+    const abs = this.path + '/' + entry;
+    if (!st.isDirectory()) {
+      if (file) {
+        this.result.add(abs.slice(this.root.length + 1));
+      }
+      then();
+    } else {
+      // is a directory
+      if (dir) {
+        this.walker(entry, { isSymbolicLink, exact: file || this.filterEntry(entry + '/') }, then);
+      } else {
+        then();
+      }
+    }
+  }
+
+  stat ({ entry, file, dir }, then) {
+    const abs = this.path + '/' + entry;
+    fs.lstat(abs, (lstatErr, lstatResult) => {
+      if (lstatErr) {
+        this.emit('error', lstatErr);
+      } else {
+        const isSymbolicLink = lstatResult.isSymbolicLink();
+        if (this.follow && isSymbolicLink) {
+          fs.stat(abs, (statErr, statResult) => {
+            if (statErr) {
+              this.emit('error', statErr);
+            } else {
+              this.onstat({ st: statResult, entry, file, dir, isSymbolicLink }, then);
+            }
+          });
+        } else {
+          this.onstat({ st: lstatResult, entry, file, dir, isSymbolicLink }, then);
+        }
+      }
+    });
+  }
+
+  walkerOpt (entry, opts) {
+    return {
+      path: this.path + '/' + entry,
+      parent: this,
+      ignoreFiles: this.ignoreFiles,
+      follow: this.follow,
+      includeEmpty: this.includeEmpty,
+      ...opts,
+    }
+  }
+
+  walker (entry, opts, then) {
+    new Walker(this.walkerOpt(entry, opts)).on('done', then).start();
+  }
+
+  filterEntry (entry, partial, entryBasename) {
+    let included = true;
+
+    // this = /a/b/c
+    // entry = d
+    // parent /a/b sees c/d
+    if (this.parent && this.parent.filterEntry) {
+      const parentEntry = this.basename + '/' + entry;
+      const parentBasename = entryBasename || entry;
+      included = this.parent.filterEntry(parentEntry, partial, parentBasename);
+      if (!included && !this.exact) {
+        return false
+      }
+    }
+
+    this.ignoreFiles.forEach(f => {
+      if (this.ignoreRules[f]) {
+        this.ignoreRules[f].forEach(rule => {
+          // negation means inclusion
+          // so if it's negated, and already included, no need to check
+          // likewise if it's neither negated nor included
+          if (rule.negate !== included) {
+            const isRelativeRule = entryBasename && rule.globParts.some(part =>
+              part.length <= (part.slice(-1)[0] ? 1 : 2)
+            );
+
+            // first, match against /foo/bar
+            // then, against foo/bar
+            // then, in the case of partials, match with a /
+            //   then, if also the rule is relative, match against basename
+            const match = rule.match('/' + entry) ||
+              rule.match(entry) ||
+              !!partial && (
+                rule.match('/' + entry + '/') ||
+                rule.match(entry + '/') ||
+                rule.negate && (
+                  rule.match('/' + entry, true) ||
+                  rule.match(entry, true)) ||
+                isRelativeRule && (
+                  rule.match('/' + entryBasename + '/') ||
+                  rule.match(entryBasename + '/') ||
+                  rule.negate && (
+                    rule.match('/' + entryBasename, true) ||
+                    rule.match(entryBasename, true))));
+
+            if (match) {
+              included = rule.negate;
+            }
+          }
+        });
+      }
+    });
+
+    return included
+  }
+}
+
+class WalkerSync extends Walker {
+  start () {
+    this.onReaddir(fs.readdirSync(this.path));
+    return this
+  }
+
+  addIgnoreFile (file, then) {
+    const ig = path.resolve(this.path, file);
+    this.onReadIgnoreFile(file, fs.readFileSync(ig, 'utf8'), then);
+  }
+
+  stat ({ entry, file, dir }, then) {
+    const abs = this.path + '/' + entry;
+    let st = fs.lstatSync(abs);
+    const isSymbolicLink = st.isSymbolicLink();
+    if (this.follow && isSymbolicLink) {
+      st = fs.statSync(abs);
+    }
+
+    // console.error('STAT SYNC', {st, entry, file, dir, isSymbolicLink, then})
+    this.onstat({ st, entry, file, dir, isSymbolicLink }, then);
+  }
+
+  walker (entry, opts, then) {
+    new WalkerSync(this.walkerOpt(entry, opts)).start();
+    then();
+  }
+}
+
+const walk$1 = (opts, callback) => {
+  const p = new Promise((resolve, reject) => {
+    new Walker(opts).on('done', resolve).on('error', reject).start();
+  });
+  return callback ? p.then(res => callback(null, res), callback) : p
+};
+
+const walkSync = opts => new WalkerSync(opts).start().result;
+
+var lib$1 = walk$1;
+walk$1.sync = walkSync;
+walk$1.Walker = Walker;
+walk$1.WalkerSync = WalkerSync;
+
+const { Walker: IgnoreWalker } = lib$1;
+const { lstatSync: lstat, readFileSync: readFile } = require$$0;
+const { basename, dirname, extname, join, relative, resolve, sep } = path$1;
+
+// symbols used to represent synthetic rule sets
+const defaultRules = Symbol('npm-packlist.rules.default');
+const strictRules = Symbol('npm-packlist.rules.strict');
+
+// There may be others, but :?|<> are handled by node-tar
+const nameIsBadForWindows = file => /\*/.test(file);
+
+// these are the default rules that are applied to everything except for non-link bundled deps
+const defaults = [
+  '.npmignore',
+  '.gitignore',
+  '**/.git',
+  '**/.svn',
+  '**/.hg',
+  '**/CVS',
+  '**/.git/**',
+  '**/.svn/**',
+  '**/.hg/**',
+  '**/CVS/**',
+  '/.lock-wscript',
+  '/.wafpickle-*',
+  '/build/config.gypi',
+  'npm-debug.log',
+  '**/.npmrc',
+  '.*.swp',
+  '.DS_Store',
+  '**/.DS_Store/**',
+  '._*',
+  '**/._*/**',
+  '*.orig',
+  '/archived-packages/**',
+];
+
+const strictDefaults = [
+  // these are forcibly excluded
+  '/.git',
+];
+
+const normalizePath = (path) => path.split('\\').join('/');
+
+const readOutOfTreeIgnoreFiles = (root, rel, result = []) => {
+  for (const file of ['.npmignore', '.gitignore']) {
+    try {
+      const ignoreContent = readFile(join(root, file), { encoding: 'utf8' });
+      result.push(ignoreContent);
+      // break the loop immediately after reading, this allows us to prioritize
+      // the .npmignore and discard the .gitignore if one is present
+      break
+    } catch (err) {
+      // we ignore ENOENT errors completely because we don't care if the file doesn't exist
+      // but we throw everything else because failing to read a file that does exist is
+      // something that the user likely wants to know about
+      // istanbul ignore next -- we do not need to test a thrown error
+      if (err.code !== 'ENOENT') {
+        throw err
+      }
+    }
+  }
+
+  if (!rel) {
+    return result
+  }
+
+  const firstRel = rel.split(sep, 1)[0];
+  const newRoot = join(root, firstRel);
+  const newRel = relative(newRoot, join(root, rel));
+
+  return readOutOfTreeIgnoreFiles(newRoot, newRel, result)
+};
+
+class PackWalker extends IgnoreWalker {
+  constructor (tree, opts) {
+    const options = {
+      ...opts,
+      includeEmpty: false,
+      follow: false,
+      // we path.resolve() here because ignore-walk doesn't do it and we want full paths
+      path: resolve(opts?.path || tree.path).replace(/\\/g, '/'),
+      ignoreFiles: opts?.ignoreFiles || [
+        defaultRules,
+        'package.json',
+        '.npmignore',
+        '.gitignore',
+        strictRules,
+      ],
+    };
+
+    super(options);
+    this.isPackage = options.isPackage;
+    this.seen = options.seen || new Set();
+    this.tree = tree;
+    this.requiredFiles = options.requiredFiles || [];
+
+    const additionalDefaults = [];
+    if (options.prefix && options.workspaces) {
+      const path = normalizePath(options.path);
+      const prefix = normalizePath(options.prefix);
+      const workspaces = options.workspaces.map((ws) => normalizePath(ws));
+
+      // istanbul ignore else - this does nothing unless we need it to
+      if (path !== prefix && workspaces.includes(path)) {
+        // if path and prefix are not the same directory, and workspaces has path in it
+        // then we know path is a workspace directory. in order to not drop ignore rules
+        // from directories between the workspaces root (prefix) and the workspace itself
+        // (path) we need to find and read those now
+        const relpath = relative(options.prefix, dirname(options.path));
+        additionalDefaults.push(...readOutOfTreeIgnoreFiles(options.prefix, relpath));
+      } else if (path === prefix) {
+        // on the other hand, if the path and prefix are the same, then we ignore workspaces
+        // so that we don't pack a workspace as part of the root project. append them as
+        // normalized relative paths from the root
+        additionalDefaults.push(...workspaces.map((w) => normalizePath(relative(options.path, w))));
+      }
+    }
+
+    // go ahead and inject the default rules now
+    this.injectRules(defaultRules, [...defaults, ...additionalDefaults]);
+
+    if (!this.isPackage) {
+      // if this instance is not a package, then place some strict default rules, and append
+      // known required files for this directory
+      this.injectRules(strictRules, [
+        ...strictDefaults,
+        ...this.requiredFiles.map((file) => `!${file}`),
+      ]);
+    }
+  }
+
+  // overridden method: we intercept the reading of the package.json file here so that we can
+  // process it into both the package.json file rules as well as the strictRules synthetic rule set
+  addIgnoreFile (file, callback) {
+    // if we're adding anything other than package.json, then let ignore-walk handle it
+    if (file !== 'package.json' || !this.isPackage) {
+      return super.addIgnoreFile(file, callback)
+    }
+
+    return this.processPackage(callback)
+  }
+
+  // overridden method: if we're done, but we're a package, then we also need to evaluate bundles
+  // before we actually emit our done event
+  emit (ev, data) {
+    if (ev !== 'done' || !this.isPackage) {
+      return super.emit(ev, data)
+    }
+
+    // we intentionally delay the done event while keeping the function sync here
+    // eslint-disable-next-line promise/catch-or-return, promise/always-return
+    this.gatherBundles().then(() => {
+      super.emit('done', this.result);
+    });
+    return true
+  }
+
+  // overridden method: before actually filtering, we make sure that we've removed the rules for
+  // files that should no longer take effect due to our order of precedence
+  filterEntries () {
+    if (this.ignoreRules['package.json']) {
+      // package.json means no .npmignore or .gitignore
+      this.ignoreRules['.npmignore'] = null;
+      this.ignoreRules['.gitignore'] = null;
+    } else if (this.ignoreRules['.npmignore']) {
+      // .npmignore means no .gitignore
+      this.ignoreRules['.gitignore'] = null;
+    }
+
+    return super.filterEntries()
+  }
+
+  // overridden method: we never want to include anything that isn't a file or directory
+  onstat (opts, callback) {
+    if (!opts.st.isFile() && !opts.st.isDirectory()) {
+      return callback()
+    }
+
+    return super.onstat(opts, callback)
+  }
+
+  // overridden method: we want to refuse to pack files that are invalid, node-tar protects us from
+  // a lot of them but not all
+  stat (opts, callback) {
+    if (nameIsBadForWindows(opts.entry)) {
+      return callback()
+    }
+
+    return super.stat(opts, callback)
+  }
+
+  // overridden method: this is called to create options for a child walker when we step
+  // in to a normal child directory (this will never be a bundle). the default method here
+  // copies the root's `ignoreFiles` value, but we don't want to respect package.json for
+  // subdirectories, so we override it with a list that intentionally omits package.json
+  walkerOpt (entry, opts) {
+    let ignoreFiles = null;
+
+    // however, if we have a tree, and we have workspaces, and the directory we're about
+    // to step into is a workspace, then we _do_ want to respect its package.json
+    if (this.tree.workspaces) {
+      const workspaceDirs = [...this.tree.workspaces.values()]
+        .map((dir) => dir.replace(/\\/g, '/'));
+
+      const entryPath = join(this.path, entry).replace(/\\/g, '/');
+      if (workspaceDirs.includes(entryPath)) {
+        ignoreFiles = [
+          defaultRules,
+          'package.json',
+          '.npmignore',
+          '.gitignore',
+          strictRules,
+        ];
+      }
+    } else {
+      ignoreFiles = [
+        defaultRules,
+        '.npmignore',
+        '.gitignore',
+        strictRules,
+      ];
+    }
+
+    return {
+      ...super.walkerOpt(entry, opts),
+      ignoreFiles,
+      // we map over our own requiredFiles and pass ones that are within this entry
+      requiredFiles: this.requiredFiles
+        .map((file) => {
+          if (relative(file, entry) === '..') {
+            return relative(entry, file).replace(/\\/g, '/')
+          }
+          return false
+        })
+        .filter(Boolean),
+    }
+  }
+
+  // overridden method: we want child walkers to be instances of this class, not ignore-walk
+  walker (entry, opts, callback) {
+    new PackWalker(this.tree, this.walkerOpt(entry, opts)).on('done', callback).start();
+  }
+
+  // overridden method: we use a custom sort method to help compressibility
+  sort (a, b) {
+    // optimize for compressibility
+    // extname, then basename, then locale alphabetically
+    // https://twitter.com/isntitvacant/status/1131094910923231232
+    const exta = extname(a).toLowerCase();
+    const extb = extname(b).toLowerCase();
+    const basea = basename(a).toLowerCase();
+    const baseb = basename(b).toLowerCase();
+
+    return exta.localeCompare(extb, 'en') ||
+      basea.localeCompare(baseb, 'en') ||
+      a.localeCompare(b, 'en')
+  }
+
+  // convenience method: this joins the given rules with newlines, appends a trailing newline,
+  // and calls the internal onReadIgnoreFile method
+  injectRules (filename, rules, callback = () => {}) {
+    this.onReadIgnoreFile(filename, `${rules.join('\n')}\n`, callback);
+  }
+
+  // custom method: this is called by addIgnoreFile when we find a package.json, it uses the
+  // arborist tree to pull both default rules and strict rules for the package
+  processPackage (callback) {
+    const {
+      bin,
+      browser,
+      files,
+      main,
+    } = this.tree.package;
+
+    // rules in these arrays are inverted since they are patterns we want to _not_ ignore
+    const ignores = [];
+    const strict = [
+      ...strictDefaults,
+      '!/package.json',
+      '!/readme{,.*[^~$]}',
+      '!/copying{,.*[^~$]}',
+      '!/license{,.*[^~$]}',
+      '!/licence{,.*[^~$]}',
+      '/.git',
+      '/node_modules',
+      '.npmrc',
+      '/package-lock.json',
+      '/yarn.lock',
+      '/pnpm-lock.yaml',
+    ];
+
+    // if we have a files array in our package, we need to pull rules from it
+    if (files) {
+      for (let file of files) {
+        // invert the rule because these are things we want to include
+        if (file.startsWith('./')) {
+          file = file.slice(1);
+        }
+        if (file.endsWith('/*')) {
+          file += '*';
+        }
+        const inverse = `!${file}`;
+        try {
+          // if an entry in the files array is a specific file, then we need to include it as a
+          // strict requirement for this package. if it's a directory or a pattern, it's a default
+          // pattern instead. this is ugly, but we have to stat to find out if it's a file
+          const stat = lstat(join(this.path, file.replace(/^!+/, '')).replace(/\\/g, '/'));
+          // if we have a file and we know that, it's strictly required
+          if (stat.isFile()) {
+            strict.unshift(inverse);
+            this.requiredFiles.push(file.startsWith('/') ? file.slice(1) : file);
+          } else if (stat.isDirectory()) {
+            // otherwise, it's a default ignore, and since we got here we know it's not a pattern
+            // so we include the directory contents
+            ignores.push(inverse);
+            ignores.push(`${inverse}/**`);
+          }
+          // if the thing exists, but is neither a file or a directory, we don't want it at all
+        } catch (err) {
+          // if lstat throws, then we assume we're looking at a pattern and treat it as a default
+          ignores.push(inverse);
+        }
+      }
+
+      // we prepend a '*' to exclude everything, followed by our inverted file rules
+      // which now mean to include those
+      this.injectRules('package.json', ['*', ...ignores]);
+    }
+
+    // browser is required
+    if (browser) {
+      strict.push(`!/${browser}`);
+    }
+
+    // main is required
+    if (main) {
+      strict.push(`!/${main}`);
+    }
+
+    // each bin is required
+    if (bin) {
+      for (const key in bin) {
+        strict.push(`!/${bin[key]}`);
+      }
+    }
+
+    // and now we add all of the strict rules to our synthetic file
+    this.injectRules(strictRules, strict, callback);
+  }
+
+  // custom method: after we've finished gathering the files for the root package, we call this
+  // before emitting the 'done' event in order to gather all of the files for bundled deps
+  async gatherBundles () {
+    if (this.seen.has(this.tree)) {
+      return
+    }
+
+    // add this node to our seen tracker
+    this.seen.add(this.tree);
+
+    // if we're the project root, then we look at our bundleDependencies, otherwise we got here
+    // because we're a bundled dependency of the root, which means we need to include all prod
+    // and optional dependencies in the bundle
+    let toBundle;
+    if (this.tree.isProjectRoot) {
+      const { bundleDependencies } = this.tree.package;
+      toBundle = bundleDependencies || [];
+    } else {
+      const { dependencies, optionalDependencies } = this.tree.package;
+      toBundle = Object.keys(dependencies || {}).concat(Object.keys(optionalDependencies || {}));
+    }
+
+    for (const dep of toBundle) {
+      const edge = this.tree.edgesOut.get(dep);
+      // no edgeOut = missing node, so skip it. we can't pack it if it's not here
+      // we also refuse to pack peer dependencies and dev dependencies
+      if (!edge || edge.peer || edge.dev) {
+        continue
+      }
+
+      // get a reference to the node we're bundling
+      const node = this.tree.edgesOut.get(dep).to;
+      // if there's no node, this is most likely an optional dependency that hasn't been
+      // installed. just skip it.
+      if (!node) {
+        continue
+      }
+      // we use node.path for the path because we want the location the node was linked to,
+      // not where it actually lives on disk
+      const path = node.path;
+      // but link nodes don't have edgesOut, so we need to pass in the target of the node
+      // in order to make sure we correctly traverse its dependencies
+      const tree = node.target;
+
+      // and start building options to be passed to the walker for this package
+      const walkerOpts = {
+        path,
+        isPackage: true,
+        ignoreFiles: [],
+        seen: this.seen, // pass through seen so we can prevent infinite circular loops
+      };
+
+      // if our node is a link, we apply defaultRules. we don't do this for regular bundled
+      // deps because their .npmignore and .gitignore files are excluded by default and may
+      // override defaults
+      if (node.isLink) {
+        walkerOpts.ignoreFiles.push(defaultRules);
+      }
+
+      // _all_ nodes will follow package.json rules from their package root
+      walkerOpts.ignoreFiles.push('package.json');
+
+      // only link nodes will obey .npmignore or .gitignore
+      if (node.isLink) {
+        walkerOpts.ignoreFiles.push('.npmignore');
+        walkerOpts.ignoreFiles.push('.gitignore');
+      }
+
+      // _all_ nodes follow strict rules
+      walkerOpts.ignoreFiles.push(strictRules);
+
+      // create a walker for this dependency and gather its results
+      const walker = new PackWalker(tree, walkerOpts);
+      const bundled = await new Promise((pResolve, pReject) => {
+        walker.on('error', pReject);
+        walker.on('done', pResolve);
+        walker.start();
+      });
+
+      // now we make sure we have our paths correct from the root, and accumulate everything into
+      // our own result set to deduplicate
+      const relativeFrom = relative(this.root, walker.path);
+      for (const file of bundled) {
+        this.result.add(join(relativeFrom, file).replace(/\\/g, '/'));
+      }
+    }
+  }
+}
+
+const walk = (tree, options, callback) => {
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+  const p = new Promise((pResolve, pReject) => {
+    new PackWalker(tree, { ...options, isPackage: true })
+      .on('done', pResolve).on('error', pReject).start();
+  });
+  return callback ? p.then(res => callback(null, res), callback) : p
+};
+
+var lib = walk;
+walk.Walker = PackWalker;
+
+var packlist = /*@__PURE__*/getDefaultExportFromCjs(lib);
+
+const edgesOut = /* @__PURE__ */ new Map();
+const getNpmPacklist = (absoluteLinkPackagePath, packageJson) => packlist({
+  path: absoluteLinkPackagePath,
+  package: packageJson,
+  // @ts-expect-error outdated types
+  edgesOut
+});
+
+const cwd = process.cwd();
+const cwdPath = (filePath) => path$2.relative(cwd, filePath);
+
+const getPrettyTime = () => (/* @__PURE__ */ new Date()).toLocaleTimeString(
+  void 0,
+  {
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    hour12: true
+  }
+);
+
+const hardlinkPackage = async (linkPath, absoluteLinkPackagePath, packageJson, publishFilesPromise = getNpmPacklist(
+  absoluteLinkPackagePath,
+  packageJson
+)) => {
+  const [oldPublishFiles, publishFiles] = await Promise.all([
+    getNpmPacklist(
+      linkPath,
+      /**
+       * This is evaluated in the context of the new package.json since that
+       * defines which files belong to the package.
+       */
+      packageJson
+    ),
+    publishFilesPromise
+  ]);
+  console.log(`Linking ${magenta(packageJson.name)} in publish mode:`);
+  await Promise.all(
+    publishFiles.map(async (file) => {
+      const sourcePath = path$2.join(absoluteLinkPackagePath, file);
+      const targetPath = path$2.join(linkPath, file);
+      await fs$2.mkdir(
+        path$2.dirname(targetPath),
+        { recursive: true }
+      );
+      await hardlink(sourcePath, targetPath);
+      const fileIndex = oldPublishFiles.indexOf(file);
+      if (fileIndex > -1) {
+        oldPublishFiles.splice(fileIndex, 1);
+      }
+      console.log(
+        `  ${green("\u2714")}`,
+        cyan(cwdPath(targetPath)),
+        "\u2192",
+        cyan(cwdPath(sourcePath))
+      );
+    })
+  );
+  await Promise.all(
+    oldPublishFiles.map(async (file) => {
+      const cleanPath = path$2.join(linkPath, file);
+      await fs$2.rm(cleanPath);
+    })
+  );
+};
+
+const isValidSetup = async (linkPath, expectedPrefix) => {
+  const linkPathStat = await fs$2.stat(linkPath).catch(() => null);
+  if (!linkPathStat?.isDirectory()) {
+    return false;
+  }
+  const linkPathReal = await fs$2.realpath(linkPath);
+  return linkPathReal.startsWith(expectedPrefix);
+};
+const linkPublishMode = async (basePackagePath, linkPackagePath, watchMode) => {
+  const absoluteLinkPackagePath = path$2.resolve(basePackagePath, linkPackagePath);
+  const packageJson = await readPackageJson(absoluteLinkPackagePath);
+  const expectedPrefix = path$2.join(basePackagePath, "node_modules/");
+  const linkPath = path$2.join(expectedPrefix, packageJson.name);
+  if (!await isValidSetup(linkPath, expectedPrefix)) {
+    console.error(
+      defaultOutdent`
+			Error: Package ${magenta(packageJson.name)} is not set up
+	
+			${bold("Setup instructions")}
 			1. In the Dependency package, create a tarball:
-			  ${Ae("$ npm pack")}
+			  ${dim("$ npm pack")}
 	
 			2. In the Consuming package, install the tarball and link the Dependency:
-			  ${Ae("$ npm install --no-save <dependency-tarball>")}
-			  ${Ae("$ npx link publish <dependency-path>")}
+			  ${dim("$ npm install --no-save <dependency-tarball>")}
+			  ${dim("$ npx link publish <dependency-path>")}
 	
 			3. Start developing!
 	
 			Learn more: https://npmjs.com/link
-			`);return}const a=Pn(bi,500);if(await a(s,D,n),u){const l={globstar:!0,extended:!0},h=["**/{npm-debug.log,*.orig,package-lock.json,yarn.lock,pnpm-lock.yaml}","**/node_modules/**","**/.{_*,*.swp,DS_Store,gitignore,npmrc,npmignore,lock-wscript,.wafpickle-*}","**/.{_*,git,svn,hg,CVS}/**"].map(m=>Mn(m,l)),F=re.watch(D,{recursive:!0});for await(const{eventType:m,filename:d}of F){if(!d||h.some(y=>y.test(d)))continue;const w=await nt(D,n);w.includes(d)&&(console.log(`
-${Ae(yi())}`,"Detected",cn(m),"in",`${Q(it(G.join(D,d)))}
-`),await a(s,D,n,w))}}},"linkPublishMode"),Ai=QD({name:"publish",parameters:["<package paths...>"],flags:{watch:{type:Boolean,alias:"w",description:"Watch for changes in the package and automatically relink"}},help:{description:"Link a package to simulate an environment similar to `npm install`"}}),Si=r(async(t,e,u)=>{e.length>0&&await Promise.all(e.map(D=>vi(t,D,u.watch)))},"publishHandler");(async()=>{const t=KD({name:"link",parameters:["[package paths...]"],flags:{deep:{type:Boolean,alias:"d",description:"Run `npx link` on dependencies if they have a link.config.json"}},help:{description:"A better `npm link` -- symlink local dependencies to the current project",render:r((u,D)=>(u[0].data=`npx link
-`,u.splice(2,0,{type:"section",data:{title:"Website",body:"https://www.npmjs.com/package/link"}}),D.render(u)),"render")},commands:[Ai]}),e=await x.realpath(process.cwd());if(t.command)t.command==="publish"&&await Si(e,t._,t.flags);else{const{packagePaths:u}=t._;if(u.length>0){await Promise.all(u.map(n=>Zt(e,n,t.flags)));return}const D=await Wt(e);if(!D){console.warn(q`
+			`
+    );
+    return;
+  }
+  const throttledHardlinkPackage = throttle$1(hardlinkPackage, 500);
+  await throttledHardlinkPackage(
+    linkPath,
+    absoluteLinkPackagePath,
+    packageJson
+  );
+  if (watchMode) {
+    const globOptions = {
+      globstar: true,
+      extended: true
+    };
+    const ignoreFiles = [
+      // Files
+      "**/{npm-debug.log,*.orig,package-lock.json,yarn.lock,pnpm-lock.yaml}",
+      // Folders
+      "**/node_modules/**",
+      // Hidden files
+      "**/.{_*,*.swp,DS_Store,gitignore,npmrc,npmignore,lock-wscript,.wafpickle-*}",
+      // Hidden folders
+      "**/.{_*,git,svn,hg,CVS}/**"
+    ].map((glob) => globToRegexp$1(glob, globOptions));
+    const watcher = fs$2.watch(
+      absoluteLinkPackagePath,
+      { recursive: true }
+    );
+    for await (const { eventType, filename } of watcher) {
+      if (!filename) {
+        continue;
+      }
+      const shouldIgnore = ignoreFiles.some((ignoreFile) => ignoreFile.test(filename));
+      if (shouldIgnore) {
+        continue;
+      }
+      const publishFiles = await getNpmPacklist(
+        absoluteLinkPackagePath,
+        packageJson
+      );
+      if (!publishFiles.includes(filename)) {
+        continue;
+      }
+      console.log(`
+${dim(getPrettyTime())}`, "Detected", yellow(eventType), "in", `${cyan(cwdPath(path$2.join(absoluteLinkPackagePath, filename)))}
+`);
+      await throttledHardlinkPackage(
+        linkPath,
+        absoluteLinkPackagePath,
+        packageJson,
+        publishFiles
+      );
+    }
+  }
+};
+
+const publishCommand = G({
+  name: "publish",
+  parameters: ["<package paths...>"],
+  flags: {
+    watch: {
+      type: Boolean,
+      alias: "w",
+      description: "Watch for changes in the package and automatically relink"
+    }
+  },
+  help: {
+    description: "Link a package to simulate an environment similar to `npm install`"
+  }
+});
+const publishHandler = async (cwdProjectPath, packagePaths, flags) => {
+  if (packagePaths.length > 0) {
+    await Promise.all(
+      packagePaths.map(
+        (linkPackagePath) => linkPublishMode(
+          cwdProjectPath,
+          linkPackagePath,
+          flags.watch
+        )
+      )
+    );
+  }
+};
+
+(async () => {
+  const argv = Z({
+    name: "link",
+    parameters: ["[package paths...]"],
+    flags: {
+      deep: {
+        type: Boolean,
+        alias: "d",
+        description: "Run `npx link` on dependencies if they have a link.config.json"
+      }
+    },
+    help: {
+      description: "A better `npm link` -- symlink local dependencies to the current project",
+      render: (nodes, renderers) => {
+        nodes[0].data = "npx link\n";
+        nodes.splice(2, 0, {
+          type: "section",
+          data: {
+            title: "Website",
+            body: "https://www.npmjs.com/package/link"
+          }
+        });
+        return renderers.render(nodes);
+      }
+    },
+    commands: [
+      publishCommand
+    ]
+  });
+  const cwdProjectPath = await fs$1.realpath(process.cwd());
+  if (!argv.command) {
+    const { packagePaths } = argv._;
+    if (packagePaths.length > 0) {
+      await Promise.all(
+        packagePaths.map(
+          (linkPackagePath) => linkPackage(
+            cwdProjectPath,
+            linkPackagePath,
+            argv.flags
+          )
+        )
+      );
+      return;
+    }
+    const config = await loadConfig(cwdProjectPath);
+    if (!config) {
+      console.warn(
+        defaultOutdent`
 				Warning: Config file "link.config.json" not found in current directory.
 							Read the documentation to learn more: https://www.npmjs.com/package/link
-				`),t.showHelp();return}await Xt(e,D,{deep:t.flags.deep})}})().catch(t=>{console.error("Error:",t.message),process.exit(1)});
+				`
+      );
+      argv.showHelp();
+      return;
+    }
+    await linkFromConfig(
+      cwdProjectPath,
+      config,
+      {
+        deep: argv.flags.deep
+      }
+    );
+  } else if (argv.command === "publish") {
+    await publishHandler(
+      cwdProjectPath,
+      argv._,
+      argv.flags
+    );
+  }
+})().catch((error) => {
+  console.error("Error:", error.message);
+  process.exit(1);
+});
