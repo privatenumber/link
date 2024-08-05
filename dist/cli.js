@@ -665,19 +665,22 @@ const symlinkBinary = async (binaryPath, linkPath) => {
 };
 const hardlink = async (sourcePath, hardlinkPath) => {
   if (await fsExists(hardlinkPath)) {
-    const [
-      existingStat,
-      sourceStat
-    ] = await Promise.all([
-      fs$1.stat(hardlinkPath),
-      fs$1.stat(sourcePath)
-    ]);
-    if (existingStat.ino === sourceStat.ino) {
-      return;
+    try {
+      const [
+        existingStat,
+        sourceStat
+      ] = await Promise.all([
+        fs$1.stat(hardlinkPath),
+        fs$1.stat(sourcePath)
+      ]);
+      if (existingStat.ino === sourceStat.ino) {
+        return;
+      }
+      await fs$1.rm(hardlinkPath, {
+        recursive: true
+      });
+    } catch {
     }
-    await fs$1.rm(hardlinkPath, {
-      recursive: true
-    });
   }
   await fs$1.link(sourcePath, hardlinkPath);
 };
