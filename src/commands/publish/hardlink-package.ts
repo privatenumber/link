@@ -69,11 +69,12 @@ export const hardlinkPackage = async (
 		}),
 	);
 
+	// Delete files that are no longer in the new publish list
 	await Promise.all(
 		oldPublishFiles.map(async (file) => {
-			try {
-				await fs.rm(path.join(linkPath, file));
-			} catch {}
+			await fs.rm(path.join(linkPath, file), {
+				force: true,
+			});
 		}),
 	);
 };
