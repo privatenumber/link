@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
 import { fsExists } from './fs-exists';
+import { waitFor } from './wait-for';
 
 /**
  * Helper to create a symlink
@@ -63,5 +64,13 @@ export const hardlink = async (
 		} catch {}
 	}
 
-	await fs.link(sourcePath, hardlinkPath);
+	try {
+		await waitFor(
+			async () => await fsExists(sourcePath),
+			500,
+			15000,
+			`Trying to link source file that does not exist ${sourcePath}`,
+		)
+		await fs.link(sourcePath, hardlinkPath);
+	} catch {}
 };
