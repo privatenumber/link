@@ -1,7 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
+import debounce from 'debounce';
 import outdent from 'outdent';
-import throttle from 'throttleit';
 import globToRegexp from 'glob-to-regexp';
 import {
 	magenta, cyan, bold, dim, yellow,
@@ -62,8 +62,8 @@ export const linkPublishMode = async (
 		return;
 	}
 
-	const throttledHardlinkPackage = throttle(hardlinkPackage, 500);
-	await throttledHardlinkPackage(
+	const debouncedHardlinkPagage = debounce(hardlinkPackage, 500);
+	await debouncedHardlinkPagage(
 		linkPath,
 		absoluteLinkPackagePath,
 		packageJson,
@@ -118,7 +118,7 @@ export const linkPublishMode = async (
 			}
 
 			console.log(`\n${dim(getPrettyTime())}`, 'Detected', yellow(eventType), 'in', `${cyan(cwdPath(path.join(absoluteLinkPackagePath, filename)))}\n`);
-			await throttledHardlinkPackage(
+			await debouncedHardlinkPagage(
 				linkPath,
 				absoluteLinkPackagePath,
 				packageJson,
