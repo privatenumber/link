@@ -72,6 +72,7 @@ export const hardlinkPackage = async (
 	// Delete files that are no longer in the new publish list
 	await Promise.all(
 		oldPublishFiles.map(async (file) => {
+			console.log(cyan(`  🚮 ${file} no longer in publish list, deleting it...`));
 			await fs.rm(path.join(linkPath, file), {
 				force: true,
 			});
