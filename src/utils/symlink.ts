@@ -1,6 +1,5 @@
 import fs from 'fs/promises';
 import { fsExists } from './fs-exists';
-import { waitFor } from './wait-for';
 
 /**
  * Helper to create a symlink

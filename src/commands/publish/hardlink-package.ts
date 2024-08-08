@@ -7,6 +7,8 @@ import type { PackageJsonWithName } from '../../utils/read-package-json';
 import { hardlink } from '../../utils/symlink';
 import { getNpmPacklist } from '../../utils/get-npm-packlist';
 import { cwdPath } from '../../utils/cwd-path.js';
+import { fsExists } from '../../utils/fs-exists';
+import { waitFor } from '../../utils/wait-for';
 
 export const hardlinkPackage = async (
 	linkPath: string,
@@ -16,6 +18,8 @@ export const hardlinkPackage = async (
 		absoluteLinkPackagePath,
 		packageJson,
 	),
+	interval: number = 500,
+	maxBuildTime: number = 30000,
 ) => {
 	const [oldPublishFiles, publishFiles] = await Promise.all([
 		getNpmPacklist(
@@ -31,6 +35,17 @@ export const hardlinkPackage = async (
 	]);
 
 	console.log(`Linking ${magenta(packageJson.name)} in publish mode:`);
+
+	await Promise.all(publishFiles.map(async (file) => {
+		const sourcePath = path.join(absoluteLinkPackagePath, file);
+		await waitFor(
+			async () => await fsExists(sourcePath),
+			interval,
+			maxBuildTime,
+			'',
+		);
+	}));
+
 	await Promise.all(
 		publishFiles.map(async (file) => {
 			const sourcePath = path.join(absoluteLinkPackagePath, file);

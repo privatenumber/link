@@ -11,6 +11,9 @@ import { getNpmPacklist } from '../../utils/get-npm-packlist.js';
 import { cwdPath } from '../../utils/cwd-path.js';
 import { getPrettyTime } from '../../utils/get-pretty-time.js';
 import { hardlinkPackage } from './hardlink-package.js';
+import { waitFor } from '../../utils/wait-for';
+import { fsExists } from '../../utils/fs-exists';
+import { sleep } from '../../utils/sleep';
 
 const isValidSetup = async (
 	linkPath: string,
@@ -35,6 +38,10 @@ export const linkPublishMode = async (
 	basePackagePath: string,
 	linkPackagePath: string,
 	watchMode?: boolean,
+	litmus?: string,
+	delay: number = 2000,
+	interval: number = 500,
+	maxBuildTime: number = 30000,
 ) => {
 	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
 	const packageJson = await readPackageJson(absoluteLinkPackagePath);
@@ -62,8 +69,9 @@ export const linkPublishMode = async (
 		return;
 	}
 
-	const debouncedHardlinkPagage = debounce(hardlinkPackage, 500);
-	await debouncedHardlinkPagage(
+	const debouncedSleepForDelay = debounce(sleep, delay);
+	const debouncedHardlinkPackage = debounce(hardlinkPackage, delay);
+	await debouncedHardlinkPackage(
 		linkPath,
 		absoluteLinkPackagePath,
 		packageJson,
@@ -108,6 +116,19 @@ export const linkPublishMode = async (
 				continue;
 			}
 
+			// wait the specified amount of time before refreshing the packlist
+			await debouncedSleepForDelay(delay);
+
+			// If a litmus file is provided, wait for it to appear
+			if (litmus) {
+				await waitFor(
+					async () => fsExists(path.join(absoluteLinkPackagePath, litmus)),
+					interval,
+					maxBuildTime,
+					'',
+				);
+			}
+
 			const publishFiles = await getNpmPacklist(
 				absoluteLinkPackagePath,
 				packageJson,
@@ -118,7 +139,7 @@ export const linkPublishMode = async (
 			}
 
 			console.log(`\n${dim(getPrettyTime())}`, 'Detected', yellow(eventType), 'in', `${cyan(cwdPath(path.join(absoluteLinkPackagePath, filename)))}\n`);
-			await debouncedHardlinkPagage(
+			await debouncedHardlinkPackage(
 				linkPath,
 				absoluteLinkPackagePath,
 				packageJson,
