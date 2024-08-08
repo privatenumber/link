@@ -1,6 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import debounce from 'debounce';
+import pDebounce from 'p-debounce';
 import outdent from 'outdent';
 import globToRegexp from 'glob-to-regexp';
 import {
@@ -69,9 +70,9 @@ export const linkPublishMode = async (
 		return;
 	}
 
-	const debouncedSleepForDelay = debounce(sleep, delay);
+	const debouncedSleepForDelay = pDebounce(sleep, delay);
 	const debouncedHardlinkPackage = debounce(hardlinkPackage, delay);
-	await debouncedHardlinkPackage(
+	await hardlinkPackage(
 		linkPath,
 		absoluteLinkPackagePath,
 		packageJson,

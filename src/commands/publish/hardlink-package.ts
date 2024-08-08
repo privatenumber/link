@@ -87,7 +87,7 @@ export const hardlinkPackage = async (
 	// Delete files that are no longer in the new publish list
 	await Promise.all(
 		oldPublishFiles.map(async (file) => {
-			console.log(cyan(`  🚮 ${file} no longer in publish list, deleting it...`));
+			console.log(cyan(`  🚮 ${file} no longer in publish list, deleting it. If you did not intend to do this, something probably went wrong. See https://github.com/privatenumber/link?tab=readme-ov-file#publish-mode`));
 			await fs.rm(path.join(linkPath, file), {
 				force: true,
 			});
