@@ -46,31 +46,20 @@ export const hardlink = async (
 	hardlinkPath: string,
 ) => {
 	if (await fsExists(hardlinkPath)) {
-		try {
-			const [
-				existingStat,
-				sourceStat,
-			] = await Promise.all([
-				fs.stat(hardlinkPath),
-				fs.stat(sourcePath),
-			]);
-			if (existingStat.ino === sourceStat.ino) {
-				return;
-			}
+		const [
+			existingStat,
+			sourceStat,
+		] = await Promise.all([
+			fs.stat(hardlinkPath),
+			fs.stat(sourcePath),
+		]);
+		if (existingStat.ino === sourceStat.ino) {
+			return;
+		}
 
-			await fs.rm(hardlinkPath, {
-				recursive: true,
-			});
-		} catch {}
+		await fs.rm(hardlinkPath, {
+			recursive: true,
+		});
 	}
-
-	try {
-		await waitFor(
-			async () => await fsExists(sourcePath),
-			500,
-			15000,
-			`Trying to link source file that does not exist ${sourcePath}`,
-		)
-		await fs.link(sourcePath, hardlinkPath);
-	} catch {}
+	await fs.link(sourcePath, hardlinkPath);
 };
