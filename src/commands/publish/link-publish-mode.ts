@@ -1,9 +1,20 @@
-import path from 'path';
-import fs from 'fs/promises';
+import path from 'node:path';
+import fs from 'node:fs/promises';
+import debounce from 'debounce';
+import pDebounce from 'p-debounce';
 import outdent from 'outdent';
-import { magenta, bold, dim } from 'kolorist';
+import globToRegexp from 'glob-to-regexp';
+import {
+	magenta, cyan, bold, dim, yellow,
+} from 'kolorist';
 import { readPackageJson } from '../../utils/read-package-json.js';
+import { getNpmPacklist } from '../../utils/get-npm-packlist.js';
+import { cwdPath } from '../../utils/cwd-path.js';
+import { getPrettyTime } from '../../utils/get-pretty-time.js';
 import { hardlinkPackage } from './hardlink-package.js';
+import { waitFor } from '../../utils/wait-for';
+import { fsExists } from '../../utils/fs-exists';
+import { sleep } from '../../utils/sleep';
 
 const isValidSetup = async (
 	linkPath: string,
@@ -27,6 +38,11 @@ const isValidSetup = async (
 export const linkPublishMode = async (
 	basePackagePath: string,
 	linkPackagePath: string,
+	watchMode?: boolean,
+	litmus?: string,
+	delay: number = 2000,
+	interval: number = 500,
+	maxBuildTime: number = 30000,
 ) => {
 	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
 	const packageJson = await readPackageJson(absoluteLinkPackagePath);
@@ -54,20 +70,82 @@ export const linkPublishMode = async (
 		return;
 	}
 
-	/**
-	 * If it's a symlink, make sure it's in the node_modules directory of the base package.
-	 * e.g. This could happen with pnpm
-	 *
-	 * If it's not, it might be a development directory and we don't want to overwrite it.
-	 */
-	const linkPathReal = await fs.realpath(linkPath);
-	if (!linkPathReal.startsWith(expectedPrefix)) {
-		return;
-	}
-
+	const debouncedSleepForDelay = pDebounce(sleep, delay);
+	const debouncedHardlinkPackage = debounce(hardlinkPackage, delay);
 	await hardlinkPackage(
 		linkPath,
 		absoluteLinkPackagePath,
 		packageJson,
 	);
+
+	if (watchMode) {
+		const globOptions = {
+			globstar: true,
+			extended: true,
+		};
+
+		/**
+		 * npm-packlist ignore list:
+		 * https://github.com/npm/npm-packlist/blob/v8.0.2/lib/index.js#L15-L38
+		 */
+		const ignoreFiles = [
+			// Files
+			'**/{npm-debug.log,*.orig,package-lock.json,yarn.lock,pnpm-lock.yaml}',
+
+			// Folders
+			'**/node_modules/**',
+
+			// Hidden files
+			'**/.{_*,*.swp,DS_Store,gitignore,npmrc,npmignore,lock-wscript,.wafpickle-*}',
+
+			// Hidden folders
+			'**/.{_*,git,svn,hg,CVS}/**',
+		].map(glob => globToRegexp(glob, globOptions));
+
+		const watcher = fs.watch(
+			absoluteLinkPackagePath,
+			{ recursive: true },
+		);
+
+		for await (const { eventType, filename } of watcher) {
+			if (!filename) {
+				continue;
+			}
+
+			const shouldIgnore = ignoreFiles.some(ignoreFile => ignoreFile.test(filename));
+			if (shouldIgnore) {
+				continue;
+			}
+
+			// wait the specified amount of time before refreshing the packlist
+			await debouncedSleepForDelay(delay);
+
+			// If a litmus file is provided, wait for it to appear
+			if (litmus) {
+				await waitFor(
+					async () => fsExists(path.join(absoluteLinkPackagePath, litmus)),
+					interval,
+					maxBuildTime,
+					'',
+				);
+			}
+
+			const publishFiles = await getNpmPacklist(
+				absoluteLinkPackagePath,
+				packageJson,
+			);
+
+			if (!publishFiles.includes(filename)) {
+				continue;
+			}
+
+			console.log(`\n${dim(getPrettyTime())}`, 'Detected', yellow(eventType), 'in', `${cyan(cwdPath(path.join(absoluteLinkPackagePath, filename)))}\n`);
+			await debouncedHardlinkPackage(
+				linkPath,
+				absoluteLinkPackagePath,
+				packageJson,
+				publishFiles,
+			);
+		}
+	}
 };

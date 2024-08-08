@@ -60,6 +60,5 @@ export const hardlink = async (
 			recursive: true,
 		});
 	}
-
 	await fs.link(sourcePath, hardlinkPath);
 };
