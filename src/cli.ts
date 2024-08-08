@@ -3,7 +3,7 @@ import { cli } from 'cleye';
 import outdent from 'outdent';
 import { linkPackage, linkFromConfig } from './link-package';
 import { loadConfig } from './utils/load-config';
-import { publishCommand, publishHandler } from './commands/publish/index.js';
+import { publishCommand, publishHandler } from './commands/publish';
 
 (async () => {
 	const argv = cli({
