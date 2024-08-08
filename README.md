@@ -131,7 +131,28 @@ To automatically re-link a package in publish mode whenever a change is made, us
 npx link publish --watch <dependency-package-path>
 ```
 
-Hard links do not support directories, so files must be individually linked. Watch mode addresses this limitation by automatically linking new files added to the _Dependency package_ so they appear in the _Consuming package_.
+Hard links do not support directories, so files must be individually linked. _Watch mode_ addresses this limitation by automatically linking new files added to the _Dependency package_ so they appear in the _Consuming package_.
+
+##### Watch mode caveats
+
+A fundamental limitation of _watch mode_ is that it doesn't have a reliable way to know when the rebuild of your local _Dependency package_ is complete.
+
+The **recommended** way to address this limitation is using the `--litmus` flag. This flag specifies a filepath relative to the _Dependency package_ that `link` can check to see if a build is completed.
+For example, you might create an empty file in your local dependency called `.build_complete`, and augment it's build system to delete that file at the start of builds, and re-create it at the end of builds. Then pass `npx link --watch --litmus '.build_complete'`
+
+```
+"build:watch": "nodemon --watch src --ext .ts,.tsx,.css --exec \"rm -f .build_complete && yarn prepare && yarn pack && touch .build_complete\"",
+```
+
+If for some reason you can't do that, you'll have to fall back on some heuristics:
+
+| Flag                    | Description                                                                                                                  | Default |
+|-------------------------|------------------------------------------------------------------------------------------------------------------------------|---------|
+| `--delay` or `-d`       | The amount of time (in ms) after a change is observed to refresh the packlist for your _Dependency package_                   | 2000    |
+| `--interval` or `-i`    | The amount of time (in ms) to poll the _Dependency package_ to see if all expected files are present (i.e: build is complete) | 500 |
+| `--maxBuildTime` or `-m` | The maximum amount of time (in ms) to poll the _Dependency package_ to see if all expected files are present (i.e: build is complete) | 30000 |
+
+Note that there is an edge case with _watch mode_ that may not work as expected if you don't use the `--litmus` flag; if you intentionally delete a file in the _Dependency package_, you may have to wait `--maxBuildTime` before the links are refreshed. 
 
 ### Configuration file
 
