@@ -7,9 +7,9 @@ const edgesOut = new Map();
 export const getNpmPacklist = (
 	absoluteLinkPackagePath: string,
 	packageJson: PackageJson,
+	// @ts-expect-error npm-packlist types expect full Node, but minimal tree object works
 ) => packlist({
 	path: absoluteLinkPackagePath,
 	package: packageJson,
-	// @ts-expect-error outdated types
 	edgesOut,
 });

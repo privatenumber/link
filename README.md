@@ -132,8 +132,8 @@ Example _link.config.json_:
 {
     "packages": [
         "/path/to/dependency-path-a",
-        "../dependency-path-b"
-    ]
+        "../dependency-path-b",
+    ],
 }
 ```
 

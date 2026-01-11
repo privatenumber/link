@@ -1,8 +1,8 @@
 import fs from 'fs/promises';
 import { cli } from 'cleye';
 import outdent from 'outdent';
-import { linkPackage, linkFromConfig } from './link-package';
-import { loadConfig } from './utils/load-config';
+import { linkPackage, linkFromConfig } from './link-package/index.js';
+import { loadConfig } from './utils/load-config.js';
 import { publishCommand, publishHandler } from './commands/publish/index.js';
 
 (async () => {

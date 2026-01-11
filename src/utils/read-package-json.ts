@@ -1,7 +1,7 @@
 import path from 'path';
 import type { PackageJson } from '@npmcli/package-json';
-import { fsExists } from './fs-exists';
-import { readJsonFile } from './read-json-file';
+import { fsExists } from './fs-exists.js';
+import { readJsonFile } from './read-json-file.js';
 
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 
