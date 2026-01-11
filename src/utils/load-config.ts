@@ -13,7 +13,7 @@ export const loadConfig = async (
 	const configJsonPath = path.join(packageDirectory, configJsonFile);
 	if (await fsExists(configJsonPath)) {
 		try {
-			return readJsonFile(configJsonPath) as LinkConfig;
+			return await readJsonFile(configJsonPath) as LinkConfig;
 		} catch (error) {
 			throw new Error(`Failed to parse config JSON ${configJsonPath}: ${(error as Error).message}`);
 		}

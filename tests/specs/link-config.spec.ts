@@ -39,8 +39,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			});
 
 			expect(result.exitCode).toBe(1);
-			// JSON parse error surfaces to CLI
-			expect(result.stderr).toMatch('JSON');
+			expect(result.stderr).toMatch('Failed to parse config JSON');
 		});
 
 		test('handles empty packages array', async () => {
