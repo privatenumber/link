@@ -18,9 +18,9 @@
 		"dist"
 	],
 	"bin": "dist/cli.js",
-	"packageManager": "pnpm@9.4.0",
+	"packageManager": "pnpm@10.14.0",
 	"scripts": {
-		"build": "pkgroll --minify",
+		"build": "pkgroll --minify --clean-dist",
 		"test": "tsx tests/index.ts",
 		"dev": "tsx watch tests/index.ts",
 		"lint": "lintroll --cache --ignore-pattern=tests/fixtures .",
