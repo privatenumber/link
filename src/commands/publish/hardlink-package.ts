@@ -57,7 +57,8 @@ export const hardlinkPackage = async (
 	await Promise.all(
 		oldPublishFiles.map(async (file) => {
 			const cleanPath = path.join(linkPath, file);
-			await fs.rm(cleanPath);
+			// Ignore errors - file may already be deleted or inaccessible
+			await fs.rm(cleanPath).catch(() => {});
 		}),
 	);
 };
