@@ -329,5 +329,84 @@ export default testSuite(({ describe }, nodePath: string) => {
 				expect(binSymlink.isSymbolicLink()).toBe(true);
 			}
 		});
+
+		test('links package without bin field', async () => {
+			await using fixture = await createFixture({
+				'package-entry': {
+					'package.json': JSON.stringify({ name: 'package-entry' }),
+				},
+				'package-no-bin': {
+					'package.json': JSON.stringify({
+						name: 'package-no-bin',
+						version: '1.0.0',
+					}),
+					'index.js': 'module.exports = "no-bin"',
+				},
+			});
+
+			const entryPackagePath = path.join(fixture.path, 'package-entry');
+
+			const linkProcess = await link(['../package-no-bin'], {
+				cwd: entryPackagePath,
+				nodePath,
+			});
+
+			expect(linkProcess.exitCode).toBe(0);
+			expect(linkProcess.stdout).toMatch('✔ Symlinked package-no-bin');
+
+			// Package should be linked
+			const packageSymlink = await fs.lstat(
+				path.join(entryPackagePath, 'node_modules/package-no-bin'),
+			);
+			expect(packageSymlink.isSymbolicLink()).toBe(true);
+
+			// .bin directory should not exist (no binaries to link)
+			const binDirExists = await fs.access(
+				path.join(entryPackagePath, 'node_modules/.bin'),
+			).then(() => true, () => false);
+			expect(binDirExists).toBe(false);
+		});
+
+		test('accepts both absolute and relative paths', async () => {
+			await using fixture = await createFixture({
+				'package-entry': {
+					'package.json': JSON.stringify({ name: 'package-entry' }),
+				},
+				'package-a': {
+					'package.json': JSON.stringify({ name: 'package-a' }),
+					'index.js': 'module.exports = "a"',
+				},
+				'package-b': {
+					'package.json': JSON.stringify({ name: 'package-b' }),
+					'index.js': 'module.exports = "b"',
+				},
+			});
+
+			const entryPackagePath = path.join(fixture.path, 'package-entry');
+
+			// Mix relative and absolute paths
+			const linkProcess = await link([
+				'../package-a',
+				path.join(fixture.path, 'package-b'),
+			], {
+				cwd: entryPackagePath,
+				nodePath,
+			});
+
+			expect(linkProcess.exitCode).toBe(0);
+			expect(linkProcess.stdout).toMatch('✔ Symlinked package-a');
+			expect(linkProcess.stdout).toMatch('✔ Symlinked package-b');
+
+			// Both packages should be linked
+			const packageASymlink = await fs.lstat(
+				path.join(entryPackagePath, 'node_modules/package-a'),
+			);
+			expect(packageASymlink.isSymbolicLink()).toBe(true);
+
+			const packageBSymlink = await fs.lstat(
+				path.join(entryPackagePath, 'node_modules/package-b'),
+			);
+			expect(packageBSymlink.isSymbolicLink()).toBe(true);
+		});
 	});
 });

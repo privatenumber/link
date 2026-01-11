@@ -6,6 +6,62 @@ import { link } from '../utils/link.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('link.config.json', ({ test, describe }) => {
+		test('shows warning when no config file exists', async () => {
+			await using fixture = await createFixture({
+				'package-entry': {
+					'package.json': JSON.stringify({ name: 'package-entry' }),
+				},
+			});
+
+			const entryPackagePath = path.join(fixture.path, 'package-entry');
+
+			const result = await link([], {
+				cwd: entryPackagePath,
+				nodePath,
+			});
+
+			expect(result.stderr).toMatch('Warning: Config file "link.config.json" not found');
+		});
+
+		test('fails with parse error for invalid JSON', async () => {
+			await using fixture = await createFixture({
+				'package-entry': {
+					'package.json': JSON.stringify({ name: 'package-entry' }),
+					'link.config.json': '{ invalid json }',
+				},
+			});
+
+			const entryPackagePath = path.join(fixture.path, 'package-entry');
+
+			const result = await link([], {
+				cwd: entryPackagePath,
+				nodePath,
+			});
+
+			expect(result.exitCode).toBe(1);
+			// JSON parse error surfaces to CLI
+			expect(result.stderr).toMatch('JSON');
+		});
+
+		test('handles empty packages array', async () => {
+			await using fixture = await createFixture({
+				'package-entry': {
+					'package.json': JSON.stringify({ name: 'package-entry' }),
+					'link.config.json': JSON.stringify({ packages: [] }),
+				},
+			});
+
+			const entryPackagePath = path.join(fixture.path, 'package-entry');
+
+			const result = await link([], {
+				cwd: entryPackagePath,
+				nodePath,
+			});
+
+			// Should succeed with no packages to link
+			expect(result.exitCode).toBe(0);
+		});
+
 		test('symlink', async () => {
 			await using fixture = await createFixture('./tests/fixtures/');
 			const entryPackagePath = path.join(fixture.path, 'package-entry');

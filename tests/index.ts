@@ -19,6 +19,8 @@ const nodeVersions = [
 			runTestSuite(import('./specs/cli.spec'), node.path);
 			runTestSuite(import('./specs/link-config.spec'), node.path);
 			runTestSuite(import('./specs/publish.spec'), node.path);
+			runTestSuite(import('./specs/symlink.spec'), node.path);
+			runTestSuite(import('./specs/utils.spec'), node.path);
 		});
 	}
 })();
