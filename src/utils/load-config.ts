@@ -1,7 +1,8 @@
 import path from 'path';
-import type { LinkConfig } from '../types';
-import { fsExists } from './fs-exists';
-import { readJsonFile } from './read-json-file';
+import { createRequire } from 'module';
+import type { LinkConfig } from '../types.js';
+import { fsExists } from './fs-exists.js';
+import { readJsonFile } from './read-json-file.js';
 
 const configJsonFile = 'link.config.json';
 const configJsFile = 'link.config.js';
@@ -21,7 +22,8 @@ export const loadConfig = async (
 	const configJsPath = path.join(packageDirectory, configJsFile);
 	if (await fsExists(configJsPath)) {
 		try {
-			// eslint-disable-next-line @typescript-eslint/no-var-requires,import-x/no-dynamic-require
+			const require = createRequire(import.meta.url);
+			// eslint-disable-next-line import-x/no-dynamic-require
 			return require(configJsPath) as LinkConfig;
 		} catch (error) {
 			throw new Error(`Failed to load config file ${configJsFile}: ${(error as Error).message}`);
