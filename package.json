@@ -35,7 +35,7 @@
 		"clean-pkg-json": "^1.3.0",
 		"cleye": "^2.2.1",
 		"cmd-shim": "^8.0.0",
-		"execa": "^8.0.1",
+		"execa": "^9.6.1",
 		"fs-fixture": "^2.11.0",
 		"get-node": "^14.2.1",
 		"kolorist": "^1.8.0",
