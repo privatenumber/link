@@ -37,7 +37,17 @@ export const symlinkBinary = async (
 	linkPath: string,
 ) => {
 	await symlink(binaryPath, linkPath);
-	await fs.chmod(linkPath, 0o755);
+
+	// chmod follows symlinks and applies to the target, not the symlink
+	// If target doesn't exist, warn and continue - linking should still succeed
+	await fs.chmod(linkPath, 0o755).catch((error) => {
+		if (error.code === 'ENOENT') {
+			console.warn(`Warning: Binary target does not exist: ${binaryPath}`);
+			console.warn('When built, ensure it has executable permissions (chmod +x)');
+			return;
+		}
+		throw error;
+	});
 };
 
 export const hardlink = async (
