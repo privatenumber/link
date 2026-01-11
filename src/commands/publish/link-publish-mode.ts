@@ -1,8 +1,14 @@
 import path from 'path';
 import fs from 'fs/promises';
+import debounce from 'debounce';
+import globToRegexp from 'glob-to-regexp';
 import outdent from 'outdent';
-import { magenta, bold, dim } from 'kolorist';
+import {
+	magenta, bold, dim, cyan, yellow,
+} from 'kolorist';
 import { readPackageJson } from '../../utils/read-package-json.js';
+import { getNpmPacklist } from '../../utils/get-npm-packlist.js';
+import { cwdPath } from '../../utils/cwd-path.js';
 import { hardlinkPackage } from './hardlink-package.js';
 
 const isValidSetup = async (
@@ -24,9 +30,33 @@ const isValidSetup = async (
 	return linkPathReal.startsWith(expectedPrefix);
 };
 
+const getTimestamp = () => {
+	const now = new Date();
+	return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+};
+
+/**
+ * npm-packlist ignore patterns
+ * https://github.com/npm/npm-packlist/blob/v8.0.2/lib/index.js#L15-L38
+ */
+const ignorePatterns = [
+	'**/{npm-debug.log,*.orig,package-lock.json,yarn.lock,pnpm-lock.yaml}',
+	'**/node_modules/**',
+	'**/.{_*,*.swp,DS_Store,gitignore,npmrc,npmignore,lock-wscript,.wafpickle-*}',
+	'**/.{_*,git,svn,hg,CVS}/**',
+].map(glob => globToRegexp(glob, {
+	globstar: true,
+	extended: true,
+}));
+
+const shouldIgnoreFile = (filename: string) => ignorePatterns.some(
+	pattern => pattern.test(filename),
+);
+
 export const linkPublishMode = async (
 	basePackagePath: string,
 	linkPackagePath: string,
+	watch?: boolean,
 ) => {
 	const absoluteLinkPackagePath = path.resolve(basePackagePath, linkPackagePath);
 	const packageJson = await readPackageJson(absoluteLinkPackagePath);
@@ -59,4 +89,51 @@ export const linkPublishMode = async (
 		absoluteLinkPackagePath,
 		packageJson,
 	);
+
+	if (!watch) {
+		return;
+	}
+
+	const debouncedHardlinkPackage = debounce(hardlinkPackage, 500);
+
+	console.log(dim('\nWatching for changes... (press Enter to manually relink)\n'));
+
+	// Listen for Enter key to manually retrigger
+	process.stdin.setRawMode?.(true);
+	process.stdin.resume();
+	process.stdin.on('data', async (data) => {
+		// Enter key or 'r' key
+		if (data[0] === 13 || data[0] === 114) {
+			console.log(`\n${dim(getTimestamp())} Manual relink triggered\n`);
+			await debouncedHardlinkPackage(linkPath, absoluteLinkPackagePath, packageJson);
+		}
+		// Ctrl+C
+		if (data[0] === 3) {
+			process.exit(0);
+		}
+	});
+
+	const watcher = fs.watch(absoluteLinkPackagePath, { recursive: true });
+
+	for await (const { eventType, filename } of watcher) {
+		if (!filename || shouldIgnoreFile(filename)) {
+			continue;
+		}
+
+		const publishFiles = await getNpmPacklist(absoluteLinkPackagePath, packageJson);
+		if (!publishFiles.includes(filename)) {
+			continue;
+		}
+
+		console.log(
+			`\n${dim(getTimestamp())}`,
+			'Detected',
+			yellow(eventType),
+			'in',
+			cyan(cwdPath(path.join(absoluteLinkPackagePath, filename))),
+			'\n',
+		);
+
+		await debouncedHardlinkPackage(linkPath, absoluteLinkPackagePath, packageJson);
+	}
 };

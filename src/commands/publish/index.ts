@@ -5,11 +5,11 @@ export const publishCommand = command({
 	name: 'publish',
 	parameters: ['<package paths...>'],
 	flags: {
-		// watch: {
-		// 	type: Boolean,
-		// 	alias: 'w',
-		// 	description: 'Watch for changes in the package and automatically relink',
-		// },
+		watch: {
+			type: Boolean,
+			alias: 'w',
+			description: 'Watch for changes in the package and automatically relink',
+		},
 	},
 	help: {
 		description: 'Link a package to simulate an environment similar to `npm install`',
@@ -19,6 +19,7 @@ export const publishCommand = command({
 export const publishHandler = async (
 	cwdProjectPath: string,
 	packagePaths: string[],
+	flags: { watch?: boolean },
 ) => {
 	if (packagePaths.length > 0) {
 		await Promise.all(
@@ -26,6 +27,7 @@ export const publishHandler = async (
 				linkPackagePath => linkPublishMode(
 					cwdProjectPath,
 					linkPackagePath,
+					flags.watch,
 				),
 			),
 		);

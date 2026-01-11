@@ -27,8 +27,13 @@
 		"type-check": "tsc",
 		"prepack": "pnpm build && clean-pkg-json"
 	},
+	"dependencies": {
+		"debounce": "^3.0.0",
+		"glob-to-regexp": "^0.4.1"
+	},
 	"devDependencies": {
 		"@types/cmd-shim": "^5.0.2",
+		"@types/glob-to-regexp": "^0.4.4",
 		"@types/node": "^25.0.6",
 		"@types/npm-packlist": "^7.0.3",
 		"@types/npmcli__package-json": "^4.0.4",

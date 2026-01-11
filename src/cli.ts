@@ -77,7 +77,7 @@ import { publishCommand, publishHandler } from './commands/publish/index.js';
 			},
 		);
 	} else if (argv.command === 'publish') {
-		await publishHandler(cwdProjectPath, argv._);
+		await publishHandler(cwdProjectPath, argv._, argv.flags);
 	}
 })().catch((error) => {
 	console.error('Error:', error.message);
