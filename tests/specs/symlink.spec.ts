@@ -42,13 +42,7 @@ export default testSuite(({ describe }, _nodePath: string) => {
 				expect(linkTarget).toBe('target-b.txt');
 			});
 
-			test('skips when symlink already points to same target', async ({ skip }) => {
-				// On Windows, realpath returns different format than input path,
-				// so the optimization doesn't work and symlink gets recreated
-				if (process.platform === 'win32') {
-					skip('Path comparison differs on Windows');
-				}
-
+			test('skips when symlink already points to same target', async () => {
 				await using fixture = await createFixture({
 					'target.txt': 'content',
 				});
