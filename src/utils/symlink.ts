@@ -1,3 +1,4 @@
+import path from 'path';
 import fs from 'fs/promises';
 import { fsExists } from './fs-exists';
 
@@ -13,10 +14,26 @@ export const symlink = async (
 	const stats = await fs.lstat(symlinkPath).catch(() => null);
 	if (stats) {
 		if (stats.isSymbolicLink()) {
-			const symlinkRealpath = await fs.realpath(symlinkPath).catch(() => null);
+			const currentRealpath = await fs.realpath(symlinkPath).catch(() => null);
 
-			if (targetPath === symlinkRealpath) {
-				return;
+			if (currentRealpath) {
+				// Resolve targetPath to absolute if relative (relative to symlink's directory)
+				const absoluteTargetPath = path.isAbsolute(targetPath)
+					? targetPath
+					: path.resolve(path.dirname(symlinkPath), targetPath);
+
+				// Get realpath of target for consistent comparison (handles Windows path quirks)
+				const targetRealpath = await fs.realpath(absoluteTargetPath).catch(() => null);
+
+				if (targetRealpath) {
+					// Compare realpaths (case-insensitive on Windows)
+					const isSame = process.platform === 'win32'
+						? currentRealpath.toLowerCase() === targetRealpath.toLowerCase()
+						: currentRealpath === targetRealpath;
+					if (isSame) {
+						return;
+					}
+				}
 			}
 		}
 
