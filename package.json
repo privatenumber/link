@@ -37,7 +37,7 @@
 		"cmd-shim": "^8.0.0",
 		"execa": "^8.0.1",
 		"fs-fixture": "^2.11.0",
-		"get-node": "^14.2.1",
+		"get-node": "^15.0.4",
 		"kolorist": "^1.8.0",
 		"lintroll": "^1.27.1",
 		"manten": "^1.10.0",
