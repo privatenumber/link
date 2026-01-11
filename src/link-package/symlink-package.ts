@@ -7,6 +7,22 @@ import { linkBinaries } from './link-binaries.js';
 
 const nodeModulesDirectory = 'node_modules';
 
+const cmdShimIfExists = async (
+	binaryPath: string,
+	linkPath: string,
+) => {
+	try {
+		await cmdShim(binaryPath, linkPath);
+	} catch (error) {
+		if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+			console.warn(`Warning: Binary target does not exist: ${binaryPath}`);
+			console.warn('When built, ensure it has executable permissions (chmod +x)');
+			return;
+		}
+		throw error;
+	}
+};
+
 export const symlinkPackage = async (
 	basePackagePath: string,
 	linkPackagePath: string,
@@ -41,7 +57,7 @@ export const symlinkPackage = async (
 		absoluteLinkPackagePath,
 		nodeModulesPath,
 		packageJson,
-		(process.platform === 'win32') ? cmdShim : symlinkBinary,
+		(process.platform === 'win32') ? cmdShimIfExists : symlinkBinary,
 	);
 
 	return {

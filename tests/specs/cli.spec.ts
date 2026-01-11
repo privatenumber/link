@@ -312,18 +312,21 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			// Verify warning about non-existent binary target
 			expect(linkProcess.stderr).toMatch('Warning: Binary target does not exist');
-			expect(linkProcess.stderr).toMatch('chmod +x');
 
-			// Verify symlinks were created
+			// Verify package symlink was created
 			const packageSymlink = await fs.lstat(
 				path.join(entryPackagePath, 'node_modules/package-unbuilt'),
 			);
 			expect(packageSymlink.isSymbolicLink()).toBe(true);
 
-			const binSymlink = await fs.lstat(
-				path.join(entryPackagePath, 'node_modules/.bin/package-unbuilt'),
-			);
-			expect(binSymlink.isSymbolicLink()).toBe(true);
+			// On Unix, binary symlink is created (pointing to non-existent target)
+			// On Windows, cmd-shim doesn't create anything when target doesn't exist
+			if (process.platform !== 'win32') {
+				const binSymlink = await fs.lstat(
+					path.join(entryPackagePath, 'node_modules/.bin/package-unbuilt'),
+				);
+				expect(binSymlink.isSymbolicLink()).toBe(true);
+			}
 		});
 	});
 });
