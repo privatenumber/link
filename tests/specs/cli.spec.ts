@@ -285,5 +285,49 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			expect(linkBinary.exitCode).toBe(0);
 		});
+
+		test('links package with binary pointing to non-existent file', async () => {
+			await using fixture = await createFixture({
+				'package-entry': {
+					'package.json': JSON.stringify({ name: 'package-entry' }),
+				},
+				'package-unbuilt': {
+					'package.json': JSON.stringify({
+						name: 'package-unbuilt',
+						bin: './dist/cli.js',
+					}),
+					// Note: dist/cli.js intentionally does not exist
+				},
+			});
+
+			const entryPackagePath = path.join(fixture.path, 'package-entry');
+
+			const linkProcess = await link(['../package-unbuilt'], {
+				cwd: entryPackagePath,
+				nodePath,
+			});
+
+			// On Unix, symlinks can point to non-existent targets, so linking succeeds with a warning
+			// On Windows, cmd-shim requires the target to exist, so linking fails with an error
+			if (process.platform === 'win32') {
+				expect(linkProcess.exitCode).toBe(1);
+				expect(linkProcess.stderr).toMatch('Binary target does not exist');
+			} else {
+				expect(linkProcess.exitCode).toBe(0);
+				expect(linkProcess.stdout).toMatch('✔ Symlinked package-unbuilt');
+				expect(linkProcess.stderr).toMatch('Warning: Binary target does not exist');
+
+				// Verify symlinks were created
+				const packageSymlink = await fs.lstat(
+					path.join(entryPackagePath, 'node_modules/package-unbuilt'),
+				);
+				expect(packageSymlink.isSymbolicLink()).toBe(true);
+
+				const binSymlink = await fs.lstat(
+					path.join(entryPackagePath, 'node_modules/.bin/package-unbuilt'),
+				);
+				expect(binSymlink.isSymbolicLink()).toBe(true);
+			}
+		});
 	});
 });
