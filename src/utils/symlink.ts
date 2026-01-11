@@ -14,23 +14,25 @@ export const symlink = async (
 	const stats = await fs.lstat(symlinkPath).catch(() => null);
 	if (stats) {
 		if (stats.isSymbolicLink()) {
-			const symlinkRealpath = await fs.realpath(symlinkPath).catch(() => null);
+			const currentRealpath = await fs.realpath(symlinkPath).catch(() => null);
 
-			if (symlinkRealpath) {
+			if (currentRealpath) {
 				// Resolve targetPath to absolute if relative (relative to symlink's directory)
 				const absoluteTargetPath = path.isAbsolute(targetPath)
 					? targetPath
 					: path.resolve(path.dirname(symlinkPath), targetPath);
 
-				// Normalize for cross-platform comparison (case-insensitive on Windows)
-				let normalizedTarget = path.normalize(absoluteTargetPath);
-				let normalizedRealpath = path.normalize(symlinkRealpath);
-				if (process.platform === 'win32') {
-					normalizedTarget = normalizedTarget.toLowerCase();
-					normalizedRealpath = normalizedRealpath.toLowerCase();
-				}
-				if (normalizedTarget === normalizedRealpath) {
-					return;
+				// Get realpath of target for consistent comparison (handles Windows path quirks)
+				const targetRealpath = await fs.realpath(absoluteTargetPath).catch(() => null);
+
+				if (targetRealpath) {
+					// Compare realpaths (case-insensitive on Windows)
+					const isSame = process.platform === 'win32'
+						? currentRealpath.toLowerCase() === targetRealpath.toLowerCase()
+						: currentRealpath === targetRealpath;
+					if (isSame) {
+						return;
+					}
 				}
 			}
 		}
