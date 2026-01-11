@@ -286,9 +286,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(linkBinary.exitCode).toBe(0);
 		});
 
-		// On Unix, symlinks can point to non-existent targets, so linking succeeds with a warning
-		// On Windows, cmd-shim requires the target to exist, so this test is skipped
-		(process.platform === 'win32' ? test.skip : test)('links package with binary pointing to non-existent file', async () => {
+		test('links package with binary pointing to non-existent file', async () => {
 			await using fixture = await createFixture({
 				'package-entry': {
 					'package.json': JSON.stringify({ name: 'package-entry' }),
@@ -309,22 +307,27 @@ export default testSuite(({ describe }, nodePath: string) => {
 				nodePath,
 			});
 
-			expect(linkProcess.exitCode).toBe(0);
-			expect(linkProcess.stdout).toMatch('✔ Symlinked package-unbuilt');
+			// On Unix, symlinks can point to non-existent targets, so linking succeeds with a warning
+			// On Windows, cmd-shim requires the target to exist, so linking fails with an error
+			if (process.platform === 'win32') {
+				expect(linkProcess.exitCode).toBe(1);
+				expect(linkProcess.stderr).toMatch('Binary target does not exist');
+			} else {
+				expect(linkProcess.exitCode).toBe(0);
+				expect(linkProcess.stdout).toMatch('✔ Symlinked package-unbuilt');
+				expect(linkProcess.stderr).toMatch('Warning: Binary target does not exist');
 
-			// Verify warning about non-existent binary target
-			expect(linkProcess.stderr).toMatch('Warning: Binary target does not exist');
+				// Verify symlinks were created
+				const packageSymlink = await fs.lstat(
+					path.join(entryPackagePath, 'node_modules/package-unbuilt'),
+				);
+				expect(packageSymlink.isSymbolicLink()).toBe(true);
 
-			// Verify symlinks were created
-			const packageSymlink = await fs.lstat(
-				path.join(entryPackagePath, 'node_modules/package-unbuilt'),
-			);
-			expect(packageSymlink.isSymbolicLink()).toBe(true);
-
-			const binSymlink = await fs.lstat(
-				path.join(entryPackagePath, 'node_modules/.bin/package-unbuilt'),
-			);
-			expect(binSymlink.isSymbolicLink()).toBe(true);
+				const binSymlink = await fs.lstat(
+					path.join(entryPackagePath, 'node_modules/.bin/package-unbuilt'),
+				);
+				expect(binSymlink.isSymbolicLink()).toBe(true);
+			}
 		});
 	});
 });
