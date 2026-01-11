@@ -22,8 +22,14 @@ export const symlink = async (
 					? targetPath
 					: path.resolve(path.dirname(symlinkPath), targetPath);
 
-				// Normalize for cross-platform comparison
-				if (path.normalize(absoluteTargetPath) === path.normalize(symlinkRealpath)) {
+				// Normalize for cross-platform comparison (case-insensitive on Windows)
+				let normalizedTarget = path.normalize(absoluteTargetPath);
+				let normalizedRealpath = path.normalize(symlinkRealpath);
+				if (process.platform === 'win32') {
+					normalizedTarget = normalizedTarget.toLowerCase();
+					normalizedRealpath = normalizedRealpath.toLowerCase();
+				}
+				if (normalizedTarget === normalizedRealpath) {
 					return;
 				}
 			}
