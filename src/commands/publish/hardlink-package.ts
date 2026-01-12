@@ -35,23 +35,25 @@ export const hardlinkPackage = async (
 			const sourcePath = path.join(absoluteLinkPackagePath, file);
 			const targetPath = path.join(linkPath, file);
 
-			// Skip missing files (can happen during build when files are being regenerated)
-			const sourceExists = await fs.access(sourcePath).then(() => true, () => false);
-			if (!sourceExists) {
-				console.log(
-					`  ${yellow('⚠')}`,
-					cyan(cwdPath(sourcePath)),
-					yellow('(missing)'),
-				);
-				return;
-			}
-
 			await fs.mkdir(
 				path.dirname(targetPath),
 				{ recursive: true },
 			);
 
-			await hardlink(sourcePath, targetPath);
+			try {
+				await hardlink(sourcePath, targetPath);
+			} catch (error) {
+				// Skip missing files (can happen during build when files are being regenerated)
+				if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+					console.log(
+						`  ${yellow('⚠')}`,
+						cyan(cwdPath(sourcePath)),
+						yellow('(missing)'),
+					);
+					return;
+				}
+				throw error;
+			}
 
 			const fileIndex = oldPublishFiles.indexOf(file);
 			if (fileIndex !== -1) {

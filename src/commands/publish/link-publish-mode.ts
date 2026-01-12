@@ -139,6 +139,15 @@ export const linkPublishModeWatch = async (
 		publishFiles = new Set(files);
 	};
 
+	// Track if we've already warned about packlist refresh failures
+	let packlistRefreshErrorLogged = false;
+	const logPacklistRefreshError = (error: unknown) => {
+		if (!packlistRefreshErrorLogged) {
+			packlistRefreshErrorLogged = true;
+			console.warn(gray(`Packlist refresh failed; watch may miss newly publishable files: ${error}`));
+		}
+	};
+
 	// Queue unknown files and batch-process them to avoid repeated packlist refreshes
 	const pendingUnknownFiles = new Set<string>();
 	const processPendingFiles = debounce(() => {
@@ -152,7 +161,7 @@ export const linkPublishModeWatch = async (
 					debouncedRelink();
 				}
 			})
-			.catch(() => {});
+			.catch(logPacklistRefreshError);
 	}, 100);
 
 	const handleFileChange = (normalizedFilename: string) => {
@@ -160,7 +169,7 @@ export const linkPublishModeWatch = async (
 		if (packlistConfigFiles.has(normalizedFilename)) {
 			refreshPacklist()
 				.then(() => debouncedRelink())
-				.catch(() => {});
+				.catch(logPacklistRefreshError);
 			return;
 		}
 
@@ -180,10 +189,16 @@ export const linkPublishModeWatch = async (
 		processPendingFiles();
 	};
 
+	// Throttle null filename warnings to avoid spam on platforms with noisy watchers
+	let nullFilenameWarned = false;
+
 	const watcher = watch(absoluteLinkPackagePath, { recursive: true }, (_eventType, filename) => {
 		// Null filename can occur on some platforms - trigger a full relink to be safe
 		if (!filename) {
-			console.warn(gray('Received watch event with no filename, triggering relink'));
+			if (!nullFilenameWarned) {
+				nullFilenameWarned = true;
+				console.warn(gray('Received watch event with no filename, triggering relink'));
+			}
 			debouncedRelink();
 			return;
 		}
