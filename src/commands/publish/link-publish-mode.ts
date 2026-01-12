@@ -99,12 +99,28 @@ export const linkPublishModeWatch = async (
 	// Cache the list of files that would be published
 	let publishFiles = new Set(await getNpmPacklist(absoluteLinkPackagePath, packageJson));
 
+	// In-flight guard to prevent overlapping relinks
+	let relinkInProgress = false;
+	let relinkQueued = false;
+
 	const relink = async () => {
+		if (relinkInProgress) {
+			relinkQueued = true;
+			return;
+		}
+
+		relinkInProgress = true;
 		console.log(gray(`\n[${new Date().toLocaleTimeString()}] Relinking ${magenta(packageJson.name)}...`));
 		try {
 			await hardlinkPackage(linkPath, absoluteLinkPackagePath, packageJson);
 		} catch (error) {
 			console.error(red(`Failed to relink ${packageJson.name}:`), error);
+		} finally {
+			relinkInProgress = false;
+			if (relinkQueued) {
+				relinkQueued = false;
+				relink().catch(() => {});
+			}
 		}
 	};
 

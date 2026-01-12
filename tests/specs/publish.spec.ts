@@ -251,12 +251,16 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 				// Verify initial hardlink
 				const linkedPath = path.join(consumingPath, 'node_modules/dep-package/index.js');
-				const originalStat = await fs.stat(path.join(depPath, 'index.js'));
+				const sourcePath = path.join(depPath, 'index.js');
+				const originalStat = await fs.stat(sourcePath);
 				const linkedStat = await fs.stat(linkedPath);
 				expect(linkedStat.ino).toBe(originalStat.ino);
 
-				// Modify the source file (this breaks the hardlink)
-				await fs.writeFile(path.join(depPath, 'index.js'), 'module.exports = "modified"');
+				// Simulate atomic file replacement (write tmp + rename)
+				// This is how build tools work and breaks the hardlink (new inode)
+				const temporaryPath = path.join(depPath, 'index.js.tmp');
+				await fs.writeFile(temporaryPath, 'module.exports = "modified"');
+				await fs.rename(temporaryPath, sourcePath);
 
 				// Poll for the file to be updated (more reliable than fixed delay)
 				const updated = await waitForFileContent(
@@ -266,8 +270,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 				);
 				expect(updated).toBe(true);
 
-				// Verify new hardlink was created
-				const newOriginalStat = await fs.stat(path.join(depPath, 'index.js'));
+				// Verify new hardlink was created (inodes should match again after relink)
+				const newOriginalStat = await fs.stat(sourcePath);
 				const newLinkedStat = await fs.stat(linkedPath);
 				expect(newLinkedStat.ino).toBe(newOriginalStat.ino);
 
@@ -323,8 +327,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 				// Small delay to ensure delete is processed before modification
 				await setTimeout(100);
 
-				// Trigger a relink by modifying index.js
-				await fs.writeFile(path.join(depPath, 'index.js'), 'module.exports = "updated"');
+				// Trigger a relink by replacing index.js (atomic: write tmp + rename)
+				const indexPath = path.join(depPath, 'index.js');
+				const temporaryPath = path.join(depPath, 'index.js.tmp');
+				await fs.writeFile(temporaryPath, 'module.exports = "updated"');
+				await fs.rename(temporaryPath, indexPath);
 
 				// Poll for the file to be updated (use longer timeout for CI reliability)
 				const linkedPath = path.join(consumingPath, 'node_modules/dep-package/index.js');
@@ -405,10 +412,12 @@ export default testSuite(({ describe }, nodePath: string) => {
 				expect(linkedStatA.ino).toBe(statA.ino);
 				expect(linkedStatB.ino).toBe(statB.ino);
 
-				// Modify both source files
+				// Replace both source files atomically (write tmp + rename)
+				const indexAPath = path.join(depAPath, 'index.js');
+				const indexBPath = path.join(depBPath, 'index.js');
 				await Promise.all([
-					fs.writeFile(path.join(depAPath, 'index.js'), 'module.exports = "a-modified"'),
-					fs.writeFile(path.join(depBPath, 'index.js'), 'module.exports = "b-modified"'),
+					fs.writeFile(`${indexAPath}.tmp`, 'module.exports = "a-modified"').then(() => fs.rename(`${indexAPath}.tmp`, indexAPath)),
+					fs.writeFile(`${indexBPath}.tmp`, 'module.exports = "b-modified"').then(() => fs.rename(`${indexBPath}.tmp`, indexBPath)),
 				]);
 
 				// Poll for both files to be updated
