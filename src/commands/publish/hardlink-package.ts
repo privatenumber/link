@@ -33,6 +33,12 @@ export const hardlinkPackage = async (
 			const sourcePath = path.join(absoluteLinkPackagePath, file);
 			const targetPath = path.join(linkPath, file);
 
+			// Skip missing files (can happen during build when files are being regenerated)
+			const sourceExists = await fs.access(sourcePath).then(() => true, () => false);
+			if (!sourceExists) {
+				return;
+			}
+
 			await fs.mkdir(
 				path.dirname(targetPath),
 				{ recursive: true },

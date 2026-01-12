@@ -122,7 +122,23 @@ _Publish mode_ helps replicate the production environment in your development se
 	Any changes you make to the _Dependency package_ will be reflected in the `node_modules` directory of the _Consuming package_.
 
 	> **Note:** If the _Dependency package_ emits new files, you'll need to re-run `npx link publish <dependency-package-path>` to create new hard links.
-	
+
+#### Watch mode
+
+Use the `--watch` flag to automatically relink when files change:
+
+```sh
+npx link publish --watch <dependency-package-path>
+```
+
+This watches the _Dependency package_ for changes and automatically creates new hard links. You can also watch multiple packages at once:
+
+```sh
+npx link publish --watch <package-a> <package-b>
+```
+
+Press `Enter` to manually trigger a relink, or `Ctrl+C` to exit.
+
 ### Configuration file
 
 Create a `link.config.json` (or `link.config.js`) configuration file at the root of the _Consuming package_ to automatically setup links to multiple _Dependency packages_.
