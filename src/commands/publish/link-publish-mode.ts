@@ -192,21 +192,30 @@ export const linkPublishModeWatch = async (
 	// Throttle null filename warnings to avoid spam on platforms with noisy watchers
 	let nullFilenameWarned = false;
 
-	const watcher = watch(absoluteLinkPackagePath, { recursive: true }, (_eventType, filename) => {
-		// Null filename can occur on some platforms - trigger a full relink to be safe
-		if (!filename) {
-			if (!nullFilenameWarned) {
-				nullFilenameWarned = true;
-				console.warn(gray('Received watch event with no filename, triggering relink'));
+	let watcher: FSWatcher;
+	try {
+		watcher = watch(absoluteLinkPackagePath, { recursive: true }, (_eventType, filename) => {
+			// Null filename can occur on some platforms - trigger a full relink to be safe
+			if (!filename) {
+				if (!nullFilenameWarned) {
+					nullFilenameWarned = true;
+					console.warn(gray('Received watch event with no filename, triggering relink'));
+				}
+				debouncedRelink();
+				return;
 			}
-			debouncedRelink();
-			return;
-		}
 
-		// Normalize path separators for Windows compatibility
-		const normalizedFilename = filename.replaceAll('\\', '/');
-		handleFileChange(normalizedFilename);
-	});
+			// Normalize path separators for Windows compatibility
+			const normalizedFilename = filename.replaceAll('\\', '/');
+			handleFileChange(normalizedFilename);
+		});
+	} catch (error) {
+		// Recursive watching may not be supported (Linux < Node 19.1.0)
+		console.error(red('Watch mode failed to start:'), (error as Error).message);
+		console.error(gray('Recursive watching requires Node.js v19.1.0+ on Linux.'));
+		console.error(gray('Run without --watch and manually relink after builds.'));
+		return;
+	}
 
 	return watcher;
 };

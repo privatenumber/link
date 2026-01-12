@@ -45,7 +45,7 @@ export const hardlinkPackage = async (
 			} catch (error) {
 				// Skip missing files (can happen during build when files are being regenerated)
 				if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-					console.log(
+					console.warn(
 						`  ${yellow('⚠')}`,
 						cyan(cwdPath(sourcePath)),
 						yellow('(missing)'),
