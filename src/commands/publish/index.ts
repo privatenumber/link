@@ -43,7 +43,28 @@ export const publishHandler = async (
 			return;
 		}
 
+		// Capture terminal state before modifying
+		const { isTTY } = process.stdin;
+		const wasRaw = isTTY && process.stdin.isRaw;
+
+		const stdinHandler = (data: Buffer) => {
+			// Enter key - manual relink
+			if (data[0] === 13 || data[0] === 10) {
+				console.log(gray('\nManual relink triggered'));
+				Promise.all(
+					packagePaths.map(
+						linkPackagePath => linkPublishMode(cwdProjectPath, linkPackagePath),
+					),
+				).catch(console.error);
+			}
+			// Ctrl+C in raw mode (byte 0x03)
+			if (data[0] === 3) {
+				cleanup();
+			}
+		};
+
 		const cleanup = () => {
+			// Close all watchers
 			for (const watcher of activeWatchers) {
 				try {
 					watcher.close();
@@ -51,38 +72,30 @@ export const publishHandler = async (
 					// Ignore errors when closing watchers
 				}
 			}
+
+			// Restore terminal state
+			if (isTTY) {
+				process.stdin.removeListener('data', stdinHandler);
+				process.stdin.setRawMode(wasRaw ?? false);
+				process.stdin.pause();
+			}
+
+			// Remove signal handlers
+			process.removeListener('SIGINT', cleanup);
+			process.removeListener('SIGTERM', cleanup);
 		};
 
 		console.log(gray('\nWatching for changes... (press Enter to relink all, Ctrl+C to exit)'));
 
-		const exit = () => {
-			cleanup();
-			process.exit(0);
-		};
-
-		// Handle graceful shutdown (SIGINT when not in raw mode, SIGTERM from kill)
-		process.on('SIGINT', exit);
-		process.on('SIGTERM', exit);
+		// Handle graceful shutdown (use once to avoid leaking handlers)
+		process.once('SIGINT', cleanup);
+		process.once('SIGTERM', cleanup);
 
 		// Setup stdin for manual retrigger (only in TTY mode)
-		if (process.stdin.isTTY) {
+		if (isTTY) {
 			process.stdin.setRawMode(true);
 			process.stdin.resume();
-			process.stdin.on('data', (data) => {
-				// Enter key - manual relink
-				if (data[0] === 13 || data[0] === 10) {
-					console.log(gray('\nManual relink triggered'));
-					Promise.all(
-						packagePaths.map(
-							linkPackagePath => linkPublishMode(cwdProjectPath, linkPackagePath),
-						),
-					).catch(console.error);
-				}
-				// Ctrl+C in raw mode (byte 0x03)
-				if (data[0] === 3) {
-					exit();
-				}
-			});
+			process.stdin.on('data', stdinHandler);
 		}
 	} else {
 		await Promise.all(
