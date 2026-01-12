@@ -1,6 +1,8 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
-import { green, magenta, cyan } from 'kolorist';
+import {
+	green, yellow, magenta, cyan,
+} from 'kolorist';
 import type { PackageJsonWithName } from '../../utils/read-package-json.js';
 import { hardlink } from '../../utils/symlink.js';
 import { getNpmPacklist } from '../../utils/get-npm-packlist.js';
@@ -36,6 +38,11 @@ export const hardlinkPackage = async (
 			// Skip missing files (can happen during build when files are being regenerated)
 			const sourceExists = await fs.access(sourcePath).then(() => true, () => false);
 			if (!sourceExists) {
+				console.log(
+					`  ${yellow('⚠')}`,
+					cyan(cwdPath(sourcePath)),
+					yellow('(missing)'),
+				);
 				return;
 			}
 

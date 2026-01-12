@@ -123,11 +123,28 @@ export const linkPublishModeWatch = async (
 		publishFiles = new Set(files);
 	};
 
-	const handleFileChange = async (normalizedFilename: string) => {
+	// Queue unknown files and batch-process them to avoid repeated packlist refreshes
+	const pendingUnknownFiles = new Set<string>();
+	const processPendingFiles = debounce(() => {
+		const files = [...pendingUnknownFiles];
+		pendingUnknownFiles.clear();
+
+		refreshPacklist()
+			.then(() => {
+				const hasNewPublishable = files.some(file => publishFiles.has(file));
+				if (hasNewPublishable) {
+					debouncedRelink();
+				}
+			})
+			.catch(() => {});
+	}, 100);
+
+	const handleFileChange = (normalizedFilename: string) => {
 		// Config files affect what's published, so refresh the cache and relink
 		if (packlistConfigFiles.has(normalizedFilename)) {
-			await refreshPacklist();
-			debouncedRelink();
+			refreshPacklist()
+				.then(() => debouncedRelink())
+				.catch(() => {});
 			return;
 		}
 
@@ -142,21 +159,22 @@ export const linkPublishModeWatch = async (
 			return;
 		}
 
-		// Unknown file - refresh packlist to check if it's newly publishable
-		await refreshPacklist();
-		if (publishFiles.has(normalizedFilename)) {
-			debouncedRelink();
-		}
+		// Unknown file - queue for batch processing
+		pendingUnknownFiles.add(normalizedFilename);
+		processPendingFiles();
 	};
 
 	const watcher = watch(absoluteLinkPackagePath, { recursive: true }, (_eventType, filename) => {
+		// Null filename can occur on some platforms - trigger a full relink to be safe
 		if (!filename) {
+			console.warn(gray('Received watch event with no filename, triggering relink'));
+			debouncedRelink();
 			return;
 		}
 
 		// Normalize path separators for Windows compatibility
 		const normalizedFilename = filename.replaceAll('\\', '/');
-		handleFileChange(normalizedFilename).catch(() => {});
+		handleFileChange(normalizedFilename);
 	});
 
 	return watcher;

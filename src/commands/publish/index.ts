@@ -45,7 +45,11 @@ export const publishHandler = async (
 
 		const cleanup = () => {
 			for (const watcher of activeWatchers) {
-				watcher.close();
+				try {
+					watcher.close();
+				} catch {
+					// Ignore errors when closing watchers
+				}
 			}
 		};
 
