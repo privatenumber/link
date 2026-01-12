@@ -139,7 +139,7 @@ npx link publish --watch <package-a> <package-b>
 
 Press `Enter` to manually trigger a relink, or `Ctrl+C` to exit.
 
-> **Note:** Watch mode uses Node.js native `fs.watch` with recursive watching, which works reliably on macOS and Windows. On Linux, recursive watching support varies by kernel version and filesystem. If watch mode doesn't detect changes in subdirectories on Linux, consider running the non-watch command manually after builds.
+> **Note:** Watch mode uses Node.js native `fs.watch` with recursive watching. Recursive watching is supported on macOS, Windows, and Linux (Node.js v19.1.0+). On older Node.js versions on Linux, subdirectory changes may not be detected.
 
 ### Configuration file
 
