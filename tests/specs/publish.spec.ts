@@ -246,8 +246,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 					},
 				);
 
-				// Wait for initial link (longer on Windows)
-				await setTimeout(isWindows ? 500 : 200);
+				// Wait for initial link (longer on Windows/CI)
+				await setTimeout(isWindows ? 1000 : 500);
 
 				// Verify initial hardlink
 				const linkedPath = path.join(consumingPath, 'node_modules/dep-package/index.js');
@@ -314,8 +314,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 					},
 				);
 
-				// Wait for initial link (longer wait needed for fs.watch to stabilize)
-				await setTimeout(isWindows ? 500 : 300);
+				// Wait for initial link (longer on Windows/CI)
+				await setTimeout(isWindows ? 1000 : 500);
 
 				// Delete optional.js from source (simulating build deleting files)
 				await fs.rm(path.join(depPath, 'optional.js'));
@@ -387,8 +387,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 					},
 				);
 
-				// Wait for initial link
-				await setTimeout(isWindows ? 500 : 200);
+				// Wait for initial link (longer on Windows/CI)
+				await setTimeout(isWindows ? 1000 : 500);
 
 				// Verify both packages were initially linked
 				const linkedAPath = path.join(consumingPath, 'node_modules/dep-a/index.js');
