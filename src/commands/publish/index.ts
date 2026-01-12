@@ -43,6 +43,12 @@ export const publishHandler = async (
 			return;
 		}
 
+		// Explicit keepalive - don't rely on implicit event loop behavior
+		let exitWatch!: () => void;
+		const keepalive = new Promise<void>((resolve) => {
+			exitWatch = resolve;
+		});
+
 		// Capture terminal state before modifying
 		const { isTTY } = process.stdin;
 		const wasRaw = isTTY && process.stdin.isRaw;
@@ -83,6 +89,9 @@ export const publishHandler = async (
 			// Remove signal handlers
 			process.removeListener('SIGINT', cleanup);
 			process.removeListener('SIGTERM', cleanup);
+
+			// Release the keepalive
+			exitWatch();
 		};
 
 		console.log(gray('\nWatching for changes... (press Enter to relink all, Ctrl+C to exit)'));
@@ -97,6 +106,14 @@ export const publishHandler = async (
 			process.stdin.resume();
 			process.stdin.on('data', stdinHandler);
 		}
+
+		// Yield to event loop to ensure watcher events can be processed
+		await new Promise<void>((resolve) => {
+			setImmediate(resolve);
+		});
+
+		// Block until cleanup is called
+		await keepalive;
 	} else {
 		await Promise.all(
 			packagePaths.map(
