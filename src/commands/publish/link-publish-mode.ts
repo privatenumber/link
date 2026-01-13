@@ -1,13 +1,24 @@
-import path from 'path';
-import fs from 'fs/promises';
-import { watch, type FSWatcher } from 'fs';
+import path from 'node:path';
+import fs from 'node:fs/promises';
+import { watch, type FSWatcher } from 'node:fs';
 import outdent from 'outdent';
 import {
 	magenta, bold, dim, gray, red,
 } from 'kolorist';
 import { getNpmPacklist } from '../../utils/get-npm-packlist.js';
-import { readPackageJson } from '../../utils/read-package-json.js';
+import { readPackageJson, type PackageJsonWithName } from '../../utils/read-package-json.js';
 import { hardlinkPackage } from './hardlink-package.js';
+
+const debounce = <T extends (...arguments_: unknown[]) => unknown>(
+	callback: T,
+	delay: number,
+) => {
+	let timeoutId: ReturnType<typeof setTimeout> | undefined;
+	return (...arguments_: Parameters<T>) => {
+		clearTimeout(timeoutId);
+		timeoutId = setTimeout(() => callback(...arguments_), delay);
+	};
+};
 
 const isValidSetup = async (
 	linkPath: string,
@@ -26,17 +37,6 @@ const isValidSetup = async (
 	 */
 	const linkPathReal = await fs.realpath(linkPath);
 	return linkPathReal.startsWith(expectedPrefix);
-};
-
-const debounce = <T extends (...arguments_: unknown[]) => unknown>(
-	callback: T,
-	delay: number,
-) => {
-	let timeoutId: ReturnType<typeof setTimeout> | undefined;
-	return (...arguments_: Parameters<T>) => {
-		clearTimeout(timeoutId);
-		timeoutId = setTimeout(() => callback(...arguments_), delay);
-	};
 };
 
 const setupPublishLink = async (basePackagePath: string, linkPackagePath: string) => {
@@ -73,6 +73,154 @@ const setupPublishLink = async (basePackagePath: string, linkPackagePath: string
 	};
 };
 
+type RelinkerOptions = {
+	linkPath: string;
+	absoluteLinkPackagePath: string;
+	packageJson: PackageJsonWithName;
+};
+
+const createRelinker = ({
+	linkPath,
+	absoluteLinkPackagePath,
+	packageJson,
+}: RelinkerOptions) => {
+	let inProgress = false;
+	let queued = false;
+
+	const relink = async () => {
+		if (inProgress) {
+			queued = true;
+			return;
+		}
+
+		inProgress = true;
+		console.log(gray(`\n[${new Date().toLocaleTimeString()}] Relinking ${magenta(packageJson.name)}...`));
+		try {
+			await hardlinkPackage(linkPath, absoluteLinkPackagePath, packageJson);
+		} catch (error) {
+			console.error(red(`Failed to relink ${packageJson.name}:`), error);
+		} finally {
+			inProgress = false;
+			if (queued) {
+				queued = false;
+				relink().catch(() => {});
+			}
+		}
+	};
+
+	const debouncedRelink = debounce(() => {
+		relink().catch(() => {});
+	}, 200);
+
+	return {
+		relink,
+		debouncedRelink,
+	};
+};
+
+type PacklistTrackerOptions = {
+	absoluteLinkPackagePath: string;
+	packageJson: PackageJsonWithName;
+	onRelink: () => void;
+};
+
+const createPacklistTracker = ({
+	absoluteLinkPackagePath,
+	packageJson,
+	onRelink,
+}: PacklistTrackerOptions) => {
+	let publishFiles: Set<string>;
+	let refreshErrorLogged = false;
+
+	const packlistConfigFiles = new Set(['package.json', '.npmignore', '.gitignore']);
+
+	const logRefreshError = (error: unknown) => {
+		if (!refreshErrorLogged) {
+			refreshErrorLogged = true;
+			console.warn(gray(`Packlist refresh failed; watch may miss newly publishable files: ${error}`));
+		}
+	};
+
+	const refresh = async () => {
+		const newPackageJson = await readPackageJson(absoluteLinkPackagePath);
+		const files = await getNpmPacklist(absoluteLinkPackagePath, newPackageJson);
+		publishFiles = new Set(files);
+	};
+
+	const refreshAndRelink = () => {
+		refresh()
+			.then(() => onRelink())
+			.catch(logRefreshError);
+	};
+
+	// Queue unknown files and batch-process them
+	const pendingUnknownFiles = new Set<string>();
+	const processPendingFiles = debounce(() => {
+		const files = [...pendingUnknownFiles];
+		pendingUnknownFiles.clear();
+
+		refresh()
+			.then(() => {
+				if (files.some(file => publishFiles.has(file))) {
+					onRelink();
+				}
+			})
+			.catch(logRefreshError);
+	}, 100);
+
+	const isIgnored = (filename: string) => (
+		filename.startsWith('.git/') || filename.startsWith('node_modules/')
+	);
+
+	const handleFileChange = (filename: string) => {
+		if (isIgnored(filename)) {
+			return;
+		}
+
+		if (packlistConfigFiles.has(filename)) {
+			refreshAndRelink();
+			return;
+		}
+
+		if (publishFiles.has(filename)) {
+			onRelink();
+			return;
+		}
+
+		// Unknown file - queue for batch processing
+		pendingUnknownFiles.add(filename);
+		processPendingFiles();
+	};
+
+	const initialize = async () => {
+		publishFiles = new Set(await getNpmPacklist(absoluteLinkPackagePath, packageJson));
+	};
+
+	return {
+		initialize,
+		handleFileChange,
+	};
+};
+
+const startRecursiveWatch = (
+	directory: string,
+	onFile: (filename: string | null) => void,
+): FSWatcher | undefined => {
+	try {
+		return watch(directory, { recursive: true }, (_eventType, filename) => {
+			// Normalize path separators for Windows compatibility
+			const normalizedFilename = filename?.replaceAll('\\', '/') ?? null;
+			onFile(normalizedFilename);
+		});
+	} catch (error) {
+		// Recursive watching may not be supported (Linux < Node 19.1.0)
+		console.error(red('Watch mode failed to start:'), (error as Error).message);
+		console.error(gray('Recursive watching requires Node.js v19.1.0+ on Linux.'));
+		console.error(gray('Run without --watch and manually relink after builds.'));
+		return undefined;
+	}
+};
+
 export const linkPublishMode = async (
 	basePackagePath: string,
 	linkPackagePath: string,
@@ -96,126 +244,36 @@ export const linkPublishModeWatch = async (
 
 	const { absoluteLinkPackagePath, packageJson, linkPath } = setup;
 
-	// Cache the list of files that would be published
-	let publishFiles = new Set(await getNpmPacklist(absoluteLinkPackagePath, packageJson));
+	const { relink, debouncedRelink } = createRelinker({
+		linkPath,
+		absoluteLinkPackagePath,
+		packageJson,
+	});
 
-	// In-flight guard to prevent overlapping relinks
-	let relinkInProgress = false;
-	let relinkQueued = false;
+	const packlistTracker = createPacklistTracker({
+		absoluteLinkPackagePath,
+		packageJson,
+		onRelink: debouncedRelink,
+	});
 
-	const relink = async () => {
-		if (relinkInProgress) {
-			relinkQueued = true;
-			return;
-		}
-
-		relinkInProgress = true;
-		console.log(gray(`\n[${new Date().toLocaleTimeString()}] Relinking ${magenta(packageJson.name)}...`));
-		try {
-			await hardlinkPackage(linkPath, absoluteLinkPackagePath, packageJson);
-		} catch (error) {
-			console.error(red(`Failed to relink ${packageJson.name}:`), error);
-		} finally {
-			relinkInProgress = false;
-			if (relinkQueued) {
-				relinkQueued = false;
-				relink().catch(() => {});
-			}
-		}
-	};
-
+	await packlistTracker.initialize();
 	await relink();
 
-	const debouncedRelink = debounce(() => {
-		relink().catch(() => {});
-	}, 200);
+	// Throttle null filename warnings
+	let nullFilenameWarned = false;
 
-	// Files that affect what gets published
-	const packlistConfigFiles = new Set(['package.json', '.npmignore', '.gitignore']);
-
-	const refreshPacklist = async () => {
-		const newPackageJson = await readPackageJson(absoluteLinkPackagePath);
-		const files = await getNpmPacklist(absoluteLinkPackagePath, newPackageJson);
-		publishFiles = new Set(files);
-	};
-
-	// Track if we've already warned about packlist refresh failures
-	let packlistRefreshErrorLogged = false;
-	const logPacklistRefreshError = (error: unknown) => {
-		if (!packlistRefreshErrorLogged) {
-			packlistRefreshErrorLogged = true;
-			console.warn(gray(`Packlist refresh failed; watch may miss newly publishable files: ${error}`));
-		}
-	};
-
-	// Queue unknown files and batch-process them to avoid repeated packlist refreshes
-	const pendingUnknownFiles = new Set<string>();
-	const processPendingFiles = debounce(() => {
-		const files = [...pendingUnknownFiles];
-		pendingUnknownFiles.clear();
-
-		refreshPacklist()
-			.then(() => {
-				const hasNewPublishable = files.some(file => publishFiles.has(file));
-				if (hasNewPublishable) {
-					debouncedRelink();
-				}
-			})
-			.catch(logPacklistRefreshError);
-	}, 100);
-
-	const handleFileChange = (normalizedFilename: string) => {
-		// Config files affect what's published, so refresh the cache and relink
-		if (packlistConfigFiles.has(normalizedFilename)) {
-			refreshPacklist()
-				.then(() => debouncedRelink())
-				.catch(logPacklistRefreshError);
-			return;
-		}
-
-		// Fast path: file is already known to be published
-		if (publishFiles.has(normalizedFilename)) {
+	const watcher = startRecursiveWatch(absoluteLinkPackagePath, (filename) => {
+		if (!filename) {
+			if (!nullFilenameWarned) {
+				nullFilenameWarned = true;
+				console.warn(gray('Received watch event with no filename, triggering relink'));
+			}
 			debouncedRelink();
 			return;
 		}
 
-		// Skip obviously ignored paths
-		if (normalizedFilename.startsWith('.git/') || normalizedFilename.startsWith('node_modules/')) {
-			return;
-		}
-
-		// Unknown file - queue for batch processing
-		pendingUnknownFiles.add(normalizedFilename);
-		processPendingFiles();
-	};
-
-	// Throttle null filename warnings to avoid spam on platforms with noisy watchers
-	let nullFilenameWarned = false;
-
-	let watcher: FSWatcher;
-	try {
-		watcher = watch(absoluteLinkPackagePath, { recursive: true }, (_eventType, filename) => {
-			// Null filename can occur on some platforms - trigger a full relink to be safe
-			if (!filename) {
-				if (!nullFilenameWarned) {
-					nullFilenameWarned = true;
-					console.warn(gray('Received watch event with no filename, triggering relink'));
-				}
-				debouncedRelink();
-				return;
-			}
-
-			// Normalize path separators for Windows compatibility
-			const normalizedFilename = filename.replaceAll('\\', '/');
-			handleFileChange(normalizedFilename);
-		});
-	} catch (error) {
-		// Recursive watching may not be supported (Linux < Node 19.1.0)
-		console.error(red('Watch mode failed to start:'), (error as Error).message);
-		console.error(gray('Recursive watching requires Node.js v19.1.0+ on Linux.'));
-		console.error(gray('Run without --watch and manually relink after builds.'));
-		return;
-	}
+		packlistTracker.handleFileChange(filename);
+	});
 
 	return watcher;
 };

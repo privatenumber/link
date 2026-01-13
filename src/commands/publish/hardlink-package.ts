@@ -8,6 +8,12 @@ import { hardlink } from '../../utils/symlink.js';
 import { getNpmPacklist } from '../../utils/get-npm-packlist.js';
 import { cwdPath } from '../../utils/cwd-path.js';
 
+const isENOENT = (error: unknown) => (error as NodeJS.ErrnoException)?.code === 'ENOENT';
+
+const warnMissing = (filePath: string) => {
+	console.warn(`  ${yellow('⚠')}`, cyan(cwdPath(filePath)), yellow('(missing)'));
+};
+
 export const hardlinkPackage = async (
 	linkPath: string,
 	absoluteLinkPackagePath: string,
@@ -44,12 +50,8 @@ export const hardlinkPackage = async (
 				await hardlink(sourcePath, targetPath);
 			} catch (error) {
 				// Skip missing files (can happen during build when files are being regenerated)
-				if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-					console.warn(
-						`  ${yellow('⚠')}`,
-						cyan(cwdPath(sourcePath)),
-						yellow('(missing)'),
-					);
+				if (isENOENT(error)) {
+					warnMissing(sourcePath);
 					return;
 				}
 				throw error;

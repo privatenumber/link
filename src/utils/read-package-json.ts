@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import type { PackageJson } from '@npmcli/package-json';
 import { fsExists } from './fs-exists.js';
 import { readJsonFile } from './read-json-file.js';

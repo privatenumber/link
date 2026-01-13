@@ -1,5 +1,8 @@
-import { describe } from 'manten';
+import { describe, setProcessTimeout } from 'manten';
 import getNode from 'get-node';
+
+// Kill process if tests don't complete in 2 minutes
+setProcessTimeout(2 * 60 * 1000);
 
 const nodeVersions = [
 	'20',

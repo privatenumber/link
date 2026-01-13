@@ -1,5 +1,5 @@
-import path from 'path';
-import fs from 'fs/promises';
+import path from 'node:path';
+import fs from 'node:fs/promises';
 import cmdShim from 'cmd-shim';
 import { readPackageJson } from '../utils/read-package-json.js';
 import { symlink, symlinkBinary } from '../utils/symlink.js';

@@ -39,7 +39,34 @@ const killAndWait = async (childProcess: { kill: () => boolean } & Promise<unkno
 	}
 };
 
+// Helper to atomically write a file (write tmp + rename) - simulates build tool behavior
+const atomicWrite = async (filePath: string, content: string) => {
+	const temporaryPath = `${filePath}.tmp`;
+	await fs.writeFile(temporaryPath, content);
+	await fs.rename(temporaryPath, filePath);
+};
+
 export default testSuite(({ describe }, nodePath: string) => {
+	// Helper to start watch mode and wait for initial link
+	// Returns a wrapper object because returning a Promise from async function awaits it
+	const startWatch = async (consumingPath: string, depPaths: string | string[]) => {
+		const paths = Array.isArray(depPaths) ? depPaths : [depPaths];
+		const watchProcess = execaNode(
+			linkBinPath,
+			['publish', '--watch', ...paths],
+			{
+				cwd: consumingPath,
+				nodePath,
+				reject: false,
+				nodeOptions: [],
+			},
+		);
+		// Wait for initial link (longer on Windows/CI)
+		await setTimeout(isWindows ? 1000 : 500);
+		// Wrap to prevent async function from awaiting the promise-like execa result
+		return { process: watchProcess };
+	};
+
 	describe('publish mode', ({ describe, test }) => {
 		describe('validation', ({ test }) => {
 			test('fails when package not in node_modules', async () => {
@@ -209,7 +236,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		describe('watch mode', ({ test }) => {
-			test('relinks on file changes', async () => {
+			test('relinks on file changes', async ({ onTestFail, onTestFinish }) => {
 				await using fixture = await createFixture({
 					'consuming-package': {
 						'package.json': JSON.stringify({ name: 'consuming-package' }),
@@ -233,21 +260,15 @@ export default testSuite(({ describe }, nodePath: string) => {
 				});
 
 				// Start watch mode
-				const watchProcess = execaNode(
-					linkBinPath,
-					['publish', '--watch', depPath],
-					{
-						cwd: consumingPath,
-						nodePath,
-						reject: false,
-						env: {},
-						extendEnv: false,
-						nodeOptions: [],
-					},
-				);
+				const { process: watchProcess } = await startWatch(consumingPath, depPath);
 
-				// Wait for initial link (longer on Windows/CI)
-				await setTimeout(isWindows ? 1000 : 500);
+				onTestFinish(() => watchProcess.kill());
+				onTestFail(async () => {
+					watchProcess.kill();
+					const result = await watchProcess;
+					console.log('STDOUT:', result.stdout);
+					console.log('STDERR:', result.stderr);
+				});
 
 				// Verify initial hardlink
 				const linkedPath = path.join(consumingPath, 'node_modules/dep-package/index.js');
@@ -256,11 +277,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 				const linkedStat = await fs.stat(linkedPath);
 				expect(linkedStat.ino).toBe(originalStat.ino);
 
-				// Simulate atomic file replacement (write tmp + rename)
-				// This is how build tools work and breaks the hardlink (new inode)
-				const temporaryPath = path.join(depPath, 'index.js.tmp');
-				await fs.writeFile(temporaryPath, 'module.exports = "modified"');
-				await fs.rename(temporaryPath, sourcePath);
+				// Simulate atomic file replacement - breaks the hardlink (new inode)
+				await atomicWrite(sourcePath, 'module.exports = "modified"');
 
 				// Poll for the file to be updated (more reliable than fixed delay)
 				const updated = await waitForFileContent(
@@ -268,16 +286,15 @@ export default testSuite(({ describe }, nodePath: string) => {
 					'module.exports = "modified"',
 					isWindows ? 5000 : 2000,
 				);
+				await killAndWait(watchProcess);
+
 				expect(updated).toBe(true);
 
 				// Verify new hardlink was created (inodes should match again after relink)
 				const newOriginalStat = await fs.stat(sourcePath);
 				const newLinkedStat = await fs.stat(linkedPath);
 				expect(newLinkedStat.ino).toBe(newOriginalStat.ino);
-
-				// Kill process before fixture cleanup (must be awaited here, not in onTestFinish)
-				await killAndWait(watchProcess);
-			});
+			}, 15_000);
 
 			test('skips missing files during relink', async () => {
 				await using fixture = await createFixture({
@@ -305,21 +322,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				});
 
 				// Start watch mode
-				const watchProcess = execaNode(
-					linkBinPath,
-					['publish', '--watch', depPath],
-					{
-						cwd: consumingPath,
-						nodePath,
-						reject: false,
-						env: {},
-						extendEnv: false,
-						nodeOptions: [],
-					},
-				);
-
-				// Wait for initial link (longer on Windows/CI)
-				await setTimeout(isWindows ? 1000 : 500);
+				const { process: watchProcess } = await startWatch(consumingPath, depPath);
 
 				// Delete optional.js from source (simulating build deleting files)
 				await fs.rm(path.join(depPath, 'optional.js'));
@@ -327,11 +330,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 				// Small delay to ensure delete is processed before modification
 				await setTimeout(100);
 
-				// Trigger a relink by replacing index.js (atomic: write tmp + rename)
-				const indexPath = path.join(depPath, 'index.js');
-				const temporaryPath = path.join(depPath, 'index.js.tmp');
-				await fs.writeFile(temporaryPath, 'module.exports = "updated"');
-				await fs.rename(temporaryPath, indexPath);
+				// Trigger a relink by replacing index.js
+				await atomicWrite(path.join(depPath, 'index.js'), 'module.exports = "updated"');
 
 				// Poll for the file to be updated (use longer timeout for CI reliability)
 				const linkedPath = path.join(consumingPath, 'node_modules/dep-package/index.js');
@@ -344,7 +344,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 				// Kill process before fixture cleanup (must be awaited here, not in onTestFinish)
 				await killAndWait(watchProcess);
-			});
+			}, 15_000);
 
 			test('watches multiple packages concurrently', async () => {
 				await using fixture = await createFixture({
@@ -381,21 +381,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				});
 
 				// Start watch mode for both packages
-				const watchProcess = execaNode(
-					linkBinPath,
-					['publish', '--watch', depAPath, depBPath],
-					{
-						cwd: consumingPath,
-						nodePath,
-						reject: false,
-						env: {},
-						extendEnv: false,
-						nodeOptions: [],
-					},
-				);
-
-				// Wait for initial link (longer on Windows/CI)
-				await setTimeout(isWindows ? 1000 : 500);
+				const { process: watchProcess } = await startWatch(consumingPath, [depAPath, depBPath]);
 
 				// Verify both packages were initially linked
 				const linkedAPath = path.join(consumingPath, 'node_modules/dep-a/index.js');
@@ -412,12 +398,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				expect(linkedStatA.ino).toBe(statA.ino);
 				expect(linkedStatB.ino).toBe(statB.ino);
 
-				// Replace both source files atomically (write tmp + rename)
-				const indexAPath = path.join(depAPath, 'index.js');
-				const indexBPath = path.join(depBPath, 'index.js');
+				// Replace both source files atomically
 				await Promise.all([
-					fs.writeFile(`${indexAPath}.tmp`, 'module.exports = "a-modified"').then(() => fs.rename(`${indexAPath}.tmp`, indexAPath)),
-					fs.writeFile(`${indexBPath}.tmp`, 'module.exports = "b-modified"').then(() => fs.rename(`${indexBPath}.tmp`, indexBPath)),
+					atomicWrite(path.join(depAPath, 'index.js'), 'module.exports = "a-modified"'),
+					atomicWrite(path.join(depBPath, 'index.js'), 'module.exports = "b-modified"'),
 				]);
 
 				// Poll for both files to be updated
@@ -429,7 +413,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				expect(updatedB).toBe(true);
 
 				await killAndWait(watchProcess);
-			});
+			}, 15_000);
 		});
 	});
 });

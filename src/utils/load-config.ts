@@ -1,5 +1,5 @@
-import path from 'path';
-import { createRequire } from 'module';
+import path from 'node:path';
+import { createRequire } from 'node:module';
 import type { LinkConfig } from '../types.js';
 import { fsExists } from './fs-exists.js';
 import { readJsonFile } from './read-json-file.js';

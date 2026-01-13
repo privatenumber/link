@@ -1,7 +1,7 @@
-import type { FSWatcher } from 'fs';
+import type { FSWatcher } from 'node:fs';
 import { command } from 'cleye';
-import { gray } from 'kolorist';
 import { linkPublishMode, linkPublishModeWatch } from './link-publish-mode.js';
+import { runWatchSession } from './run-watch-session.js';
 
 export const publishCommand = command({
 	name: 'publish',
@@ -18,6 +18,15 @@ export const publishCommand = command({
 	},
 });
 
+const relinkAll = (
+	cwdProjectPath: string,
+	packagePaths: string[],
+) => Promise.all(
+	packagePaths.map(
+		packagePath => linkPublishMode(cwdProjectPath, packagePath),
+	),
+);
+
 export const publishHandler = async (
 	cwdProjectPath: string,
 	packagePaths: string[],
@@ -27,98 +36,24 @@ export const publishHandler = async (
 		return;
 	}
 
-	if (flags.watch) {
-		// Start watchers for all packages concurrently
-		const watchers = await Promise.all(
-			packagePaths.map(
-				linkPackagePath => linkPublishModeWatch(cwdProjectPath, linkPackagePath),
-			),
-		);
-
-		const activeWatchers = watchers.filter(
-			(watcher): watcher is FSWatcher => watcher !== undefined,
-		);
-
-		if (activeWatchers.length === 0) {
-			return;
-		}
-
-		// Explicit keepalive - don't rely on implicit event loop behavior
-		let exitWatch!: () => void;
-		const keepalive = new Promise<void>((resolve) => {
-			exitWatch = resolve;
-		});
-
-		// Capture terminal state before modifying
-		const { isTTY } = process.stdin;
-		const wasRaw = isTTY && process.stdin.isRaw;
-
-		const stdinHandler = (data: Buffer) => {
-			// Enter key - manual relink
-			if (data[0] === 13 || data[0] === 10) {
-				console.log(gray('\nManual relink triggered'));
-				Promise.all(
-					packagePaths.map(
-						linkPackagePath => linkPublishMode(cwdProjectPath, linkPackagePath),
-					),
-				).catch(console.error);
-			}
-			// Ctrl+C in raw mode (byte 0x03)
-			if (data[0] === 3) {
-				cleanup();
-			}
-		};
-
-		const cleanup = () => {
-			// Close all watchers
-			for (const watcher of activeWatchers) {
-				try {
-					watcher.close();
-				} catch {
-					// Ignore errors when closing watchers
-				}
-			}
-
-			// Restore terminal state
-			if (isTTY) {
-				process.stdin.removeListener('data', stdinHandler);
-				process.stdin.setRawMode(wasRaw ?? false);
-				process.stdin.pause();
-			}
-
-			// Remove signal handlers
-			process.removeListener('SIGINT', cleanup);
-			process.removeListener('SIGTERM', cleanup);
-
-			// Release the keepalive
-			exitWatch();
-		};
-
-		console.log(gray('\nWatching for changes... (press Enter to relink all, Ctrl+C to exit)'));
-
-		// Handle graceful shutdown (use once to avoid leaking handlers)
-		process.once('SIGINT', cleanup);
-		process.once('SIGTERM', cleanup);
-
-		// Setup stdin for manual retrigger (only in TTY mode)
-		if (isTTY) {
-			process.stdin.setRawMode(true);
-			process.stdin.resume();
-			process.stdin.on('data', stdinHandler);
-		}
-
-		// Yield to event loop to ensure watcher events can be processed
-		await new Promise<void>((resolve) => {
-			setImmediate(resolve);
-		});
-
-		// Block until cleanup is called
-		await keepalive;
-	} else {
-		await Promise.all(
-			packagePaths.map(
-				linkPackagePath => linkPublishMode(cwdProjectPath, linkPackagePath),
-			),
-		);
+	if (!flags.watch) {
+		await relinkAll(cwdProjectPath, packagePaths);
+		return;
 	}
+
+	// Start watchers for all packages concurrently
+	const watchers = await Promise.all(
+		packagePaths.map(
+			packagePath => linkPublishModeWatch(cwdProjectPath, packagePath),
+		),
+	);
+
+	const activeWatchers = watchers.filter(
+		(watcher): watcher is FSWatcher => watcher !== undefined,
+	);
+
+	await runWatchSession({
+		watchers: activeWatchers,
+		onManualRelink: () => relinkAll(cwdProjectPath, packagePaths),
+	});
 };
