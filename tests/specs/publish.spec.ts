@@ -1,14 +1,14 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { execa } from 'execa';
 import { createFixture } from 'fs-fixture';
 import { link } from '../utils/link.js';
 import { npmPack } from '../utils/npm-pack.js';
 
-export default testSuite(({ describe }, nodePath: string) => {
-	describe('publish mode', ({ describe, test }) => {
-		describe('validation', ({ test }) => {
+export const publish = (nodePath: string) => {
+	describe('publish mode', () => {
+		describe('validation', () => {
 			test('fails when package not in node_modules', async () => {
 				await using fixture = await createFixture({
 					'consuming-package': {
@@ -175,4 +175,4 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(await fs.access(indexPath).then(() => true, () => false)).toBe(true);
 		});
 	});
-});
+};

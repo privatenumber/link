@@ -1,14 +1,14 @@
 import path from 'path';
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { fsExists } from '../../src/utils/fs-exists.js';
 import { readJsonFile } from '../../src/utils/read-json-file.js';
 import { cwdPath } from '../../src/utils/cwd-path.js';
 import { readPackageJson } from '../../src/utils/read-package-json.js';
 
-export default testSuite(({ describe }, _nodePath: string) => {
-	describe('utilities', ({ describe }) => {
-		describe('fsExists', ({ test }) => {
+export const utils = (_nodePath: string) => {
+	describe('utilities', () => {
+		describe('fsExists', () => {
 			test('returns true for existing file', async () => {
 				await using fixture = await createFixture({
 					'file.txt': 'content',
@@ -35,7 +35,7 @@ export default testSuite(({ describe }, _nodePath: string) => {
 			});
 		});
 
-		describe('readJsonFile', ({ test }) => {
+		describe('readJsonFile', () => {
 			test('parses valid JSON', async () => {
 				await using fixture = await createFixture({
 					'data.json': JSON.stringify({
@@ -70,7 +70,7 @@ export default testSuite(({ describe }, _nodePath: string) => {
 			});
 		});
 
-		describe('cwdPath', ({ test }) => {
+		describe('cwdPath', () => {
 			test('converts absolute path to relative', () => {
 				const cwd = process.cwd();
 				const absolutePath = path.join(cwd, 'some', 'nested', 'file.txt');
@@ -88,7 +88,7 @@ export default testSuite(({ describe }, _nodePath: string) => {
 			});
 		});
 
-		describe('readPackageJson', ({ test }) => {
+		describe('readPackageJson', () => {
 			test('reads valid package.json', async () => {
 				await using fixture = await createFixture({
 					'package.json': JSON.stringify({
@@ -133,4 +133,4 @@ export default testSuite(({ describe }, _nodePath: string) => {
 			});
 		});
 	});
-});
+};

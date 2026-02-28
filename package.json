@@ -25,7 +25,8 @@
 		"dev": "tsx watch tests/index.ts",
 		"lint": "lintroll --cache --ignore-pattern=tests/fixtures .",
 		"type-check": "tsc",
-		"prepack": "pnpm build && clean-pkg-json"
+		"prepack": "pnpm build && clean-pkg-json",
+		"prepare": "skills-npm"
 	},
 	"devDependencies": {
 		"@types/cmd-shim": "^5.0.2",
@@ -40,10 +41,11 @@
 		"get-node": "^14.2.1",
 		"kolorist": "^1.8.0",
 		"lintroll": "^1.27.1",
-		"manten": "^1.10.0",
+		"manten": "^2.0.0",
 		"npm-packlist": "^10.0.3",
 		"outdent": "^0.8.0",
 		"pkgroll": "^2.21.5",
+		"skills-npm": "^1.0.0",
 		"tsx": "^4.21.0",
 		"typescript": "^5.9.3"
 	}

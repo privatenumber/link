@@ -1,11 +1,11 @@
 import path from 'path';
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { execa, execaNode } from 'execa';
 import { createFixture } from 'fs-fixture';
 import { link } from '../utils/link.js';
 
-export default testSuite(({ describe }, nodePath: string) => {
-	describe('link.config.json', ({ test, describe }) => {
+export const linkConfig = (nodePath: string) => {
+	describe('link.config.json', () => {
 		test('shows warning when no config file exists', async () => {
 			await using fixture = await createFixture({
 				'package-entry': {
@@ -113,7 +113,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(nonPublishFileExists).toBe(true);
 		});
 
-		describe('deep linking', ({ test }) => {
+		describe('deep linking', () => {
 			test('cli', async () => {
 				await using fixture = await createFixture('./tests/fixtures/');
 				const entryPackagePath = path.join(fixture.path, 'package-entry');
@@ -188,7 +188,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 	});
 
-	describe('link.config.js', ({ test }) => {
+	describe('link.config.js', () => {
 		test('catches invalid config error', async () => {
 			await using fixture = await createFixture('./tests/fixtures/');
 			const entryPackagePath = path.join(fixture.path, 'package-entry');
@@ -261,4 +261,4 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(nonPublishFileExists).toBe(true);
 		});
 	});
-});
+};

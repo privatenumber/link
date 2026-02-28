@@ -1,12 +1,14 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { testSuite, expect } from 'manten';
+import {
+	describe, test, expect, skip,
+} from 'manten';
 import { createFixture } from 'fs-fixture';
 import { symlink, symlinkBinary, hardlink } from '../../src/utils/symlink.js';
 
-export default testSuite(({ describe }, _nodePath: string) => {
-	describe('symlink utilities', ({ describe }) => {
-		describe('symlink', ({ test }) => {
+export const symlinkSpec = (_nodePath: string) => {
+	describe('symlink utilities', () => {
+		describe('symlink', () => {
 			test('creates new symlink', async () => {
 				await using fixture = await createFixture({
 					'target-file.txt': 'content',
@@ -103,7 +105,7 @@ export default testSuite(({ describe }, _nodePath: string) => {
 			});
 		});
 
-		describe('symlinkBinary', ({ test }) => {
+		describe('symlinkBinary', () => {
 			test('creates symlink and sets executable permissions', async () => {
 				await using fixture = await createFixture({
 					'cli.js': '#!/usr/bin/env node\nconsole.log("hello")',
@@ -127,7 +129,7 @@ export default testSuite(({ describe }, _nodePath: string) => {
 				}
 			});
 
-			test('warns when binary target does not exist', async ({ skip }) => {
+			test('warns when binary target does not exist', async () => {
 				// Windows symlinks to non-existent targets may require elevated privileges
 				if (process.platform === 'win32') {
 					skip('Symlinks to non-existent targets require elevated privileges on Windows');
@@ -158,7 +160,7 @@ export default testSuite(({ describe }, _nodePath: string) => {
 			});
 		});
 
-		describe('hardlink', ({ test }) => {
+		describe('hardlink', () => {
 			test('creates new hardlink', async () => {
 				await using fixture = await createFixture({
 					'source.txt': 'content',
@@ -256,4 +258,4 @@ export default testSuite(({ describe }, _nodePath: string) => {
 			});
 		});
 	});
-});
+};

@@ -1,13 +1,13 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { execa, execaNode } from 'execa';
 import { createFixture } from 'fs-fixture';
 import { link } from '../utils/link.js';
 
-export default testSuite(({ describe }, nodePath: string) => {
-	describe('cli', ({ test, describe }) => {
-		describe('error-cases', ({ test }) => {
+export const cli = (nodePath: string) => {
+	describe('cli', () => {
+		describe('error-cases', () => {
 			test('link package doesnt exist', async () => {
 				await using fixture = await createFixture('./tests/fixtures/');
 
@@ -409,4 +409,4 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(packageBSymlink.isSymbolicLink()).toBe(true);
 		});
 	});
-});
+};
