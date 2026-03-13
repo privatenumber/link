@@ -44,7 +44,7 @@
 		"manten": "^2.0.0",
 		"npm-packlist": "^10.0.3",
 		"outdent": "^0.8.0",
-		"pkgroll": "^2.21.5",
+		"pkgroll": "^2.27.0",
 		"skills-npm": "^1.0.0",
 		"tsx": "^4.21.0",
 		"typescript": "^5.9.3"
