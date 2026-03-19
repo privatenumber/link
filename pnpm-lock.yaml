@@ -24,8 +24,8 @@ importers:
         specifier: ^1.3.0
         version: 1.3.0
       cleye:
-        specifier: ^2.2.1
-        version: 2.2.1
+        specifier: ^2.3.0
+        version: 2.3.0
       cmd-shim:
         specifier: ^8.0.0
         version: 8.0.0
@@ -1273,8 +1273,8 @@ packages:
     resolution: {integrity: sha512-GfisEZEJvzKrmGWkvfhgzcz/BllN1USeqD2V6tg14OAOgaCD2Z/PUEuxnAZ/nPvmaHRG7a8y77p1T/IRQ4D1Hw==}
     engines: {node: '>=4'}
 
-  cleye@2.2.1:
-    resolution: {integrity: sha512-eZzJGlG3N6+IsKV+297HIRS2fyRsLMOrx62hGUmmcyOtP/I+L7JVeSKZH49WZUdVB8NoaZOUvq01363I/PHJiA==}
+  cleye@2.3.0:
+    resolution: {integrity: sha512-hnROLVsAA8JQo8W65/khA90gPvZ0ymuZqWwQcBpHrrmpIDD2CLvB7HdqAeA0Odxf7RpJLS5Zor0ujlPOXx4IBQ==}
 
   cli-progress@3.12.0:
     resolution: {integrity: sha512-tRkV3HJ1ASwm19THiiLIXLO7Im7wlTuKnvkYaTkyoAPefqjNg7W7DHKUlGRxy9vxDvbyCYQkQozvptuMkGCg8A==}
@@ -3034,8 +3034,8 @@ packages:
   type-flag@3.0.0:
     resolution: {integrity: sha512-3YaYwMseXCAhBB14RXW5cRQfJQlEknS6i4C8fCfeUdS3ihG9EdccdR9kt3vP73ZdeTGmPb4bZtkDn5XMIn1DLA==}
 
-  type-flag@4.0.3:
-    resolution: {integrity: sha512-YA09cL07U7hSV+/doSfKl+RkIZ2olCnevZsVgAuyBUG3h2ROf9Oh2vmbq5Rf26aA9/qu9RtStuc7ap5PC6k/vw==}
+  type-flag@4.1.0:
+    resolution: {integrity: sha512-I/K5a1jUhdFgzM3L7413akxQRzUYq4sCbef6bMAe6SrIvIdFxGZFJys5M1SiY0d0VrAjZjY4LQzppuTaLHMvSQ==}
 
   typed-array-buffer@1.0.3:
     resolution: {integrity: sha512-nAYYwfY3qnzX30IkA6AQZjVbtK6duGontcQm1WSG1MD94YLqK0515GNApXkoxKOWMusVssAHWLh9SeaoefYFGw==}
@@ -4282,10 +4282,10 @@ snapshots:
     dependencies:
       escape-string-regexp: 1.0.5
 
-  cleye@2.2.1:
+  cleye@2.3.0:
     dependencies:
       terminal-columns: 2.0.0
-      type-flag: 4.0.3
+      type-flag: 4.1.0
 
   cli-progress@3.12.0:
     dependencies:
@@ -5507,7 +5507,7 @@ snapshots:
       '@stylistic/eslint-plugin': 5.7.0(eslint@9.39.2(jiti@2.6.1))
       '@typescript-eslint/eslint-plugin': 8.52.0(@typescript-eslint/parser@8.52.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
       '@typescript-eslint/parser': 8.52.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
-      cleye: 2.2.1
+      cleye: 2.3.0
       confusing-browser-globals: 1.0.11
       eslint: 9.39.2(jiti@2.6.1)
       eslint-import-resolver-typescript: 4.4.4(eslint-plugin-import-x@4.16.1(@typescript-eslint/utils@8.52.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1))
@@ -6582,7 +6582,7 @@ snapshots:
 
   type-flag@3.0.0: {}
 
-  type-flag@4.0.3: {}
+  type-flag@4.1.0: {}
 
   typed-array-buffer@1.0.3:
     dependencies:
