@@ -41,7 +41,7 @@
 		"fs-fixture": "^2.11.0",
 		"get-node": "^14.2.1",
 		"kolorist": "^1.8.0",
-		"lintroll": "^1.27.1",
+		"lintroll": "^1.30.1",
 		"manten": "^2.0.0",
 		"npm-packlist": "^10.0.3",
 		"outdent": "^0.8.0",
