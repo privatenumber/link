@@ -1,5 +1,5 @@
 import { command } from 'cleye';
-import { linkPublishMode } from './link-publish-mode.js';
+import { linkPublishMode } from './link-publish-mode.ts';
 
 export const publishCommand = command({
 	name: 'publish',

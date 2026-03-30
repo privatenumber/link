@@ -4,7 +4,7 @@ import {
 	describe, test, expect, skip,
 } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { symlink, symlinkBinary, hardlink } from '../../src/utils/symlink.js';
+import { symlink, symlinkBinary, hardlink } from '../../src/utils/symlink.ts';
 
 export const symlinkSpec = (_nodePath: string) => {
 	describe('symlink utilities', () => {

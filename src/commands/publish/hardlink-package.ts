@@ -1,10 +1,10 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { green, magenta, cyan } from 'kolorist';
-import type { PackageJsonWithName } from '../../utils/read-package-json.js';
-import { hardlink } from '../../utils/symlink.js';
-import { getNpmPacklist } from '../../utils/get-npm-packlist.js';
-import { cwdPath } from '../../utils/cwd-path.js';
+import type { PackageJsonWithName } from '../../utils/read-package-json.ts';
+import { hardlink } from '../../utils/symlink.ts';
+import { getNpmPacklist } from '../../utils/get-npm-packlist.ts';
+import { cwdPath } from '../../utils/cwd-path.ts';
 
 export const hardlinkPackage = async (
 	linkPath: string,

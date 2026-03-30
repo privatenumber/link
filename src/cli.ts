@@ -1,9 +1,9 @@
 import fs from 'fs/promises';
 import { cli } from 'cleye';
-import outdent from 'outdent';
-import { linkPackage, linkFromConfig } from './link-package/index.js';
-import { loadConfig } from './utils/load-config.js';
-import { publishCommand, publishHandler } from './commands/publish/index.js';
+import { outdent } from 'outdent';
+import { linkPackage, linkFromConfig } from './link-package/index.ts';
+import { loadConfig } from './utils/load-config.ts';
+import { publishCommand, publishHandler } from './commands/publish/index.ts';
 
 (async () => {
 	const argv = cli({

@@ -1,10 +1,10 @@
 import path from 'path';
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { fsExists } from '../../src/utils/fs-exists.js';
-import { readJsonFile } from '../../src/utils/read-json-file.js';
-import { cwdPath } from '../../src/utils/cwd-path.js';
-import { readPackageJson } from '../../src/utils/read-package-json.js';
+import { fsExists } from '../../src/utils/fs-exists.ts';
+import { readJsonFile } from '../../src/utils/read-json-file.ts';
+import { cwdPath } from '../../src/utils/cwd-path.ts';
+import { readPackageJson } from '../../src/utils/read-package-json.ts';
 
 export const utils = (_nodePath: string) => {
 	describe('utilities', () => {

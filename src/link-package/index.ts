@@ -2,10 +2,10 @@ import path from 'path';
 import {
 	green, red, cyan, magenta,
 } from 'kolorist';
-import { fsExists } from '../utils/fs-exists.js';
-import type { LinkConfig } from '../types.js';
-import { loadConfig } from '../utils/load-config.js';
-import { symlinkPackage } from './symlink-package.js';
+import { fsExists } from '../utils/fs-exists.ts';
+import type { LinkConfig } from '../types.ts';
+import { loadConfig } from '../utils/load-config.ts';
+import { symlinkPackage } from './symlink-package.ts';
 
 export const linkPackage = async (
 	basePackagePath: string,

@@ -1,8 +1,8 @@
 import path from 'path';
 import { createRequire } from 'module';
-import type { LinkConfig } from '../types.js';
-import { fsExists } from './fs-exists.js';
-import { readJsonFile } from './read-json-file.js';
+import type { LinkConfig } from '../types.ts';
+import { fsExists } from './fs-exists.ts';
+import { readJsonFile } from './read-json-file.ts';
 
 const configJsonFile = 'link.config.json';
 const configJsFile = 'link.config.js';

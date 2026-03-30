@@ -1,9 +1,9 @@
 import path from 'path';
 import fs from 'fs/promises';
 import cmdShim from 'cmd-shim';
-import { readPackageJson } from '../utils/read-package-json.js';
-import { symlink, symlinkBinary } from '../utils/symlink.js';
-import { linkBinaries } from './link-binaries.js';
+import { readPackageJson } from '../utils/read-package-json.ts';
+import { symlink, symlinkBinary } from '../utils/symlink.ts';
+import { linkBinaries } from './link-binaries.ts';
 
 const nodeModulesDirectory = 'node_modules';
 

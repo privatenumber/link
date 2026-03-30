@@ -17,12 +17,13 @@
 	"files": [
 		"dist"
 	],
+	"type": "module",
 	"bin": "dist/cli.js",
 	"packageManager": "pnpm@10.14.0",
 	"scripts": {
 		"build": "pkgroll --minify --clean-dist",
-		"test": "tsx tests/index.ts",
-		"dev": "tsx watch tests/index.ts",
+		"test": "node tests/index.ts",
+		"dev": "node --watch tests/index.ts",
 		"lint": "lintroll --cache --ignore-pattern=tests/fixtures .",
 		"type-check": "tsc",
 		"prepack": "pnpm build && clean-pkg-json",
@@ -46,7 +47,6 @@
 		"outdent": "^0.8.0",
 		"pkgroll": "^2.21.5",
 		"skills-npm": "^1.0.0",
-		"tsx": "^4.21.0",
 		"typescript": "^5.9.3"
 	}
 }

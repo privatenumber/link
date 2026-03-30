@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs/promises';
-import { fsExists } from './fs-exists';
+import { fsExists } from './fs-exists.ts';
 
 /**
  * Helper to create a symlink

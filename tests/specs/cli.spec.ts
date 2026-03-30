@@ -3,7 +3,7 @@ import path from 'path';
 import { describe, test, expect } from 'manten';
 import { execa, execaNode } from 'execa';
 import { createFixture } from 'fs-fixture';
-import { link } from '../utils/link.js';
+import { link } from '../utils/link.ts';
 
 export const cli = (nodePath: string) => {
 	describe('cli', () => {

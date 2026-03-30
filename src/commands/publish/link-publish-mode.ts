@@ -1,9 +1,9 @@
 import path from 'path';
 import fs from 'fs/promises';
-import outdent from 'outdent';
+import { outdent } from 'outdent';
 import { magenta, bold, dim } from 'kolorist';
-import { readPackageJson } from '../../utils/read-package-json.js';
-import { hardlinkPackage } from './hardlink-package.js';
+import { readPackageJson } from '../../utils/read-package-json.ts';
+import { hardlinkPackage } from './hardlink-package.ts';
 
 const isValidSetup = async (
 	linkPath: string,

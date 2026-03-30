@@ -1,10 +1,10 @@
 import { describe } from 'manten';
 import getNode from 'get-node';
-import { cli } from './specs/cli.spec.js';
-import { linkConfig } from './specs/link-config.spec.js';
-import { publish } from './specs/publish.spec.js';
-import { symlinkSpec } from './specs/symlink.spec.js';
-import { utils } from './specs/utils.spec.js';
+import { cli } from './specs/cli.spec.ts';
+import { linkConfig } from './specs/link-config.spec.ts';
+import { publish } from './specs/publish.spec.ts';
+import { symlinkSpec } from './specs/symlink.spec.ts';
+import { utils } from './specs/utils.spec.ts';
 
 const nodeVersions = [
 	'20',

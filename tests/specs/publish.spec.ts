@@ -3,8 +3,8 @@ import path from 'node:path';
 import { describe, test, expect } from 'manten';
 import { execa } from 'execa';
 import { createFixture } from 'fs-fixture';
-import { link } from '../utils/link.js';
-import { npmPack } from '../utils/npm-pack.js';
+import { link } from '../utils/link.ts';
+import { npmPack } from '../utils/npm-pack.ts';
 
 export const publish = (nodePath: string) => {
 	describe('publish mode', () => {
