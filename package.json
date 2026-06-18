@@ -47,7 +47,7 @@
 		"npm-packlist": "^10.0.4",
 		"outdent": "^0.8.0",
 		"pkgroll": "^2.27.0",
-		"skills-npm": "^1.1.1",
+		"skills-npm": "^1.2.0",
 		"typescript": "^6.0.3"
 	}
 }
