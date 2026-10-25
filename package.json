@@ -20,15 +20,14 @@
 	],
 	"type": "module",
 	"bin": "dist/cli.js",
-	"packageManager": "pnpm@10.14.0",
+	"packageManager": "pnpm@12.15.0",
 	"scripts": {
 		"build": "pkgroll --minify --clean-dist",
 		"test": "node tests/index.ts",
 		"dev": "node --watch tests/index.ts",
 		"lint": "lintroll --cache --ignore-pattern=tests/fixtures .",
 		"type-check": "tsc",
-		"prepack": "pnpm build && clean-pkg-json",
-		"prepare": "skills-npm"
+		"prepack": "pnpm build && clean-pkg-json"
 	},
 	"devDependencies": {
 		"@types/cmd-shim": "^5.0.2",
@@ -47,7 +46,6 @@
 		"npm-packlist": "^10.0.4",
 		"outdent": "^0.8.0",
 		"pkgroll": "^2.27.0",
-		"skills-npm": "^1.2.0",
 		"typescript": "^6.0.3"
 	}
 }
