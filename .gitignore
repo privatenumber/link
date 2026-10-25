@@ -28,5 +28,6 @@ node_modules/
 # Distribution
 dist
 
-# Agent skills from npm packages (managed by skills-npm)
-**/skills/npm-*
+# Agent skill links from dependencies (managed by pnpm)
+**/skills/pnpm-*
+**/skills/.gitignore

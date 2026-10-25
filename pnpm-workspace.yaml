@@ -1,0 +1,20 @@
+allowBuilds:
+  esbuild@0.26.0: false
+  esbuild@0.27.7: false
+  unrs-resolver@1.11.1: false
+
+permissions:
+  clean-pkg-json:
+    skills: true
+  cleye:
+    skills: true
+  fs-fixture:
+    skills: true
+  lintroll:
+    skills: true
+  manten:
+    skills: true
+
+skills:
+  dirs:
+    - .agents/skills
