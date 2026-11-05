@@ -24,9 +24,10 @@ jobs:
           node-version-file: .nvmrc
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@08c4be7e2e672a47d11bd04269e27e5f3e8529cb # v6
+        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
         with:
-          run_install: true
+          run_install: |
+            args: [--frozen-lockfile]
 
       - name: Lint
         if: ${{ matrix.os == 'ubuntu-latest' }}
